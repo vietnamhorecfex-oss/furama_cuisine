@@ -121,7 +121,14 @@ main[data-view='home'][data-hero='none'] {
     padding-inline: clamp(24px, 3vw - 8px, 30px);
   }
 
-  /* The mark's 54 px do not fit here: the wordmark alone, as before it. */
+  /* The gold rule before DINING WORLD does not fit here. */
+  .hdr-logo-sub::before {
+    display: none;
+  }
+}
+
+/* Below 1360 the mark would crowd the nav (the six sections, SEARCH, the language and RESERVE): the wordmark alone. */
+@media (min-width: 1080px) and (max-width: 1359px) {
   .hdr-full .hdr-logo-mark {
     display: none;
   }
@@ -175,11 +182,12 @@ html {
   }
 }
 
-/* The mark (components/ui/BrandMark.tsx) beside the two-line wordmark, as tall as the pair. */
+/* The mark (components/ui/BrandMark.tsx) beside the two-line wordmark, as in the brand's horizontal lockup
+   (public/brand/furama-dining-world-logo-horizontal-*.svg): the mark about 3.6 times FURAMA's cap height. */
 .hdr-logo {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 15px;
   color: var(--on-dark);
   flex: 0 0 auto;
 }
@@ -194,8 +202,9 @@ html {
   gap: 8px;
 }
 
+/* 53 px at 1360, where it first shows and the header has no room to spare; 60 px from 1440. */
 .hdr-logo-mark {
-  width: clamp(40px, 3.3vw, 46px);
+  width: clamp(53px, 8.75vw - 66px, 60px);
 }
 
 .brand-mark {
@@ -205,9 +214,8 @@ html {
   aspect-ratio: 1;
 }
 
-.brand-mark-rule {
-  stroke: var(--gold);
-  stroke-width: 1.5;
+.brand-mark-gold {
+  color: var(--gold);
 }
 
 .hdr-logo-word {
@@ -218,11 +226,22 @@ html {
   font-weight: 400;
 }
 
+/* DINING WORLD after a short gold rule, as in the lockup. */
 .hdr-logo-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
   font-size: 9.5px;
   line-height: 1;
   letter-spacing: 0.46em;
   font-weight: 500;
+}
+
+.hdr-logo-sub::before {
+  content: '';
+  width: 1.5em;
+  height: 1px;
+  background: var(--gold);
 }
 
 .hdr-wordmark {
@@ -241,8 +260,23 @@ html {
   gap: 10px;
 }
 
+/* The horizontal lockup at phone size: "FURAMA DINING WORLD" on one line pushed the menu off a 390 px screen. */
 .hdr-wordmark-mark {
-  width: 30px;
+  width: 34px;
+}
+
+.hdr-wordmark-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  letter-spacing: 0.24em;
+}
+
+.hdr-wordmark-sub {
+  font-family: var(--sans);
+  font-size: 7.5px;
+  font-weight: 500;
+  letter-spacing: 0.46em;
 }
 
 .hdr-wordmark:hover {

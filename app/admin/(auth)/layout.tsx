@@ -6,7 +6,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <main className="a-auth">
       <div className="a-auth-inner">
         <p className="a-auth-brand">
-          <BrandMark className="a-brand-mark" />
+          <BrandMark className="a-brand-mark" initials={false} />
           <span className="a-brand-text">
             Furama Dining World
             <small>Quản trị</small>

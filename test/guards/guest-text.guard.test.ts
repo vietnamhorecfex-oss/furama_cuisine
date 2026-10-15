@@ -38,7 +38,6 @@ const LOCKED: Record<string, string> = {
   "components/site/Footer.tsx: FURAMA": "brand wordmark: the footer's great outline wordmark (aria-hidden decoration)",
   "components/site/Header.tsx: DINING WORLD": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
   "components/site/Header.tsx: FURAMA": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
-  "components/site/Header.tsx: FURAMA DINING WORLD": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
   "components/site/IntroCurtain.tsx: DINING WORLD": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
   "components/site/IntroCurtain.tsx: FURAMA": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
   "components/site/PageCurtain.tsx: FURAMA": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",

@@ -77,8 +77,11 @@ export function Header() {
               goHomeTop();
             }}
           >
-            <BrandMark className="hdr-wordmark-mark" />
-            FURAMA DINING WORLD
+            <BrandMark className="hdr-wordmark-mark" initials={false} />
+            <span className="hdr-wordmark-text">
+              FURAMA
+              <span className="hdr-wordmark-sub">DINING WORLD</span>
+            </span>
           </a>
           <div className="hdr-compact-actions">
             <button type="button" className="btn-gold hdr-compact-reserve" onClick={() => openReserve()}>
