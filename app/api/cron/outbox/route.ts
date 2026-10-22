@@ -2,7 +2,7 @@ import { cronAuthorized } from '@/lib/server/cron';
 import { drainOutbox } from '@/lib/server/email/drain';
 
 /*
- * Vercel Cron, hourly (vercel.json; production deployments only):
+ * Vercel Cron, daily at 01:00 UTC (vercel.json; production deployments only):
  * sends what after() could not, and every retry that has come due (spec
  * §10.4). Without `Authorization: Bearer $CRON_SECRET` it is 401 (spec §12).
  * Reading request.headers keeps the handler out of prerendering

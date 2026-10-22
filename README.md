@@ -1197,7 +1197,8 @@ in-process server on `127.0.0.1`.
   booking's language. A failed email never fails the booking.
 - **Sent after commit, at least once.** `after()` sends the new rows once the
   response is out (at most 10 rows or 25 s), and `GET /api/cron/outbox` runs
-  hourly, on the hour (`vercel.json`, Production only), for whatever is due;
+  daily at 01:00 UTC, 08:00 in Da Nang (`vercel.json`, Production only), for
+  whatever is due;
   a retry that comes due between runs also goes out with the next write. SMTP
   has no idempotency key, so a row is claimed with a 120-second lease and
   sent with a Message-ID fixed at its first claim
@@ -1297,18 +1298,21 @@ a new deployment.
 2. **Neon plan:** the project is on Neon Free (owner, 2026-10-05). Free
    suspends an idle compute after 5 minutes, and its monthly compute
    allowance is limited; once it runs out, Neon suspends the compute and
-   bookings and the admin stop working. The outbox cron therefore runs
-   hourly, not every 5 minutes: a 5-minute cron would keep the production
-   compute awake around the clock (about 183 CU-hours a month at the
-   0.25 CU minimum). The cost is that a failed email is retried up to an hour
-   late. Watch the usage in Vercel → Storage → Neon during the first
-   month; if it nears the allowance, move to Launch (check
-   neon.tech/pricing) and the cron can go back to `*/5 * * * *` (change
-   `vercel.json` and `test/guards/vercel-crons.guard.test.ts` together).
-   Phase 9's AI-jobs cron must follow the same rule. The hourly outbox cron
-   needs **Vercel Pro**: Hobby runs a cron at most once a day (the research
-   synthesis, `docs/superpowers/research/2026-10-01-admin-cms/00-synthesis.md`
-   §D item 7, records Pro).
+   bookings and the admin stop working. A 5-minute outbox cron would keep
+   the production compute awake around the clock (about 183 CU-hours a
+   month at the 0.25 CU minimum). Watch the usage in Vercel → Storage →
+   Neon during the first month; if it nears the allowance, move to Launch
+   (check neon.tech/pricing), and with Vercel Pro too the cron can go to
+   `*/5 * * * *` (change `vercel.json` and
+   `test/guards/vercel-crons.guard.test.ts` together).
+   Phase 9's AI-jobs cron must follow the same rule. The project is on
+   **Vercel Hobby**, which runs a cron at most once a day and refuses a
+   deploy whose `vercel.json` asks for more, so the outbox cron runs daily at
+   `0 1 * * *` (08:00 in Da Nang). Every email still goes out right after its
+   booking commits (`after()`); the cost is that a failed one is retried up
+   to a day late (or with the next booking write). Hobby also fires a cron at
+   any minute within its hour. On Vercel Pro the outbox can go back to
+   hourly (`0 * * * *`).
 3. **Vercel project settings, before the first deploy:** turn on
    "Automatically expose System Environment Variables" and OIDC Federation,
    and keep Fluid Compute on (the default). BotID's browser half needs
@@ -1390,7 +1394,7 @@ a new deployment.
 11. **Production deploy and crons:** 009 is already on production and the
     store is connected (step 1); merge into `main` (Production starts on
     redirect). After that deploy, Project → Settings → Cron Jobs shows
-    three crons: `/api/cron/outbox` hourly (`0 * * * *`), `/api/cron/daily`
+    three crons: `/api/cron/outbox` daily (`0 1 * * *`), `/api/cron/daily`
     at `5 17 * * *` (00:05 in Da Nang) and `/api/cron/media-sweep` at
     `35 18 * * *` (01:35 in Da Nang). The media sweep's dry run answers 200,
     not 401 ("Media sweep" above has the `curl`). Then move the phase-6

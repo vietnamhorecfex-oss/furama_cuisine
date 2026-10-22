@@ -5,9 +5,11 @@ import { describe, expect, it } from 'vitest';
 /*
  * Vercel runs only the crons vercel.json lists, and no other gate reads the
  * file: a lost or mistyped entry would pass them all. The outbox drains once
- * an hour, on the hour: Neon is on the Free plan, which suspends an idle
- * compute after 5 minutes, so a 5-minute cron would keep it awake around the
- * clock, past Free's monthly compute allowance (owner, 2026-10-05). The daily
+ * a day at 01:00 UTC, 08:00 in Da Nang: the project is on Vercel Hobby, which
+ * runs a cron at most once a day and refuses the deploy otherwise, and Neon
+ * is on Free, which a 5-minute cron would keep awake past its monthly compute
+ * allowance (owner, 2026-10-05). after() still sends each email as soon as
+ * its booking commits; the cron only retries what failed. The daily
  * cron runs at 17:05 UTC, 00:05 in Da Nang, so the day's offers, and with
  * them the Offers nav item, change at the venue's midnight instead of at the
  * next hourly revalidation. The media sweep (phase 7, spec §12) runs once a
@@ -19,9 +21,9 @@ type Cron = { path: string; schedule: string };
 const crons = (): Cron[] => JSON.parse(readFileSync(join(process.cwd(), 'vercel.json'), 'utf8')).crons;
 
 describe('the crons in vercel.json', () => {
-  it('drain the outbox hourly, run the daily cron at 00:05 in Da Nang (17:05 UTC) and sweep media at 01:35 (18:35 UTC)', () => {
+  it('drain the outbox at 08:00 in Da Nang (01:00 UTC), run the daily cron at 00:05 in Da Nang (17:05 UTC) and sweep media at 01:35 (18:35 UTC)', () => {
     expect(crons()).toEqual([
-      { path: '/api/cron/outbox', schedule: '0 * * * *' },
+      { path: '/api/cron/outbox', schedule: '0 1 * * *' },
       { path: '/api/cron/daily', schedule: '5 17 * * *' },
       { path: '/api/cron/media-sweep', schedule: '35 18 * * *' },
     ]);
