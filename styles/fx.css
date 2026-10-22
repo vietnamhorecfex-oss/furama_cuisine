@@ -429,6 +429,21 @@ main[data-view='home'] .experiences .eyebrow::before {
   bottom: 22px;
 }
 
+/* A finger has no hover: the tag stays on the picture, so a tap's outcome (reserve, view, call)
+   shows before it. With no mat it sits 10px in, and tighter, so "View restaurant →" keeps one
+   line on a 166px card (a 390px phone). */
+@media (hover: none), (pointer: coarse) {
+  .rcard-tag {
+    left: 10px;
+    bottom: 10px;
+    max-width: calc(100% - 20px);
+    padding: 6px 8px;
+    letter-spacing: 0.08em;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* A card's name and a story's title underline themselves in gold. */
 .rcard-name,
 .story-title {
