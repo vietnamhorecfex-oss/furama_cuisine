@@ -77,7 +77,7 @@ export function Header() {
               goHomeTop();
             }}
           >
-            <BrandMark className="hdr-wordmark-mark" initials={false} />
+            <BrandMark className="hdr-wordmark-mark" />
             <span className="hdr-wordmark-text">
               FURAMA
               <span className="hdr-wordmark-sub">DINING WORLD</span>

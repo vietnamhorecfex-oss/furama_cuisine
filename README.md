@@ -1538,7 +1538,7 @@ nonce `proxy.ts` made for it. On `next start` and Vercel an admin page answers
 those arrive in the page payload, not the status.
 
 The proxy skips `/api`, `/_next`, `/admin` (its own branch), any path with a dot
-(files such as `/icon.svg`) and any unprefixed top-level segment of 2–3 letters,
+(files such as `/icon.png`) and any unprefixed top-level segment of 2–3 letters,
 which it reads as a locale. Such unknown top-level paths are not redirected; they
 become cached 404s.
 

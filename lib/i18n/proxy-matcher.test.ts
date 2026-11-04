@@ -42,7 +42,7 @@ describe('proxy matcher', () => {
     '/_next/static/a.js',
     '/_next/image',
     '/favicon.ico',
-    '/icon.svg',
+    '/icon.png',
     '/sitemap.xml',
     '/robots.txt',
     '/images/a.png',

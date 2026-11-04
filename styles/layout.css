@@ -182,8 +182,7 @@ html {
   }
 }
 
-/* The mark (components/ui/BrandMark.tsx) beside the two-line wordmark, as in the brand's horizontal lockup
-   (public/brand/furama-dining-world-logo-horizontal-*.svg): the mark about 3.6 times FURAMA's cap height. */
+/* The mark (components/ui/BrandMark.tsx) beside the two-line wordmark. */
 .hdr-logo {
   display: flex;
   align-items: center;
@@ -212,10 +211,6 @@ html {
   flex: none;
   height: auto;
   aspect-ratio: 1;
-}
-
-.brand-mark-gold {
-  color: var(--gold);
 }
 
 .hdr-logo-word {

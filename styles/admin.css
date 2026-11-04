@@ -253,17 +253,12 @@ body.admin {
   text-decoration: none;
 }
 
-/* The site's mark (lib/brand-mark.ts) as the brand set draws it on the green: cream arcs, gold the rest. */
+/* The site's mark (lib/brand-mark.ts): its own colours, on the green as on the light sign-in page. */
 .a-brand-mark {
   display: block;
   flex: none;
   width: 38px;
   height: 38px;
-  color: #f7f2e8;
-}
-
-.a-brand-mark .brand-mark-gold {
-  color: #c6a664;
 }
 
 .a-brand-text {
@@ -2839,15 +2834,6 @@ fieldset.a-field legend {
   align-items: center;
   gap: 12px;
   color: var(--a-brand);
-}
-
-/* On the light sign-in page: the set's light mark, green arcs and dark gold. */
-.a-auth-brand .a-brand-mark {
-  color: var(--a-brand);
-}
-
-.a-auth-brand .a-brand-mark .brand-mark-gold {
-  color: #8a6b33;
 }
 
 .a-auth-brand .a-brand-text small {

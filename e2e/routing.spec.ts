@@ -47,7 +47,7 @@ test.describe('old and unprefixed links', () => {
     expect((await hop(request, HOME_PATH)).status).toBe(200);
     expect((await hop(request, DETAIL_PATH)).status).toBe(200);
     expect((await hop(request, '/api/availability')).status).toBe(400); // the handler answered: no restaurant given
-    for (const path of ['/icon.svg', '/favicon.ico', '/apple-icon.png']) expect((await hop(request, path)).status, path).toBe(200);
+    for (const path of ['/icon.png', '/favicon.ico', '/apple-icon.png']) expect((await hop(request, path)).status, path).toBe(200);
   });
 });
 
