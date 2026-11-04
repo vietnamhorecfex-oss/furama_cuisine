@@ -6,8 +6,10 @@ import { HOME_PATH } from './paths';
  * transparent header. On a wide but short window (a laptop's: 1366 × 768,
  * 1280 × 720) the copy used to be taller than the hero and ran up under the
  * header, the headline over the logo and the menu. The headline now follows
- * the window's height as well as its width, and when the copy still does not
- * fit (the longest lines staff may write, which wrap) the hero grows instead.
+ * the window's height as well as its width, its lines are measured to stay
+ * whole up to the longest staff may write, and when the copy still does not
+ * fit the hero grows instead; the finder card over the hero's foot never
+ * covers it.
  */
 
 test.use({ reducedMotion: 'reduce' });
@@ -50,7 +52,6 @@ test('the longest headline and lede staff may write still start below the header
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.goto(HOME_PATH);
   await expect(page.locator('#top h1.hero-title')).toBeVisible();
-  const before = await page.locator('#top').evaluate((el) => el.getBoundingClientRect().height);
   // Registry maxLength: 28 characters a title line, 160 for the lede (lib/i18n/registry.ts).
   await page.evaluate(() => {
     document.querySelectorAll('#top .hero-line').forEach((line) => (line.textContent = 'Hương vị tinh tế bốn phương'));
@@ -58,6 +59,12 @@ test('the longest headline and lede staff may write still start below the header
     if (lede) lede.textContent = 'Từ những bữa tối bên bờ biển đến các điểm đến sôi động giữa lòng thành phố – khám phá nhà hàng, ẩm thực và con người của Furama Cuisine.';
   });
   expect(await titleBelowHeader(page)).toBeGreaterThanOrEqual(16);
-  // The lines wrap at this width: the hero made room by growing.
-  expect(await page.locator('#top').evaluate((el) => el.getBoundingClientRect().height)).toBeGreaterThan(before);
+  // The copy ends above the finder card that rides over the hero's foot.
+  const clear = await page.evaluate(() => {
+    const copy = document.querySelector('#top .hero-copy');
+    const finder = document.querySelector('.finder-inner');
+    if (!copy || !finder) throw new Error('no hero copy or finder');
+    return finder.getBoundingClientRect().top - copy.getBoundingClientRect().bottom;
+  });
+  expect(clear).toBeGreaterThanOrEqual(0);
 });
