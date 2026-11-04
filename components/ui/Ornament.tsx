@@ -30,7 +30,7 @@ function DividerHalf() {
 }
 
 /**
- * The divider under a centred section title: the Mỹ Sơn E1 frieze's lozenges
+ * The divider of the heritage banner and the booking bar: the Mỹ Sơn E1 frieze's lozenges
  * and four-petalled flower, between two hairlines. `ref` and `reveal` let a
  * section fade it in with its title (useReveal).
  */

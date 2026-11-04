@@ -26,13 +26,13 @@ const WINDOWS = [
   { width: 390, height: 844 },
 ];
 
-/** How far the hero's first line (the kicker) starts below the visible header's bottom (negative: under it). */
-function kickerBelowHeader(page: Page) {
+/** How far the hero's first line (the headline) starts below the visible header's bottom (negative: under it). */
+function titleBelowHeader(page: Page) {
   return page.evaluate(() => {
     const header = [...document.querySelectorAll('header')].find((el) => el.getClientRects().length > 0);
-    const kicker = document.querySelector('#top .hero-kicker');
-    if (!header || !kicker) throw new Error('no visible header or hero kicker');
-    return kicker.getBoundingClientRect().top - header.getBoundingClientRect().bottom;
+    const title = document.querySelector('#top .hero-title');
+    if (!header || !title) throw new Error('no visible header or hero headline');
+    return title.getBoundingClientRect().top - header.getBoundingClientRect().bottom;
   });
 }
 
@@ -42,7 +42,7 @@ for (const { width, height } of WINDOWS) {
     await page.goto(HOME_PATH);
     await expect(page.locator('#top h1.hero-title')).toBeVisible();
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
-    expect(await kickerBelowHeader(page)).toBeGreaterThanOrEqual(16);
+    expect(await titleBelowHeader(page)).toBeGreaterThanOrEqual(16);
   });
 }
 
@@ -57,7 +57,7 @@ test('the longest headline and lede staff may write still start below the header
     const lede = document.querySelector('#top .hero-lede');
     if (lede) lede.textContent = 'Từ những bữa tối bên bờ biển đến các điểm đến sôi động giữa lòng thành phố – khám phá nhà hàng, ẩm thực và con người của Furama Cuisine.';
   });
-  expect(await kickerBelowHeader(page)).toBeGreaterThanOrEqual(16);
+  expect(await titleBelowHeader(page)).toBeGreaterThanOrEqual(16);
   // The lines wrap at this width: the hero made room by growing.
   expect(await page.locator('#top').evaluate((el) => el.getBoundingClientRect().height)).toBeGreaterThan(before);
 });

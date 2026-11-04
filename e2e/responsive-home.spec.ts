@@ -58,7 +58,7 @@ for (const { width, height, cta } of [
       await expect(page.locator('#top h1.hero-title')).toBeVisible();
       expect(await page.evaluate(() => window.scrollY)).toBe(0);
       const { headerBottom, floor } = await bars(page);
-      expect((await box(page, '#top .hero-kicker')).top).toBeGreaterThanOrEqual(headerBottom);
+      expect((await box(page, '#top .hero-title')).top).toBeGreaterThanOrEqual(headerBottom);
       expect((await box(page, '#top .hero-title')).bottom).toBeLessThanOrEqual(floor);
       expect((await box(page, `#top ${cta}`)).bottom).toBeLessThanOrEqual(floor);
     });

@@ -7,8 +7,8 @@
  *   A band of it tops the footer.
  * - The lozenges and four-petalled flowers of the Mỹ Sơn E1 pedestal, a
  *   National Treasure in the Museum of Cham Sculpture, Da Nang ("alternated
- *   patterns of lozenges and four-petaled flowers"): the divider under a
- *   centred title, an offer card's flower, and the lattice behind the dark
+ *   patterns of lozenges and four-petaled flowers"): the divider over the
+ *   heritage banner and the booking bar, an offer card's flower, and the lattice behind the dark
  *   green sections. Furama Resort "draws inspiration from the local Champa
  *   culture" (danangfantasticity.com, Da Nang's tourism portal).
  * - Sóng nước, water waves: the same portal names "motifs inspired by ocean
@@ -80,10 +80,6 @@
 }
 
 /* ── Where the dividers sit ──────────────────────────────────────────────── */
-
-.section-orn {
-  margin-top: clamp(18px, 1.8vw, 24px);
-}
 
 /* Over a photograph: the heritage banner's, above its kicker. */
 .heritage-orn {

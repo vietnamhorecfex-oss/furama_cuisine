@@ -121,7 +121,7 @@ main[data-view='home'][data-hero='none'] {
     padding-inline: clamp(24px, 3vw - 8px, 30px);
   }
 
-  /* The gold rule before DINING WORLD does not fit here. */
+  /* The rule before DINING WORLD does not fit here. */
   .hdr-logo-sub::before {
     display: none;
   }
@@ -221,7 +221,7 @@ html {
   font-weight: 400;
 }
 
-/* DINING WORLD after a short gold rule, as in the lockup. */
+/* DINING WORLD after a short jade rule, in the mark's colour. */
 .hdr-logo-sub {
   display: flex;
   align-items: center;
@@ -236,7 +236,7 @@ html {
   content: '';
   width: 1.5em;
   height: 1px;
-  background: var(--gold);
+  background: var(--jade);
 }
 
 .hdr-wordmark {
@@ -269,9 +269,9 @@ html {
 
 .hdr-wordmark-sub {
   font-family: var(--sans);
-  font-size: 7.5px;
+  font-size: 8.5px;
   font-weight: 500;
-  letter-spacing: 0.46em;
+  letter-spacing: 0.38em;
 }
 
 .hdr-wordmark:hover {

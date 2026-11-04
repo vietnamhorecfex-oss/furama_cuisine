@@ -94,11 +94,8 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
 
       <div className="hero-content" data-hero-content="1">
         <div className="hero-copy">
-          <div className="hero-kicker" data-intro="0">
-            {copy['hero.kicker']}
-          </div>
-
-          {/* Each word rises on its own (SplitWords); the lines still read as one heading. */}
+          {/* Each word rises on its own (SplitWords); the lines still read as one heading. The header's logo
+              names the brand just above, so no label repeats it here. */}
           <h1 className="hero-title">
             <span className="hero-line">
               <SplitWords text={TITLE[0]} intro={1} />
@@ -106,7 +103,7 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
             <span className="hero-line hero-title-mid">
               <SplitWords text={TITLE[1]} intro={2} />
             </span>{' '}
-            <span className="hero-line hero-line-accent">
+            <span className="hero-line">
               <SplitWords text={TITLE[2]} intro={3} />
             </span>
           </h1>

@@ -710,7 +710,7 @@ export const REGISTRY = {
   'offers.cta': {
     en: 'VIEW OFFER',
     maxLength: 24,
-    context: 'Home page, the button on an offer card that opens the reservation form for its restaurant. Capitals; an arrow follows it.',
+    context: 'Home page, the button on an offer card that opens the reservation form for its restaurant. Capitals.',
     screen: 'offers',
     label: 'Nút “View offer” trên thẻ',
   },
@@ -741,14 +741,6 @@ export const REGISTRY = {
   },
   // ── Hero (spec §7.2 content/hero): the home page reads them on the server and hands them to the hero (page props);
   // the same three title lines name the page from a hidden <h1> when the hero is left out (phase-6 F-A, L7-16) ──
-  'hero.kicker': {
-    // The brand name (renamed from "Furama Culinary World" / "Furama Cuisine", 2026-10-15).
-    en: 'Furama Dining World',
-    maxLength: 48,
-    context: 'Home page, small line above the hero title, over the photo. One line on a phone.',
-    screen: 'hero',
-    label: 'Dòng nhỏ phía trên tiêu đề',
-  },
   'hero.title_1': {
     en: 'Many Flavours.',
     maxLength: 28,
@@ -855,7 +847,7 @@ export const REGISTRY = {
   'restaurants.view_all': {
     en: 'VIEW ALL RESTAURANTS',
     maxLength: 32,
-    context: 'Home page, the link beside the restaurants title; clears the filters and shows every restaurant. Capitals; an arrow follows it.',
+    context: 'Home page, the link beside the restaurants title; clears the filters and shows every restaurant. Capitals.',
     screen: 'restaurants',
     label: 'Link xem mọi nhà hàng',
   },
@@ -995,7 +987,7 @@ export const REGISTRY = {
   'detail.more_all': {
     en: 'ALL RESTAURANTS',
     maxLength: 32,
-    context: 'Restaurant page, the link beside “More at …” to every restaurant on the home page. Capitals; an arrow follows it.',
+    context: 'Restaurant page, the link beside “More at …” to every restaurant on the home page. Capitals.',
     screen: 'restaurants',
     label: 'Link xem mọi nhà hàng (cuối trang nhà hàng)',
   },
@@ -1034,7 +1026,7 @@ export const REGISTRY = {
   'cuisines.all': {
     en: 'ALL CUISINES',
     maxLength: 32,
-    context: 'Home page, the link beside the cuisine title; clears the cuisine filter and scrolls to the restaurants. Capitals; an arrow follows it.',
+    context: 'Home page, the link beside the cuisine title; clears the cuisine filter and scrolls to the restaurants. Capitals.',
     screen: 'cuisines',
     label: 'Link “mọi ẩm thực”',
   },
@@ -1059,7 +1051,7 @@ export const REGISTRY = {
     maxLength: 80,
     vars: ['count'],
     context:
-      'A destination card, how many venues (restaurants, cafés, bars) guests can see there; the card filters the restaurants by that place. ICU plural: keep {count, plural, …} and # (the number). An arrow follows it.',
+      'A destination card, how many venues (restaurants, cafés, bars) guests can see there; the card filters the restaurants by that place. ICU plural: keep {count, plural, …} and # (the number).',
     screen: 'destinations',
     label: 'Số địa điểm trên thẻ (số ít / số nhiều)',
   },

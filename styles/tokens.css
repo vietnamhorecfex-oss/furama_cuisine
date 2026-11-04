@@ -16,6 +16,11 @@
   --green-muted: #adb4aa;
   --footer-rule: #2c3b35;
 
+  /* Jade: the logo's own colours (public/brand/furama-dining-world-mark.png), its frame and its flower.
+     A small accent beside the gold: the rule in the header's lockup, ties the mark to the wordmark. */
+  --jade: #a9d8c7;
+  --jade-deep: #06604f;
+
   /* Gold / brass */
   --gold: #c6a664;
   --gold-hover: #d3b574;

@@ -1,7 +1,7 @@
 /*
- * The guest site's livelier layer: the scroll's progress, the marquee, what
- * reacts to the pointer, the destination cards that open on hover, the
- * heritage year and the footer's great wordmark. Every moving part
+ * The guest site's livelier layer: the scroll's progress, what reacts to the
+ * pointer, the destination cards that open on hover, the heritage year and the
+ * footer's great wordmark. Every moving part
  * stops under prefers-reduced-motion; the pointer effects need a fine pointer
  * that can hover (components/site/PointerFx.tsx).
  */
@@ -37,72 +37,6 @@
   }
   to {
     transform: scaleX(1);
-  }
-}
-
-/* ── The marquee (components/home/Marquee.tsx) ───────────────────────────── */
-
-.marquee {
-  position: relative;
-  overflow: hidden;
-  padding: clamp(28px, 4vw, 56px) 0;
-  background: var(--cream);
-  border-block: 1px solid var(--line);
-  --velocity: 0;
-}
-
-.marquee-track {
-  display: flex;
-  width: max-content;
-  /* Leans with the scroll's speed, as if the words had weight. */
-  transform: skewX(calc(var(--velocity) * -0.35deg));
-  transition: transform 0.4s var(--ease-out);
-}
-
-.marquee-run {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-  animation: fx-marquee 46s linear infinite;
-}
-
-.marquee-word {
-  padding-inline: clamp(18px, 2.4vw, 36px);
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 300;
-  font-size: clamp(44px, 7.2vw, 112px);
-  line-height: 1.1;
-  white-space: nowrap;
-  color: var(--green);
-}
-
-/* Every other name is drawn in outline. */
-.marquee-word:nth-of-type(even) {
-  color: transparent;
-  -webkit-text-stroke: 1px var(--gold-deep);
-}
-
-.marquee-mark {
-  flex: 0 0 auto;
-  width: clamp(18px, 2vw, 28px);
-  height: auto;
-  color: var(--gold);
-}
-
-@keyframes fx-marquee {
-  to {
-    transform: translateX(-100%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marquee-run {
-    animation: none;
-  }
-
-  .marquee-track {
-    transform: none;
   }
 }
 
@@ -167,56 +101,7 @@
   user-select: none;
 }
 
-/* ── The classic half: numbered chapters, framed pictures, a drop cap ────── */
-
-/*
- * The home page reads like a book: each section's title carries its chapter
- * in Roman numerals above it, between gold hairlines. A CSS counter, so the
- * numbers follow whichever sections staff show, and `/ ""` keeps them out of
- * the heading's accessible name.
- */
-main[data-view='home'] {
-  counter-reset: fc-chapter;
-}
-
-main[data-view='home'] .section-title,
-main[data-view='home'] .experiences .eyebrow {
-  counter-increment: fc-chapter;
-}
-
-main[data-view='home'] .section-title::before,
-main[data-view='home'] .experiences .eyebrow::before {
-  content: counter(fc-chapter, upper-roman);
-  content: counter(fc-chapter, upper-roman) / '';
-  display: block;
-  width: fit-content;
-  margin-bottom: clamp(12px, 1.2vw, 18px);
-  padding-right: 54px;
-  font-family: var(--serif);
-  font-size: 17px;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  text-transform: none;
-  color: var(--gold-deep);
-  background: linear-gradient(var(--gold), var(--gold)) right center / 40px 1px no-repeat;
-}
-
-/* A centred title's chapter sits centred, a hairline either side. */
-main[data-view='home'] :is(.destinations-head, .stories-head, .offers-head) .section-title::before {
-  margin-inline: auto;
-  padding-inline: 54px;
-  background:
-    linear-gradient(var(--gold), var(--gold)) left center / 40px 1px no-repeat,
-    linear-gradient(var(--gold), var(--gold)) right center / 40px 1px no-repeat;
-}
-
-/* Experiences counts too: its chapter goes before its eyebrow, in the gold of the dark section. */
-main[data-view='home'] .experiences .eyebrow::before {
-  letter-spacing: 0.12em;
-  color: var(--gold);
-}
+/* ── The classic half: framed pictures, a drop cap ───────────────────────── */
 
 /* The restaurant page's story opens on a drop cap. */
 .taya-story::first-letter,
@@ -551,14 +436,14 @@ main[data-view='home'] .experiences .eyebrow::before {
 }
 
 /* Arrows step forward. */
-:is(.btn-slab, .btn-green, .text-link, .offer-cta) :is(.arrow, .hero-arrow, span:last-child),
+:is(.btn-slab, .btn-green) :is(.arrow, .hero-arrow, span:last-child),
 .experience-arrow {
   display: inline-block;
   transition: transform 0.45s var(--ease-out);
 }
 
 @media (hover: hover) {
-  :is(.btn-slab, .btn-green, .offer-cta):hover :is(.arrow, .hero-arrow, span:last-child),
+  :is(.btn-slab, .btn-green):hover :is(.arrow, .hero-arrow, span:last-child),
   .experience-row:hover .experience-arrow {
     transform: translateX(6px);
   }

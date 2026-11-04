@@ -7,7 +7,6 @@ import type { Copy } from '@/lib/i18n/registry';
 import { journeyStops } from '@/lib/journey';
 import { CmsImage } from '@/components/ui/CmsImage';
 import { SplitWords } from '@/components/ui/SplitWords';
-import { FriezeDivider } from '@/components/ui/Ornament';
 import { useSite } from '@/components/site/SiteProvider';
 import { useReveal } from '@/lib/motion';
 import { playDestinations } from '@/components/home/DestinationsMotion';
@@ -19,7 +18,6 @@ export function Destinations({ copy }: { copy: Copy<'destinations'> }) {
   // otherwise a venue's card picks its restaurants and the teaser is not a link.
   const cards = site.destinations;
   const title = useReveal<HTMLHeadingElement>('title');
-  const ornament = useReveal<HTMLSpanElement>('fade');
   const lede = useReveal<HTMLParagraphElement>('up');
   // The route and the cards come in as one journey (components/home/DestinationsMotion.ts).
   const stage = useReveal<HTMLDivElement>('stage', playDestinations);
@@ -34,7 +32,6 @@ export function Destinations({ copy }: { copy: Copy<'destinations'> }) {
           <h2 ref={title} data-reveal="title" className="section-title">
             <SplitWords text={copy['destinations.title']} />
           </h2>
-          <FriezeDivider ref={ornament} reveal="fade" className="section-orn" />
           <p ref={lede} data-reveal="up" className="section-lede">
             {copy['destinations.lede']}
           </p>
@@ -117,10 +114,7 @@ function DestCard({
           <br />
           {card.cardBlurb[1]}
         </span>
-        <span className="dest-count">
-          {count}
-          {card.kind !== 'teaser' && <> <span aria-hidden="true">→</span></>}
-        </span>
+        <span className="dest-count">{count}</span>
       </span>
     </>
   );

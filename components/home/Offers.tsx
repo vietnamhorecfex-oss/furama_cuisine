@@ -3,7 +3,7 @@
 import type { Offer } from '@/lib/content/types';
 import type { Copy } from '@/lib/i18n/registry';
 import { useSite } from '@/components/site/SiteProvider';
-import { FriezeDivider, RosetteMark } from '@/components/ui/Ornament';
+import { RosetteMark } from '@/components/ui/Ornament';
 import { SplitWords } from '@/components/ui/SplitWords';
 import { useReveal } from '@/lib/motion';
 
@@ -13,7 +13,6 @@ import { useReveal } from '@/lib/motion';
  */
 export function Offers({ items, copy }: { items: Offer[]; copy: Copy<'offers'> }) {
   const title = useReveal<HTMLHeadingElement>('title');
-  const ornament = useReveal<HTMLSpanElement>('fade');
   const lede = useReveal<HTMLParagraphElement>('up');
 
   return (
@@ -23,7 +22,6 @@ export function Offers({ items, copy }: { items: Offer[]; copy: Copy<'offers'> }
           <h2 ref={title} data-reveal="title" className="section-title">
             <SplitWords text={copy['offers.title']} />
           </h2>
-          <FriezeDivider ref={ornament} reveal="fade" className="section-orn" />
           <p ref={lede} data-reveal="up" className="section-lede">
             {copy['offers.lede']}
           </p>
@@ -58,7 +56,6 @@ function OfferCard({ offer, cta }: { offer: Offer; cta: string }) {
           onClick={() => openReserve({ restaurant: offer.restaurantId }, { id: offer.id, title: offer.title })}
         >
           {cta}
-          <span aria-hidden="true">→</span>
         </button>
       )}
     </div>

@@ -30,7 +30,7 @@ export function Cuisines({ copy }: { copy: Copy<'cuisines'> }) {
               scrollToId('restaurants');
             }}
           >
-            {copy['cuisines.all']} <span aria-hidden="true">→</span>
+            {copy['cuisines.all']}
           </button>
         </div>
 

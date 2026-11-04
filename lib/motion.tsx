@@ -230,16 +230,14 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(kind: RevealKi
 
 /**
  * One rAF loop for everything scroll-driven: header auto-hide, parallax, hero
- * fade, a picture settling from a zoom as it scrolls in ([data-scale-in]) and
- * the lean of whatever follows the scroll's speed ([data-velocity], the
- * marquee). Everything but the header only touches `page` (the visible page's
+ * fade and a picture settling from a zoom as it scrolls in ([data-scale-in]).
+ * Everything but the header only touches `page` (the visible page's
  * <main>): a page hidden by <Activity>, or one still hydrating, is left alone.
  */
 export function useScrollMotion(overlayOpen: boolean, page: HTMLElement | null) {
   const motion = useMotion();
   const hidden = useRef(false);
   const lastY = useRef<number | null>(null);
-  const velocity = useRef(0);
 
   useEffect(() => {
     if (!motion || !page) return;
@@ -275,13 +273,6 @@ export function useScrollMotion(overlayOpen: boolean, page: HTMLElement | null) 
         let off = (r.top + r.height / 2 - vh / 2) * -factor;
         if (max) off = Math.max(-r.height * max, Math.min(r.height * max, off));
         el.style.translate = `0 ${off.toFixed(1)}px`;
-      });
-
-      // The scroll's speed, smoothed, in px per frame (clamped): what the marquee leans by.
-      velocity.current = velocity.current * 0.86 + Math.max(-60, Math.min(60, delta)) * 0.14;
-      const lean = Math.abs(velocity.current) < 0.05 ? 0 : velocity.current;
-      page.querySelectorAll<HTMLElement>('[data-velocity]').forEach((el) => {
-        el.style.setProperty('--velocity', lean.toFixed(2));
       });
 
       page.querySelectorAll<HTMLElement>('[data-scale-in]').forEach((el) => {

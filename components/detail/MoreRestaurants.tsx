@@ -37,7 +37,7 @@ export function MoreRestaurants({ slug, destinationName }: { slug: string; desti
               scrollToId('restaurants');
             }}
           >
-            {strings['detail.more_all']} <span aria-hidden="true">→</span>
+            {strings['detail.more_all']}
           </button>
         </div>
 

@@ -260,7 +260,7 @@ test('2.5 hero and film', async () => {
         await reachesGuest(api, HOME_PATH, { absent: `alt="${mark(16)}"` });
       },
     },
-    { row: 17, item: 'kicker, title 1/2/3, lede', key: 'hero.kicker' },
+    { row: 17, item: 'title 1/2/3, lede', key: 'hero.title_1' },
     { row: 18, item: '3 CTAs, "Slide {n}"', key: 'hero.cta_explore' },
     {
       row: 19,

@@ -120,7 +120,7 @@
   z-index: 3;
   pointer-events: none;
   /* The copy sits on the bottom 60px plus about 300px of the hero, whatever its height: the dark ramp is
-     measured from the bottom, so the gold kicker on a bright sky still reads (4.5:1 needs about 0.7 here). */
+     measured from the bottom, so the copy on a bright sky still reads (4.5:1 needs about 0.7 here). */
   background: linear-gradient(
     180deg,
     rgba(12, 18, 15, 0.55) 0%,
@@ -180,27 +180,14 @@
   }
 }
 
+/* Wide enough for each title line to stay on one line (about 10 em for "One Furama Dining World."); the lede
+   keeps its own measure. */
 .hero-copy {
-  max-width: 760px;
-}
-
-.hero-kicker {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-@media (min-width: 760px) {
-  .hero-kicker {
-    font-size: 12px;
-    letter-spacing: 0.24em;
-  }
+  max-width: 980px;
 }
 
 .hero-title {
-  margin: 12px 0 0;
+  margin: 0;
   font-family: var(--serif);
   font-weight: 300;
   /* 40px on a phone; a small tablet in the phone layout grows it towards the 52px it gets from 760px. */
@@ -211,11 +198,10 @@
 }
 
 /* From 760px the headline and the gaps around it follow the window's height as well as its width, so a wide
-   but short window (a laptop's) still shows the copy and the finder's top in one screen. */
+   but short window (a laptop's) still shows the copy and the whole finder in one screen. */
 @media (min-width: 760px) {
   .hero-title {
-    margin-top: clamp(14px, 2.6vh, 22px);
-    font-size: clamp(52px, min(6.2vw, 10vh), 100px);
+    font-size: clamp(52px, min(5.6vw, 9vh), 92px);
     line-height: 0.98;
     letter-spacing: -0.022em;
   }
@@ -223,12 +209,6 @@
 
 .hero-line {
   display: block;
-}
-
-/* The last line, the brand's own name, in italic and a warmer cream. */
-.hero-line-accent {
-  font-style: italic;
-  color: #f2e2bf;
 }
 
 /* The middle line only appears where there is room for three. */
@@ -534,7 +514,6 @@
   }
 
   .hero-title {
-    margin-top: 8px;
     font-size: clamp(30px, 11vh, 40px);
   }
 
@@ -909,11 +888,9 @@ a.rcard:hover {
 }
 
 .rcard-type {
-  margin-top: 8px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--brown);
 }
 
@@ -953,12 +930,6 @@ a.rcard:hover {
 .destinations {
   background: var(--white);
   padding: clamp(64px, 7.6vw, 110px) 0 clamp(64px, 6.6vw, 96px);
-}
-
-.destinations-head,
-.stories-head,
-.offers-head {
-  text-align: center;
 }
 
 .journey {
@@ -1471,10 +1442,7 @@ a.dest-hit:hover {
 
 .story-kicker {
   margin-top: 18px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: 13px;
   color: var(--brown);
 }
 

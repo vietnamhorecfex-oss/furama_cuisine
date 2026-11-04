@@ -108,21 +108,22 @@ img {
   margin: 0;
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(28px, 2.9vw, 42px);
-  line-height: 1.1;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: clamp(32px, 3.4vw, 50px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 
 .section-lede {
+  max-width: 68ch;
   margin: 16px 0 0;
+  text-wrap: pretty;
   font-size: 14px;
   line-height: 1.6;
   color: var(--ink-softer);
 }
 
-/* Small caps link, e.g. "ALL CUISINES →" */
+/* Small caps link, e.g. "ALL CUISINES"; a gold line draws under it on hover (styles/fx.css). */
 .text-link {
   /* A 44px touch area; the negative margin keeps the layout of the old 6px padding. */
   padding: 16px 0;

@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 
 test('page entrances play again after client-side navigation', async ({ page }) => {
   await page.goto(HOME_PATH);
-  await expect(page.locator('.hero-kicker')).toHaveCSS('opacity', '1');
+  await expect(page.locator('#top .hero-actions')).toHaveCSS('opacity', '1');
 
   await page.locator('.rcard', { hasText: 'Tàya House' }).first().click();
   await page.waitForURL((url) => url.pathname === DETAIL_PATH);
@@ -15,5 +15,5 @@ test('page entrances play again after client-side navigation', async ({ page }) 
 
   await page.locator('.taya-back').click();
   await page.waitForURL((url) => url.pathname === HOME_PATH);
-  await expect(page.locator('.hero-kicker')).toHaveCSS('opacity', '1');
+  await expect(page.locator('#top .hero-actions')).toHaveCSS('opacity', '1');
 });

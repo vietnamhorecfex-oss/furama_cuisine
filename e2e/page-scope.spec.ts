@@ -98,7 +98,7 @@ test('back from a restaurant page lands on the restaurant list', async ({ page }
   await page.locator('.taya-back:visible').click();
   await page.waitForURL((u) => u.pathname === HOME_PATH);
   await expect.poll(() => offsetFromHeader(page, 'restaurants'), { timeout: 5000 }).toBeLessThan(40);
-  await expect(page.locator('.hero-kicker')).toHaveCSS('opacity', '1');
+  await expect(page.locator('#top .hero-actions')).toHaveCSS('opacity', '1');
 });
 
 test('the logo on a restaurant page opened directly goes to the top of home', async ({ page }) => {
@@ -106,7 +106,7 @@ test('the logo on a restaurant page opened directly goes to the top of home', as
   await expect(page.locator('.taya-kicker')).toHaveCSS('opacity', '1');
   await page.locator('.hdr-full .hdr-logo').click();
   await page.waitForURL((u) => u.pathname === HOME_PATH);
-  await expect(page.locator('.hero-kicker')).toBeVisible();
+  await expect(page.locator('#top .hero-actions')).toBeVisible();
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 

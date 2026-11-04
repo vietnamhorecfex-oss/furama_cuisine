@@ -234,32 +234,32 @@ test('the film: a link that names no video is refused; a YouTube link plays in t
   expect(outside).toEqual([]);
 });
 
-test('the hero’s words are the hero screen’s: an edited kicker reaches the guest within seconds, and the default comes back', async ({ page, browser }) => {
+test('the hero’s words are the hero screen’s: an edited lede reaches the guest within seconds, and the default comes back', async ({ page, browser }) => {
   const guest = await visitor(browser);
-  const kicker = guest.locator('.hero-kicker');
+  const lede = guest.locator('#top .hero-lede');
   const form = page.getByRole('form', { name: 'Chữ hero và phim' });
   const save = async (value: string) => {
     await page.goto('/admin/content/hero');
-    await form.getByLabel('Dòng nhỏ phía trên tiêu đề', { exact: true }).fill(value);
+    await form.getByLabel('Câu dẫn', { exact: true }).fill(value);
     await form.getByRole('button', { name: 'Lưu chữ hero và phim' }).click();
     await expect(form.getByRole('status')).toContainText('Đã lưu 1 mục');
   };
   try {
     await guest.goto(HOME_PATH);
-    await expect(kicker).toHaveText(REGISTRY['hero.kicker'].en);
+    await expect(lede).toHaveText(REGISTRY['hero.lede'].en);
     await signInAs(page, STAFF.editor);
     try {
-      await save('Since 1997 · Da Nang');
+      await save('Beachfront tables since 1997, city kitchens since 2026.');
       const started = Date.now();
       await guest.reload();
-      await expect(kicker).toHaveText('Since 1997 · Da Nang');
+      await expect(lede).toHaveText('Beachfront tables since 1997, city kitchens since 2026.');
       expect(Date.now() - started).toBeLessThan(5_000);
     } finally {
-      await save(REGISTRY['hero.kicker'].en);
+      await save(REGISTRY['hero.lede'].en);
     }
     await guest.reload();
-    await expect(kicker).toHaveText(REGISTRY['hero.kicker'].en);
-    expect(await one(`SELECT 1 FROM content_strings WHERE key = 'hero.kicker'`)).toBeUndefined();
+    await expect(lede).toHaveText(REGISTRY['hero.lede'].en);
+    expect(await one(`SELECT 1 FROM content_strings WHERE key = 'hero.lede'`)).toBeUndefined();
   } finally {
     await guest.context().close();
   }

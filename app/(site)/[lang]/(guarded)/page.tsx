@@ -3,7 +3,6 @@ import { Hero, HeroHeading } from '@/components/home/Hero';
 import { Finder } from '@/components/home/Finder';
 import { Cuisines } from '@/components/home/Cuisines';
 import { Restaurants } from '@/components/home/Restaurants';
-import { Marquee } from '@/components/home/Marquee';
 import { Destinations } from '@/components/home/Destinations';
 import { Experiences } from '@/components/home/Experiences';
 import { Heritage } from '@/components/home/Heritage';
@@ -52,7 +51,6 @@ export default async function HomePage() {
       {shown.has('cuisines') && <Cuisines copy={copyOf(strings, 'cuisines')} />}
       {shown.has('restaurants') && <Restaurants />}
       {/* The cuisines' names running sideways between the restaurants and the destinations: decoration only. */}
-      {shown.has('cuisines') && <Marquee />}
       {shown.has('destinations') && <Destinations copy={copyOf(strings, 'destinations')} />}
       {shown.has('experiences') && <Experiences items={experiences} copy={copyOf(strings, 'experiences')} />}
       {shown.has('heritage') && <Heritage copy={copyOf(strings, 'heritage')} />}
