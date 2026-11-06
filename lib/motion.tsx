@@ -9,6 +9,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type RefObject,
 } from 'react';
 
@@ -69,6 +70,23 @@ function prefersReducedMotion() {
 
 export function readMotionLevel(): MotionLevel {
   return prefersReducedMotion() ? 0 : 2;
+}
+
+const REDUCE_QUERY = '(prefers-reduced-motion: reduce)';
+
+function subscribeReducedMotion(change: () => void) {
+  if (typeof matchMedia === 'undefined') return () => {};
+  const list = matchMedia(REDUCE_QUERY);
+  list.addEventListener('change', change);
+  return () => list.removeEventListener('change', change);
+}
+
+/**
+ * Whether the guest lets things move on their own: false on the server and
+ * under prefers-reduced-motion, and it follows a change of that setting.
+ */
+export function useMotionAllowed(): boolean {
+  return useSyncExternalStore(subscribeReducedMotion, () => !prefersReducedMotion(), () => false);
 }
 
 type Registry = {

@@ -799,6 +799,20 @@ export const REGISTRY = {
     screen: 'hero',
     label: 'Tên nút chọn slide (trình đọc màn hình)',
   },
+  'hero.pause_aria': {
+    en: 'Pause the slideshow',
+    maxLength: 40,
+    context: 'Screen-reader name of the button after the hero’s dots that stops the slides changing on their own.',
+    screen: 'hero',
+    label: 'Tên nút dừng slide (trình đọc màn hình)',
+  },
+  'hero.play_aria': {
+    en: 'Play the slideshow',
+    maxLength: 40,
+    context: 'Screen-reader name of the same button once the slides are paused: it starts them again.',
+    screen: 'hero',
+    label: 'Tên nút chạy lại slide (trình đọc màn hình)',
+  },
   // ── The film dialog (spec §5.2 sections[film]): a client component of the chrome (CLIENT_KEYS) ──
   'film.aria': {
     en: 'Furama Dining World film',

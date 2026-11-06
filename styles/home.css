@@ -397,6 +397,41 @@
   }
 }
 
+/* Stops and restarts the slideshow (WCAG 2.2.2): two bars while it runs, a play triangle once paused.
+   44px to touch, like the dots. */
+.hero-pause {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -11px 0 -11px 6px;
+  color: var(--on-dark);
+}
+
+.hero-pause span {
+  display: block;
+  width: 10px;
+  height: 12px;
+  border-inline: 3px solid currentColor;
+}
+
+.hero-pause span[data-paused='true'] {
+  width: 0;
+  height: 0;
+  border-inline: 0;
+  border-block: 6px solid transparent;
+  border-inline-start: 10px solid currentColor;
+}
+
+.hero-pause:hover {
+  color: var(--gold);
+}
+
+.hero-pause:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -6px;
+}
+
 /* "01 / 03" before the dots. */
 .hero-count {
   display: flex;

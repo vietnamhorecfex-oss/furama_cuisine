@@ -8,12 +8,15 @@ import { MobileBar } from '@/components/site/MobileBar';
 import { ViewMarker } from '@/components/site/ViewMarker';
 import { languageAlternates, notFoundMetadata, restaurantMetadata } from '@/lib/content/seo';
 import { isRestaurantSlug } from '@/lib/content/slug';
+import { jsonLd, restaurantSchema } from '@/lib/content/structured-data';
 import { formatMessage } from '@/lib/i18n/format';
 import { DEFAULT_LOCALE } from '@/lib/i18n/locales';
 import { getEnabledLocales, isLocalePreview, requireEnabledLocale } from '@/lib/server/content/locales';
-import { getDetailSlugs, getRestaurantDetail } from '@/lib/server/content/restaurants';
+import { getDetailSlugs, getRestaurantDetail, getRestaurants } from '@/lib/server/content/restaurants';
+import { getCuisines, getDestinations } from '@/lib/server/content/site';
 import { getShareImage, SEO_KEYS } from '@/lib/server/content/seo';
 import { getStrings } from '@/lib/server/content/strings';
+import { siteOrigin } from '@/lib/site-origin';
 
 type Props = { params: Promise<{ lang: string; slug: string }> };
 
@@ -78,11 +81,34 @@ export default async function RestaurantPage({ params }: Props) {
   // A segment no restaurant can have is a 404 without a query: a NUL byte made Postgres throw on every
   // hit, so the error page was never cached, and any other junk slug cost a read (R13).
   if (!isRestaurantSlug(slug)) notFound();
-  const [detail, strings] = await Promise.all([getRestaurantDetail(slug, lang), getStrings(lang, ['detail.highlights_title'])]);
+  const [detail, strings, restaurants, destinations, cuisines] = await Promise.all([
+    getRestaurantDetail(slug, lang),
+    getStrings(lang, ['detail.highlights_title']),
+    // The chrome's own cached lists: the restaurant's destination (its address) and cuisines, for the JSON-LD.
+    getRestaurants(lang),
+    getDestinations(lang),
+    getCuisines(lang),
+  ]);
   if (!detail) notFound();
+  const card = restaurants.find((r) => r.slug === slug);
+  const origin = siteOrigin();
+  const schema = restaurantSchema({
+    name: detail.name,
+    url: new URL(`/${lang}/restaurants/${slug}`, origin).href,
+    origin,
+    lang,
+    image: detail.seo.image ?? detail.portrait,
+    phone: detail.phone,
+    map: detail.map,
+    address: destinations.find((d) => d.id === card?.dest)?.address ?? null,
+    cuisines: (card?.cuisines ?? []).flatMap((id) => cuisines.find((c) => c.id === id)?.label ?? []),
+    bookingEnabled: detail.bookingEnabled,
+  });
 
   return (
     <ViewMarker view="detail" restaurant={slug}>
+      {/* schema.org data for search engines and AI answers: a data block, never run, so the CSP's nonce is not needed. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(schema) }} />
       <IntroTrigger />
       <RestaurantHero detail={detail} />
       {detail.highlights.length > 0 && (

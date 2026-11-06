@@ -8,7 +8,7 @@ import type { Copy } from '@/lib/i18n/registry';
 import { useSite } from '@/components/site/SiteProvider';
 import { CmsImage, cmsPictureProps } from '@/components/ui/CmsImage';
 import { SplitWords } from '@/components/ui/SplitWords';
-import { readMotionLevel } from '@/lib/motion';
+import { useMotionAllowed } from '@/lib/motion';
 
 /** The hero's headline, a line each (registry hero.title_*, spec §7.2 content/hero). */
 const titleOf = (copy: Copy<'hero'>) => [copy['hero.title_1'], copy['hero.title_2'], copy['hero.title_3']] as const;
@@ -49,19 +49,23 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
     setSlide(to);
   }, []);
   const count = slides.length;
+  // WCAG 2.2.2: a slideshow that moves on its own for more than five seconds needs a way to stop it.
+  // `motion` is whether it may run at all (not when motion is reduced); `paused` is the guest's choice.
+  const motion = useMotionAllowed() && slides.length > 1;
+  const [paused, setPaused] = useState(false);
   const autoplayMs = site.settings.heroAutoplayMs;
   const shown = homeSections(site.sections);
 
   /* Slideshow: desktop only, paused behind an overlay or a hidden tab. It lives
      in the hero, so it stops whenever the home page is not on screen. */
   useEffect(() => {
-    if (overlay || count < 2 || !readMotionLevel()) return;
+    if (overlay || paused || !motion) return;
     const timer = window.setInterval(() => {
       if (document.hidden || window.innerWidth < 760) return;
       go((s) => (s + 1) % count);
     }, autoplayMs);
     return () => window.clearInterval(timer);
-  }, [autoplayMs, count, go, overlay]);
+  }, [autoplayMs, count, go, motion, overlay, paused]);
 
   const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -151,9 +155,20 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
                   className="hero-dot"
                 >
                   {/* The live dot fills over the slide's time (--hero-ms), like a progress bar. */}
-                  <span data-active={i === slide} data-run={i === slide && !overlay ? true : undefined} />
+                  <span data-active={i === slide} data-run={i === slide && !overlay && !paused && motion ? true : undefined} />
                 </button>
               ))}
+              {motion && (
+                <button
+                  type="button"
+                  className="hero-pause"
+                  aria-label={paused ? copy['hero.play_aria'] : copy['hero.pause_aria']}
+                  aria-pressed={paused}
+                  onClick={() => setPaused((p) => !p)}
+                >
+                  <span aria-hidden="true" data-paused={paused} />
+                </button>
+              )}
             </div>
           )}
         </div>

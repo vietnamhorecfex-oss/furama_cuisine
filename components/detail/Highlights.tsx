@@ -19,7 +19,9 @@ export function Highlights({ title, items }: { title: string; items: Highlight[]
           {title}
         </h2>
 
-        <div className="dishes-rail">
+        {/* A phone scrolls the rail sideways; a keyboard reaches it too (WCAG 2.1.1), named by the section's title. */}
+        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrolling region must take focus to scroll by keyboard (axe scrollable-region-focusable) */}
+        <div className="dishes-rail" role="region" aria-label={title} tabIndex={0}>
           {items.map((h) => (
             <DishCard key={h.id} highlight={h} />
           ))}

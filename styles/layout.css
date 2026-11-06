@@ -525,6 +525,12 @@ html {
   padding: 15px 0;
   margin: -15px 0;
   color: var(--on-dark);
+  /* WCAG 1.4.1: the phones sit inside a line of dimmer text, and colour alone (2:1 against it) does not
+     mark them as links. A quiet underline does. */
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
 }
 
 .footer-strong:hover {
