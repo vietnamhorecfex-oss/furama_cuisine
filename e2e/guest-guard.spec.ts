@@ -222,7 +222,7 @@ function contrastInHeader(el: Element): number {
   return (Math.max(text, back) + 0.05) / (Math.min(text, back) + 0.05);
 }
 
-const LOGO = /^FURAMA\s*CUISINE$/;
+const LOGO = /^FURAMA\s*DINING\s*WORLD$/;
 const CLEAR = 'rgba(20, 32, 28, 0)';
 
 /*
