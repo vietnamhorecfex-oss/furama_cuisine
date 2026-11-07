@@ -121,6 +121,12 @@ main[data-view='home'][data-hero='none'] {
     padding-inline: clamp(24px, 3vw - 8px, 30px);
   }
 
+  /* At 1080 the row filled its width to within 2 px, so a font that set the capitals a little wider (CI's
+     Chromium on Linux: 18 px) pushed RESERVE into the gutter. Tighter tracking frees about 26 px. */
+  .hdr-full .hdr-nav .hdr-link {
+    letter-spacing: 0.1em;
+  }
+
   /* The rule before DINING WORLD does not fit here. */
   .hdr-logo-sub::before {
     display: none;
