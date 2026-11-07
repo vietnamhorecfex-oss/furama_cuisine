@@ -511,12 +511,40 @@ html {
 .footer-bottom {
   padding-top: 24px;
   border-top: 1px solid var(--footer-rule);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 48px;
+  display: grid;
+  gap: 24px;
   font-size: 13px;
   line-height: 1.7;
   color: var(--footer-dim);
+}
+
+/* The destinations as equal columns: three across on a desktop, fewer as the width runs out, one on a phone. */
+.footer-venues {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 20px 48px;
+}
+
+.footer-venue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-venue-name {
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-dark);
+}
+
+/* The shared inbox and the policy link, under the destinations. */
+.footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 48px;
 }
 
 .footer-strong {

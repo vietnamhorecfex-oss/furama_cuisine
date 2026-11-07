@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { privacyHref } from '@/lib/legal';
 import { useSite } from '@/components/site/SiteProvider';
-import { footerVenueText, socialKey } from '@/lib/content/footer';
+import { socialKey } from '@/lib/content/footer';
 import { homeHref } from '@/lib/i18n/href';
 import { useReveal } from '@/lib/motion';
 
@@ -45,23 +45,30 @@ export function Footer() {
 
       <div className="shell footer-bottom-wrap">
         <div className="footer-bottom">
-          {venues.map((d) => (
-            <span key={d.id}>
-              {footerVenueText(d)}
-              {d.phone && (
-                <a href={`tel:${d.phone.tel}`} className="footer-strong">
-                  {d.phone.display}
-                </a>
-              )}
-            </span>
-          ))}
-          <a href={`mailto:${email}`} className="footer-strong">
-            {email}
-          </a>
-          {/* e2e/visual-added.css hides this link, so the pre-phase-5 baselines still compare pixel for pixel. */}
-          <Link href={privacyHref(locale)} className="footer-strong footer-legal">
-            {strings['legal.link']}
-          </Link>
+          {/* Every destination staff mark for the footer, side by side as equals: its name, its address, its phone,
+              each on its own line, a blank part left out (L7-7). The admin's contact screen previews them as one line each. */}
+          <div className="footer-venues">
+            {venues.map((d) => (
+              <div key={d.id} className="footer-venue">
+                {d.name?.trim() && <span className="footer-venue-name">{d.name}</span>}
+                {d.address?.trim() && <span>{d.address}</span>}
+                {d.phone && (
+                  <a href={`tel:${d.phone.tel}`} className="footer-strong">
+                    {d.phone.display}
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="footer-meta">
+            <a href={`mailto:${email}`} className="footer-strong">
+              {email}
+            </a>
+            {/* e2e/visual-added.css hides this link, so the pre-phase-5 baselines still compare pixel for pixel. */}
+            <Link href={privacyHref(locale)} className="footer-strong footer-legal">
+              {strings['legal.link']}
+            </Link>
+          </div>
         </div>
       </div>
 

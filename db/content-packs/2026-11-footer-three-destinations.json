@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-footer-three-destinations",
+  "note": "The footer names every destination that is open today (owner, 2026-11-07): Dining Village Mega Market joins Furama Resort Danang and Furama Dining House. Its address is already on the destinations screen; it has no phone of its own yet, so its line is name and address until staff add one there.",
+  "changes": [
+    { "kind": "row", "entity": "destinations", "id": "mm", "column": "show_in_footer", "from": false, "to": true }
+  ]
+}
