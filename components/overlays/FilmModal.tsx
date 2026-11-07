@@ -5,7 +5,7 @@ import { CmsImage } from '@/components/ui/CmsImage';
 import { homeSections } from '@/lib/content/home-sections';
 import { parseFilmUrl } from '@/lib/media/film';
 import { useRef } from 'react';
-import { EASE_OUT, useOverlayPresence } from '@/lib/motion';
+import { DUR_BASE, EASE_OUT, useOverlayPresence } from '@/lib/motion';
 
 export function FilmModal() {
   const { site, overlay, close, strings } = useSite();
@@ -24,7 +24,7 @@ export function FilmModal() {
     {
       el: box.querySelector('.film-frame'),
       away: { opacity: 0, transform: 'scale(.97)' },
-      in: { duration: 600, easing: EASE_OUT },
+      in: { duration: DUR_BASE, easing: EASE_OUT },
       out: { duration: 200, easing: EASE_OUT },
     },
   ]);

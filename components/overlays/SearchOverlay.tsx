@@ -6,7 +6,7 @@ import type { Media } from '@/lib/content/types';
 import { formatMessage } from '@/lib/i18n/format';
 import { useSite } from '@/components/site/SiteProvider';
 import { useRef } from 'react';
-import { EASE_OUT, useOverlayPresence } from '@/lib/motion';
+import { DUR_BASE, EASE_OUT, useOverlayPresence } from '@/lib/motion';
 
 /**
  * A result's thumbnail (an 80×60 CSS background) as next/image's optimiser
@@ -32,8 +32,8 @@ export function SearchOverlay() {
     (box) =>
       box.querySelectorAll('[data-anim="search-item"]').forEach((el) => {
         el.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], {
-          duration: 800,
-          delay: 150,
+          duration: DUR_BASE,
+          delay: 100,
           easing: EASE_OUT,
           fill: 'backwards',
         });

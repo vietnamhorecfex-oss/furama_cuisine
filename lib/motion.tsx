@@ -33,15 +33,20 @@ export const EASE_POP = 'cubic-bezier(.22,1,.36,1)';
 /** A drawer's slide (iOS-like): under way at once, a long soft landing. In and out alike. */
 export const EASE_DRAWER = 'cubic-bezier(.32,.72,0,1)';
 
+/** The motion budget, as in styles/tokens.css (--dur-quick, --dur-base, --dur-reveal). */
+export const DUR_QUICK = 200;
+export const DUR_BASE = 400;
+export const DUR_REVEAL = 500;
+
 type Spec = { frames: Keyframe[]; duration: number; easing: string };
 
 const SPECS: Record<RevealKind, Spec> = {
-  title: { frames: [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], duration: 1000, easing: EASE_OUT },
-  fade: { frames: [{ opacity: 0 }, { opacity: 1 }], duration: 1000, easing: 'ease' },
-  up: { frames: [{ opacity: 0, transform: 'translateY(22px)' }, { opacity: 1, transform: 'none' }], duration: 1000, easing: EASE_OUT },
-  card: { frames: [{ opacity: 0, transform: 'translateY(28px)' }, { opacity: 1, transform: 'none' }], duration: 1100, easing: EASE_OUT },
-  wipe: { frames: [{ clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)' }], duration: 1500, easing: EASE_INOUT },
-  right: { frames: [{ opacity: 0, transform: 'translateX(20px)' }, { opacity: 1, transform: 'none' }], duration: 1000, easing: EASE_OUT },
+  title: { frames: [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], duration: DUR_REVEAL, easing: EASE_OUT },
+  fade: { frames: [{ opacity: 0 }, { opacity: 1 }], duration: DUR_REVEAL, easing: 'ease' },
+  up: { frames: [{ opacity: 0, transform: 'translateY(22px)' }, { opacity: 1, transform: 'none' }], duration: DUR_REVEAL, easing: EASE_OUT },
+  card: { frames: [{ opacity: 0, transform: 'translateY(28px)' }, { opacity: 1, transform: 'none' }], duration: DUR_REVEAL, easing: EASE_OUT },
+  wipe: { frames: [{ clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)' }], duration: DUR_REVEAL, easing: EASE_INOUT },
+  right: { frames: [{ opacity: 0, transform: 'translateX(20px)' }, { opacity: 1, transform: 'none' }], duration: DUR_REVEAL, easing: EASE_OUT },
   // A plate set down with a little bounce: the cuisine chips.
   pop: {
     frames: [
@@ -49,7 +54,7 @@ const SPECS: Record<RevealKind, Spec> = {
       { opacity: 1, transform: 'scale(1.08) rotate(2deg)', offset: 0.62 },
       { opacity: 1, transform: 'none' },
     ],
-    duration: 950,
+    duration: DUR_REVEAL,
     easing: EASE_POP,
   },
   stage: { frames: [{ opacity: 0 }, { opacity: 1 }], duration: 0, easing: 'linear' },
@@ -136,7 +141,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
     // A split heading: each word rises out of its own mask, staggered.
     if (kind === 'title') {
       el.querySelectorAll<HTMLElement>('[data-word]').forEach((w, i) =>
-        anims.push(w.animate(WORD_FRAMES, { duration: 1100, delay: delay + 120 + i * 65, easing: EASE_OUT, fill: 'backwards' })),
+        anims.push(w.animate(WORD_FRAMES, { duration: DUR_REVEAL, delay: delay + 60 + i * 40, easing: EASE_OUT, fill: 'backwards' })),
       );
     }
 
@@ -147,7 +152,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
         anims.push(
           box.animate(
             [{ clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)' }],
-            { duration: 1200, delay, easing: EASE_INOUT, fill: 'backwards' },
+            { duration: DUR_REVEAL, delay, easing: EASE_INOUT, fill: 'backwards' },
           ),
         );
       }
@@ -155,7 +160,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
       if (img) {
         anims.push(
           img.animate([{ transform: 'scale(1.08)' }, { transform: 'scale(1)' }], {
-            duration: 1600,
+            duration: DUR_REVEAL,
             delay,
             easing: EASE_OUT,
             fill: 'backwards',

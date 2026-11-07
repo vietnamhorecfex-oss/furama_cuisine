@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { readMotionLevel } from '@/lib/motion';
+import { DUR_BASE, readMotionLevel } from '@/lib/motion';
 import { useSite } from '@/components/site/SiteProvider';
 
 /*
@@ -23,7 +23,7 @@ export function coverThen(swap: () => void) {
 
   curtain.dataset.active = 'true';
   const inAnim = curtain.animate([{ opacity: 0 }, { opacity: 1 }], {
-    duration: 380,
+    duration: 300,
     easing: 'ease',
     fill: 'forwards',
   });
@@ -48,8 +48,8 @@ function uncover() {
     return;
   }
   const out = curtain.animate([{ opacity: 1 }, { opacity: 0 }], {
-    duration: 520,
-    delay: 140,
+    duration: DUR_BASE,
+    delay: 100,
     easing: 'ease',
     fill: 'forwards',
   });
