@@ -261,9 +261,31 @@ export function useScrollMotion(overlayOpen: boolean, page: HTMLElement | null) 
   const motion = useMotion();
   const hidden = useRef(false);
   const lastY = useRef<number | null>(null);
+  const shownPage = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!motion || !page) return;
+    // A header this loop hid comes back at once whenever the loop is not the one deciding: on a new page (it starts
+    // at its top; a guest who went down to the footer and followed its link) and when motion is reduced, where no
+    // loop runs to show it again. Before, it stayed off screen there (e2e guest-guard).
+    const showHeader = () => {
+      if (!hidden.current) return;
+      hidden.current = false;
+      lastY.current = null;
+      document.querySelectorAll<HTMLElement>('[data-header]').forEach((el) => {
+        el.style.transition = 'none';
+        el.style.translate = '0 0';
+        void el.offsetHeight;
+        el.style.transition = '';
+      });
+    };
+    if (page !== shownPage.current) {
+      shownPage.current = page;
+      showHeader();
+    }
+    if (!motion || !page) {
+      showHeader();
+      return;
+    }
     let raf = 0;
 
     const frame = () => {

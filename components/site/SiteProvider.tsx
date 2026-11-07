@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import {
   createContext,
+  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -32,6 +33,8 @@ import type { ClientKey } from '@/lib/i18n/registry';
 import type { IsoDate } from '@/lib/venue-time';
 import { submitReservation } from '@/app/actions';
 import { coverThen } from '@/components/site/PageCurtain';
+import { expectMorphArrival } from '@/lib/motion-intro';
+import { canMorph } from '@/lib/view-morph';
 import { homeHref, restaurantHref } from '@/lib/i18n/href';
 import type { SwitcherLanguage } from '@/components/site/LanguageSwitcher';
 import { markHero } from '@/lib/content/home-sections';
@@ -464,9 +467,13 @@ export function SiteProvider({
     setFinderState((f) => ({ ...f, ...patch }));
   }, []);
 
+  // A transition (R2, E4): the restaurant grid's cards are <ViewTransition>s (components/home/Restaurants.tsx), so a
+  // filter that hides some slides the rest into their new places instead of jumping.
   const setFilter = useCallback((patch: Partial<Filter>) => {
-    setFilterState((f) => ({ ...f, ...patch }));
-    setFinderState((f) => ({ ...f, ...patch }));
+    startTransition(() => {
+      setFilterState((f) => ({ ...f, ...patch }));
+      setFinderState((f) => ({ ...f, ...patch }));
+    });
   }, []);
 
   const clearFilters = useCallback(() => {
@@ -601,7 +608,11 @@ export function SiteProvider({
       setOverlay(null);
       setOpenDropdown(null);
       if (page?.view === 'detail' && page.restaurant === r.slug) return;
-      coverThen(() => router.push(restaurantHref(locale, r.slug)));
+      // The card's picture grows into the page's portrait where the browser can (lib/view-morph.ts); else the curtain.
+      if (canMorph()) {
+        expectMorphArrival();
+        router.push(restaurantHref(locale, r.slug));
+      } else coverThen(() => router.push(restaurantHref(locale, r.slug)));
     },
     [locale, openReserve, page, router, setBooking],
   );

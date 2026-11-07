@@ -76,11 +76,32 @@ test('each page owns its <main data-view>, and the document says which page is s
   await expect(page.locator('html')).toHaveAttribute('data-view', 'detail');
 });
 
-test('a card opens the restaurant page under the curtain, at the top', async ({ page }) => {
+test('a card opens the restaurant page by growing its picture into the portrait, without the curtain, at the top', async ({ page }) => {
   await page.goto(HOME_PATH);
   await recordCurtain(page);
+  // The page is fetched while the guest points at the card, so it renders in the route change's commit (lib/view-morph.ts).
+  await tayaCard(page).hover();
+  await page.waitForLoadState('networkidle');
+  await page.evaluate(() => {
+    const w = window as Window & { __morph?: string[] };
+    w.__morph = [];
+    const t0 = performance.now();
+    const tick = () => {
+      for (const a of document.getAnimations()) {
+        const pseudo = (a.effect as KeyframeEffect | null)?.pseudoElement;
+        if (pseudo?.startsWith('::view-transition-group(') && !w.__morph!.includes(pseudo)) w.__morph!.push(pseudo);
+      }
+      if (performance.now() - t0 < 3000) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
   await openTaya(page);
-  await expect.poll(() => curtainLog(page)).toEqual(['true', 'false']);
+  const groups = await page.evaluate(() => (window as Window & { __morph?: string[] }).__morph ?? []);
+  expect(groups).toContain('::view-transition-group(restaurant-taya-house)');
+  // Chromium has view transitions: the curtain stays down (a browser without them keeps it, PageCurtain).
+  expect(await curtainLog(page)).toEqual([]);
+  // The portrait is the morph's landing: shown at once, no clip of its own over the moving picture.
+  await expect(page.locator('.taya-portrait')).toHaveAttribute('data-intro-done', '');
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
@@ -129,6 +150,11 @@ test('a second visit to the restaurant page plays its entrance again', async ({ 
 
 test('navigation still works after the error page replaces a page the curtain was covering', async ({ page }) => {
   await page.goto(HOME_PATH);
+  // The card fetches its page once it comes into view (RestaurantCard). A click while that fetch is still on its way
+  // and the page then fails to render leaves the guest on this one, with no error page (Next's router); a guest sees
+  // a card before clicking it, so the fetch has long finished. The test does as a guest does.
+  await tayaCard(page).scrollIntoViewIfNeeded();
+  await page.waitForLoadState('networkidle');
   // Test-only fault: while armed, MoreRestaurants' restaurants.find(r => r.slug === slug) throws,
   // so the restaurant page fails to render under the covering curtain and [lang]/error.tsx
   // takes over (and unmounts the curtain mid-cover). No production code is involved.

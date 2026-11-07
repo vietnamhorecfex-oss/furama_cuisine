@@ -83,24 +83,6 @@
   white-space: nowrap;
 }
 
-/* ── The footer's great wordmark ─────────────────────────────────────────── */
-
-.footer-giant {
-  display: block;
-  overflow: hidden;
-  padding: clamp(8px, 2vw, 24px) var(--gutter) 0;
-  font-family: var(--serif);
-  font-weight: 300;
-  font-size: clamp(64px, 19vw, 300px);
-  line-height: 0.82;
-  letter-spacing: 0.06em;
-  text-align: center;
-  white-space: nowrap;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(198, 166, 100, 0.4);
-  user-select: none;
-}
-
 /* ── The classic half: framed pictures, a drop cap ───────────────────────── */
 
 /* The restaurant page's story opens on a drop cap. */

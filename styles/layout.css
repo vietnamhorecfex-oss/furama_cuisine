@@ -10,7 +10,7 @@
   background: rgba(20, 32, 28, 0);
   box-shadow: 0 1px 0 rgba(247, 242, 232, 0);
   transition: height 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease,
-    translate 0.6s var(--ease-soft);
+    translate var(--dur-base) var(--ease-soft);
 }
 
 .hdr[data-solid='true'] {
@@ -470,7 +470,7 @@ html {
 }
 
 .footer-top {
-  padding-block: clamp(40px, 3.6vw, 52px);
+  padding-block: clamp(28px, 2.6vw, 40px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -533,14 +533,14 @@ html {
 }
 
 .footer-bottom-wrap {
-  padding-bottom: clamp(28px, 2.6vw, 36px);
+  padding-bottom: clamp(20px, 2vw, 28px);
 }
 
 .footer-bottom {
-  padding-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid var(--footer-rule);
   display: grid;
-  gap: 24px;
+  gap: 16px;
   font-size: 13px;
   line-height: 1.7;
   color: var(--footer-dim);
@@ -550,7 +550,7 @@ html {
 .footer-venues {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-  gap: 20px 48px;
+  gap: 16px 48px;
 }
 
 .footer-venue {
@@ -591,6 +591,68 @@ html {
 
 .footer-strong:hover {
   color: var(--gold);
+}
+
+/*
+ * The wordmark running right to left at the footer's foot: outlined in the brand's gold, one line, a gold star
+ * between each. The track holds two identical halves and slides by one half (-50%), so the loop has no seam.
+ * Ambient motion (styles/tokens.css): slow, under the pointer it pauses, with motion reduced it stands still.
+ */
+.footer-band {
+  overflow: hidden;
+  padding-block: clamp(10px, 1.4vw, 18px);
+  border-top: 1px solid var(--footer-rule);
+  user-select: none;
+}
+
+.footer-band-track {
+  display: flex;
+  width: max-content;
+  animation: footer-band 60s linear infinite;
+}
+
+.footer-band:hover .footer-band-track {
+  animation-play-state: paused;
+}
+
+.footer-band-half {
+  display: flex;
+}
+
+.footer-band-item {
+  display: flex;
+  align-items: center;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(32px, 4.4vw, 64px);
+  line-height: 1;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(198, 166, 100, 0.45);
+}
+
+.footer-band-item::after {
+  content: '\2726';
+  margin-inline: 0.6em;
+  font-size: 0.4em;
+  color: rgba(198, 166, 100, 0.55);
+  -webkit-text-stroke: 0;
+}
+
+@keyframes footer-band {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-band-track {
+    animation: none;
+  }
 }
 
 /* Clears the fixed tab bar where one shows (--tabbar-space, below). */

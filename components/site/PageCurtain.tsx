@@ -40,7 +40,9 @@ export function coverThen(swap: () => void) {
 }
 
 function uncover() {
-  if (!curtain) return;
+  // Only a page the curtain covered: a route change without it (the card's picture morphing, lib/view-morph.ts;
+  // the browser's back and forward) would otherwise flash the curtain in at full and fade it over the new page.
+  if (!curtain || !busy) return;
   busy = false;
   if (!curtain.animate || !readMotionLevel()) {
     curtain.style.opacity = '0';
