@@ -14,7 +14,7 @@ import { STAFF, expect, one, seedStaff, signInAs, test } from './staff-fixtures'
  * SQL, then a save, only if a step failed half-way.
  */
 
-const HOME_TITLE = 'Furama Cuisine — Many Flavours. Many Destinations.';
+const HOME_TITLE = 'Furama Dining World — Many Flavours. Many Destinations.';
 const TAYA = `${HOME_PATH}/restaurants/taya-house`;
 
 async function guest(browser: Browser): Promise<Page> {

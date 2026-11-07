@@ -1,5 +1,6 @@
 import type { Browser, Page } from '@playwright/test';
 import { REGISTRY } from '../lib/i18n/registry';
+import { NOT_RECORDED } from '../test/helpers/legal';
 import { expectHydrated } from './csp';
 import { HOME_PATH } from './paths';
 import { STAFF, expect, one, seedStaff, signInAs, test } from './staff-fixtures';
@@ -178,14 +179,15 @@ test('changing the policy text adds a version: the policy page shows the text an
       await expect(visitor.getByText('We keep your booking for 12 months.')).toBeVisible();
       await expect(visitor.getByText(`Last updated ${today}`)).toBeVisible();
     } finally {
-      // The seeded version back first, so restoring the seeded wording adds no version (its hash matches the seed row).
-      await one(`DELETE FROM legal_versions WHERE created_by IS DISTINCT FROM 'seed'`);
+      // The recorded versions back first (the seed and migration 015's), so restoring the code's wording adds no
+      // version: its hash matches 015's row, the newest.
+      await one(`DELETE FROM legal_versions WHERE ${NOT_RECORDED}`);
       await saveField(page, '/admin/content/legal', 'Chính sách bảo mật', 'Mục 4: nội dung', DEFAULT_KEEP, 'Lưu chính sách bảo mật');
       await expect(page.getByRole('form', { name: 'Chính sách bảo mật' }).getByRole('status')).toContainText('Đã lưu 1 mục');
     }
     await visitor.goto('/en/privacy');
-    await expect(visitor.getByText('Last updated 3 October 2026')).toBeVisible();
-    expect(await one(`SELECT count(*)::int AS n FROM legal_versions`)).toEqual({ n: 1 });
+    await expect(visitor.getByText('Last updated 15 October 2026')).toBeVisible();
+    expect(await one(`SELECT count(*)::int AS n FROM legal_versions`)).toEqual({ n: 2 });
   } finally {
     await visitor.context().close();
   }
