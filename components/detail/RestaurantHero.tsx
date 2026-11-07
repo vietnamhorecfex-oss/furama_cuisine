@@ -1,10 +1,12 @@
 'use client';
 
+import { ViewTransition } from 'react';
 import type { RestaurantDetail } from '@/lib/content/types';
 import { useSite } from '@/components/site/SiteProvider';
 import { CmsImage } from '@/components/ui/CmsImage';
 import { openMenu } from '@/components/site/MobileBar';
 import { useReveal } from '@/lib/motion';
+import { restaurantMorphName } from '@/lib/view-morph';
 
 /*
  * One hero across breakpoints: desktop shows the two-column split with the
@@ -93,7 +95,9 @@ export function RestaurantHero({ detail }: { detail: RestaurantDetail }) {
             </div>
           </div>
 
-          <div className="taya-portrait" data-intro="1" data-intro-kind="clip">
+          {/* The card's picture lands here (lib/view-morph.ts): same name as the card's, so the two morph. */}
+          <ViewTransition name={restaurantMorphName(detail.slug)} share="morph" default="none">
+          <div className="taya-portrait" data-intro="1" data-intro-kind="clip" data-intro-morph="">
             {/* The page's LCP image: preloaded, fetched first, optimised by next/image (CmsImage). */}
             <CmsImage
               media={detail.portrait}
@@ -105,6 +109,7 @@ export function RestaurantHero({ detail }: { detail: RestaurantDetail }) {
               fetchPriority="high"
             />
           </div>
+          </ViewTransition>
         </div>
 
         <button type="button" className="taya-back-float" onClick={goBackToRestaurants}>

@@ -254,3 +254,44 @@
     clip-path: none !important;
   }
 }
+
+/*
+ * View transitions (R2): the restaurant card's picture morphing into its page's portrait (.morph, lib/view-morph.ts)
+ * and the grid's cards sliding to their places when a filter changes (.grid-move, components/home/Restaurants.tsx).
+ * Both within the motion budget (styles/tokens.css). A soft blur mid-flight hides the two pictures' crossfade.
+ * Clicks go through to the page while one runs; a guest who asks for reduced motion gets the swap at once.
+ */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(.morph) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-image-pair(.morph) {
+  animation-name: morph-blur;
+  animation-duration: var(--dur-base);
+}
+
+@keyframes morph-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+::view-transition-group(.grid-move) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

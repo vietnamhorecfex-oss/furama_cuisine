@@ -85,6 +85,12 @@ export const NON_TEXT_ATTRIBUTES = new Set([
   'aria-describedby',
   'aria-labelledby',
   'aria-pressed',
+  // React's <ViewTransition> (lib/view-morph.ts, the restaurant grid): animation classes and "none", never shown.
+  'share',
+  'default',
+  'update',
+  'enter',
+  'exit',
   // An iframe's permissions and referrer policy (the film player): tokens, never shown.
   'allow',
   'sandbox',

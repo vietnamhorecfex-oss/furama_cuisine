@@ -29,6 +29,17 @@ const INTRO_FRAMES: Record<IntroKind, Keyframe[]> = {
  */
 let curtainLiftsAt = 0;
 
+/**
+ * Set just before a route change that morphs a picture into the next page (lib/view-morph.ts): that page's
+ * [data-intro-morph] element is the morph's landing, so it shows at once instead of playing its own entrance
+ * (a clip wiping in under the moving picture). Read and cleared by the next page's entrance.
+ */
+let morphArrival = false;
+
+export function expectMorphArrival() {
+  morphArrival = true;
+}
+
 /** The home page of a language ("/en", "/vi/", "/zh-hans"): the one page the opening curtain plays on. */
 export function isHomeLanding(pathname: string): boolean {
   return /^\/[a-z]{2,3}(?:-[a-z0-9]+)*\/?$/.test(pathname);
@@ -67,7 +78,16 @@ export function useIntro(active: boolean, baseDelay = 0, root?: RefObject<HTMLEl
     const scope: ParentNode | null = root ? root.current : document;
     if (!scope) return;
     const all = Array.from(scope.querySelectorAll<HTMLElement>('[data-intro]'));
-    const els = all.filter((el) => !el.hasAttribute('data-intro-done'));
+    const morphed = morphArrival;
+    morphArrival = false;
+    const els = all.filter((el) => {
+      if (el.hasAttribute('data-intro-done')) return false;
+      if (morphed && el.hasAttribute('data-intro-morph')) {
+        el.setAttribute('data-intro-done', '');
+        return false;
+      }
+      return true;
+    });
     if (!els.length) return;
 
     const timer = window.setTimeout(() => {

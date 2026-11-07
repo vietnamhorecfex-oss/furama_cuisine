@@ -1,5 +1,6 @@
 'use client';
 
+import { ViewTransition } from 'react';
 import type { Meal } from '@/lib/data';
 import { cuisineLabel, mealLabel } from '@/lib/content/options';
 import { formatMessage } from '@/lib/i18n/format';
@@ -68,8 +69,12 @@ export function Restaurants() {
         )}
 
         <div id="restaurant-grid" className="restaurant-grid">
+          {/* A filter is a transition (SiteProvider setFilter): each card that stays slides to its new place (R2, E4).
+              Only on an update: a route change leaves the grid alone, and the card's picture morphs on its own. */}
           {restaurants.map((r) => (
-            <RestaurantCard key={r.id} restaurant={r} hidden={!matches(r)} />
+            <ViewTransition key={r.id} name={`grid-${r.slug}`} update="grid-move" default="none">
+              <RestaurantCard restaurant={r} hidden={!matches(r)} />
+            </ViewTransition>
           ))}
         </div>
 

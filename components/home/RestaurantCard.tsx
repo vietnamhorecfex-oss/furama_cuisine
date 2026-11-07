@@ -1,11 +1,14 @@
 'use client';
 
+import { useEffect, ViewTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import type { Restaurant } from '@/lib/data';
 import { formatMessage } from '@/lib/i18n/format';
 import { restaurantHref } from '@/lib/i18n/href';
 import { CmsImage } from '@/components/ui/CmsImage';
 import { useSite } from '@/components/site/SiteProvider';
 import { useReveal } from '@/lib/motion';
+import { restaurantMorphName } from '@/lib/view-morph';
 
 /**
  * Shared grid/rail card. The hover tag and image push-in are CSS-driven so the
@@ -15,7 +18,22 @@ import { useReveal } from '@/lib/motion';
  */
 export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant; hidden?: boolean }) {
   const { openRestaurant, strings, locale } = useSite();
+  const router = useRouter();
   const ref = useReveal<HTMLButtonElement & HTMLAnchorElement>('card');
+  // As <Link> does: a card with a page fetches that page once it comes into view, so a tap on a phone (no hover
+  // first) still finds it ready and its picture morphs into the page's portrait (lib/view-morph.ts).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !restaurant.hasDetailPage || typeof IntersectionObserver === 'undefined') return;
+    const href = restaurantHref(locale, restaurant.slug);
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      router.prefetch(href);
+      io.disconnect();
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [locale, ref, restaurant.hasDetailPage, restaurant.slug, router]);
   // A card without a page reserves; with online booking off (R14) it calls instead (R20), and with
   // no number either it has no action (GX-6).
   const calls = !restaurant.hasDetailPage && !restaurant.bookingEnabled && restaurant.phone !== null;
@@ -30,6 +48,7 @@ export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant;
   const body = (
     <>
       <span className="rcard-frame frame" data-reveal-img="1">
+        <ViewTransition name={restaurant.hasDetailPage ? restaurantMorphName(restaurant.slug) : undefined} share="morph" default="none">
         <span className="rcard-zoom" data-reveal-zoom="1">
           {/* alt: the card picture's own (media_i18n; seeded as the restaurant's name, R19). */}
           {restaurant.image && (
@@ -41,6 +60,7 @@ export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant;
             />
           )}
         </span>
+        </ViewTransition>
         {/* The call tag holds a whole phone number, longer than the narrowest cards: it wraps (home.css), and a
             no-break space keeps the arrow on the number's last line. VIEW and RESERVE keep their plain space. */}
         {tag && (
@@ -64,6 +84,10 @@ export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant;
         href={restaurantHref(locale, restaurant.slug)}
         className="rcard"
         hidden={hidden}
+        // The page is fetched while the guest points at it, so it renders in the same commit as the route change:
+        // only then does the picture morph (a page still loading would just appear).
+        onPointerEnter={() => router.prefetch(restaurantHref(locale, restaurant.slug))}
+        onFocus={() => router.prefetch(restaurantHref(locale, restaurant.slug))}
         onClick={(e) => {
           // A new tab or window (modifier keys, middle click) is the browser's; a plain click keeps the curtain.
           if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
