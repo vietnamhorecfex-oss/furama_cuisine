@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { REGISTRY } from '@/lib/i18n/registry';
 import { AGREED_KEYS, PRIVACY_POLICY_VERSION, privacyHref } from './legal';
+import { BRAND_RENAME_POLICY, SEEDED_POLICY } from '@/test/helpers/legal';
 
 /*
  * reservations.consent_version must name the text the guest saw, and since
@@ -17,12 +18,13 @@ import { AGREED_KEYS, PRIVACY_POLICY_VERSION, privacyHref } from './legal';
  * has version and effective_on = today's Da Nang date and text_sha256 = that
  * language's new hash (for English, the one this test prints), and ships in
  * the same deploy window as the code (the README's "Before launch A", the
- * lawyer's note). Then add that migration's English pair beside RECORDED (its
- * first row stays the seeded one) and point the assertion below at it.
+ * lawyer's note). Then add that migration's English pair to test/helpers/legal.ts
+ * (CURRENT_POLICY follows it) and point the assertion below at it.
  */
-const RECORDED = { version: '2026-10-03', sha256: 'f49aa3f58723d14d6491c1801466c411fe9439acab85b4da5272d4c7676e10d2' };
+// The recorded pairs live in test/helpers/legal.ts, which the integration tests share.
+const RECORDED = SEEDED_POLICY;
 /** Migration 015: the brand renamed Furama Dining World. */
-const BRAND_RENAME = { version: '2026-10-15', sha256: '77926aacc33be47d2aa8dc6c07ed2b9355ff0a3b954177a3628c1064acd0a003' };
+const BRAND_RENAME = BRAND_RENAME_POLICY;
 
 describe('privacy policy version', () => {
   it('pins the agreed English text (policy, notice, consent label) to the version 015 recorded: a changed default needs a new legal_versions migration', () => {
