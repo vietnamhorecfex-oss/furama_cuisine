@@ -150,6 +150,11 @@ test('a second visit to the restaurant page plays its entrance again', async ({ 
 
 test('navigation still works after the error page replaces a page the curtain was covering', async ({ page }) => {
   await page.goto(HOME_PATH);
+  // The card fetches its page once it comes into view (RestaurantCard). A click while that fetch is still on its way
+  // and the page then fails to render leaves the guest on this one, with no error page (Next's router); a guest sees
+  // a card before clicking it, so the fetch has long finished. The test does as a guest does.
+  await tayaCard(page).scrollIntoViewIfNeeded();
+  await page.waitForLoadState('networkidle');
   // Test-only fault: while armed, MoreRestaurants' restaurants.find(r => r.slug === slug) throws,
   // so the restaurant page fails to render under the covering curtain and [lang]/error.tsx
   // takes over (and unmounts the curtain mid-cover). No production code is involved.

@@ -20,8 +20,10 @@ export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant;
   const { openRestaurant, strings, locale } = useSite();
   const router = useRouter();
   const ref = useReveal<HTMLButtonElement & HTMLAnchorElement>('card');
-  // As <Link> does: a card with a page fetches that page once it comes into view, so a tap on a phone (no hover
-  // first) still finds it ready and its picture morphs into the page's portrait (lib/view-morph.ts).
+  // As <Link> does: a card with a page fetches that page once it comes into view, so the page renders in the route
+  // change's commit and its picture morphs into the page's portrait (lib/view-morph.ts). Not again on pointer or
+  // focus: a click while that fetch was still on its way made a page that failed to render leave the guest here
+  // with no error page (Next's router; e2e page-scope). A card is in view well before it is clicked.
   useEffect(() => {
     const el = ref.current;
     if (!el || !restaurant.hasDetailPage || typeof IntersectionObserver === 'undefined') return;
@@ -84,10 +86,6 @@ export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant;
         href={restaurantHref(locale, restaurant.slug)}
         className="rcard"
         hidden={hidden}
-        // The page is fetched while the guest points at it, so it renders in the same commit as the route change:
-        // only then does the picture morph (a page still loading would just appear).
-        onPointerEnter={() => router.prefetch(restaurantHref(locale, restaurant.slug))}
-        onFocus={() => router.prefetch(restaurantHref(locale, restaurant.slug))}
         onClick={(e) => {
           // A new tab or window (modifier keys, middle click) is the browser's; a plain click keeps the curtain.
           if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
