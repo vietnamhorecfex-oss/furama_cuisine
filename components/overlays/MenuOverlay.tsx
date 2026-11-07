@@ -3,7 +3,7 @@
 import { MenuLanguages } from '@/components/site/LanguageSwitcher';
 import { useSite } from '@/components/site/SiteProvider';
 import { useRef } from 'react';
-import { EASE_OUT, useOverlayPresence } from '@/lib/motion';
+import { DUR_BASE, EASE_OUT, useOverlayPresence } from '@/lib/motion';
 
 export function MenuOverlay() {
   const { site, overlay, close, open, scrollToId, openReserve, strings } = useSite();
@@ -18,8 +18,8 @@ export function MenuOverlay() {
     (box) =>
       box.querySelectorAll('[data-anim="menu-item"]').forEach((el, i) => {
         el.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], {
-          duration: 700,
-          delay: 120 + i * 40,
+          duration: DUR_BASE,
+          delay: 80 + i * 30,
           easing: EASE_OUT,
           fill: 'backwards',
         });

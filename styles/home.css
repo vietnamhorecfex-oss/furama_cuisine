@@ -856,7 +856,7 @@ a.rcard:hover {
   position: absolute;
   inset: 0;
   transform: scale(1);
-  transition: transform 0.9s var(--ease-soft);
+  transition: transform var(--dur-base) var(--ease-soft);
 }
 
 /* A card with no action (a reserve-only restaurant with online booking off,
@@ -1061,7 +1061,7 @@ a.dest-hit:hover {
   position: absolute;
   inset: 0;
   transform: scale(1);
-  transition: transform 0.9s var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
 .dest-img {
@@ -1466,7 +1466,7 @@ a.dest-hit:hover {
 .story-zoom {
   position: absolute;
   inset: 0;
-  transition: transform 0.9s var(--ease-soft);
+  transition: transform var(--dur-base) var(--ease-soft);
 }
 
 /* Under the pointer the picture is matted like a framed print (styles/fx.css "Hover"). */
@@ -1532,7 +1532,7 @@ a.dest-hit:hover {
   padding: clamp(32px, 3vw, 44px) clamp(24px, 2.4vw, 36px) clamp(24px, 2.4vw, 34px);
   background: var(--cream);
   border: 1px solid var(--line-warm);
-  transition: box-shadow 0.6s ease, border-color 0.4s ease, transform 0.6s var(--ease-soft);
+  transition: box-shadow var(--dur-base) ease, border-color var(--dur-base) ease, transform var(--dur-base) var(--ease-soft);
 }
 
 /* The card's gold head rule, which runs the full width on hover. */
@@ -1544,7 +1544,7 @@ a.dest-hit:hover {
   width: 56px;
   height: 2px;
   background: var(--gold);
-  transition: width 0.6s var(--ease-soft);
+  transition: width var(--dur-base) var(--ease-soft);
 }
 
 .offer:hover {

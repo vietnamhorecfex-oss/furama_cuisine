@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react';
-import { EASE_DRAWER, EASE_OUT, EASE_POP, readMotionLevel, usePresence } from '@/lib/motion';
+import { DUR_REVEAL, EASE_DRAWER, EASE_OUT, EASE_POP, readMotionLevel, usePresence } from '@/lib/motion';
 
 /*
  * The Reserve drawer's motion (components/overlays/ReserveDrawer.tsx): its
@@ -166,7 +166,7 @@ export function useDrawerMotion(open: boolean, { root, backdrop, panel }: Parts,
         { opacity: 1, transform: 'scale(1.12)', offset: 0.6 },
         { opacity: 1, transform: 'none' },
       ],
-      { duration: 720, delay: 60, easing: EASE_POP, fill: 'backwards' },
+      { duration: DUR_REVEAL, delay: 60, easing: EASE_POP, fill: 'backwards' },
     );
     const settle = (selector: string, from: number, frames = RISE, duration = 400) =>
       sheet.querySelectorAll(selector).forEach((el, i) => {

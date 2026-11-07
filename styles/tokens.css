@@ -76,6 +76,14 @@
   /* How far the home finder's card rides up over the hero (styles/home.css). */
   --finder-lift: clamp(44px, 4.4vw, 64px);
 
+  /* Duration: the motion budget (brief §2: 300–500 ms). A response to a hover, focus or press is quick; an
+     overlay, a menu or a hover's picture is base; a section rising into view is reveal. Only ambient motion runs
+     longer (the hero's slow zoom, its slide change, the slide's progress, the scroll hint), and none of it moves
+     when motion is reduced. lib/motion.tsx holds the same numbers for the animations scripts play. */
+  --dur-quick: 200ms;
+  --dur-base: 400ms;
+  --dur-reveal: 500ms;
+
   /* Easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-inout: cubic-bezier(0.76, 0, 0.24, 1);

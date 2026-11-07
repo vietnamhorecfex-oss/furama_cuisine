@@ -140,12 +140,12 @@
 
 .intro-curtain-top {
   top: 0;
-  animation: fc-part-up 0.85s var(--ease-inout) 1.65s both;
+  animation: fc-part-up 0.3s var(--ease-inout) 0.5s both;
 }
 
 .intro-curtain-bottom {
   bottom: 0;
-  animation: fc-part-down 0.85s var(--ease-inout) 1.65s both;
+  animation: fc-part-down 0.3s var(--ease-inout) 0.5s both;
 }
 
 .intro-curtain-card {
@@ -154,7 +154,7 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  animation: fc-card-out 0.5s ease 1.5s both;
+  animation: fc-card-out 0.15s ease 0.5s both;
 }
 
 .intro-curtain-word {
@@ -170,7 +170,7 @@
 
 .intro-curtain-word span {
   display: inline-block;
-  animation: fc-letter 0.9s var(--ease-out) calc(0.08s + var(--i) * 0.07s) both;
+  animation: fc-letter 0.35s var(--ease-out) calc(0.02s + var(--i) * 0.03s) both;
 }
 
 .intro-curtain-rule {
@@ -178,7 +178,7 @@
   height: 1px;
   background: var(--gold);
   transform-origin: 50% 50%;
-  animation: fc-line 1s cubic-bezier(0.65, 0, 0.35, 1) 0.45s both;
+  animation: fc-line 0.3s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
 }
 
 .intro-curtain-sub {
@@ -187,7 +187,7 @@
   font-weight: 500;
   letter-spacing: 0.6em;
   color: var(--gold);
-  animation: fc-in 1s var(--ease-out) 0.7s both;
+  animation: fc-in 0.3s var(--ease-out) 0.2s both;
 }
 
 @keyframes fc-letter {

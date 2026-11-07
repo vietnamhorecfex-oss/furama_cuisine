@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, type RefObject } from 'react';
-import { EASE_INOUT, EASE_OUT, readMotionLevel, useMotion } from '@/lib/motion';
+import { DUR_REVEAL, EASE_INOUT, EASE_OUT, readMotionLevel, useMotion } from '@/lib/motion';
 
 /*
  * A page's entrance: the staggered [data-intro] elements (IntroTrigger) and
@@ -29,12 +29,23 @@ const INTRO_FRAMES: Record<IntroKind, Keyframe[]> = {
  */
 let curtainLiftsAt = 0;
 
-/** True once per session (sessionStorage), when the curtain should play; records when it lifts. */
-export function claimIntroCurtain(lift: number): boolean {
+/** The home page of a language ("/en", "/vi/", "/zh-hans"): the one page the opening curtain plays on. */
+export function isHomeLanding(pathname: string): boolean {
+  return /^\/[a-z]{2,3}(?:-[a-z0-9]+)*\/?$/.test(pathname);
+}
+
+/**
+ * True once per session (sessionStorage), when the curtain should play: the session's first page, and only when
+ * that page is a home page. Records when it lifts.
+ */
+export function claimIntroCurtain(lift: number, pathname: string): boolean {
   if (!readMotionLevel()) return false;
   try {
     if (sessionStorage.getItem('fc-intro-seen')) return false;
     sessionStorage.setItem('fc-intro-seen', '1');
+    // A guest who lands on a restaurant page (a search result, a shared link) came for that page: no title card
+    // between them and it, and none later in the session either (the key above is already set).
+    if (!isHomeLanding(pathname)) return false;
   } catch {
     return false;
   }
@@ -69,8 +80,8 @@ export function useIntro(active: boolean, baseDelay = 0, root?: RefObject<HTMLEl
         // Words of one line follow each other (data-intro-sub).
         const sub = Number(el.getAttribute('data-intro-sub')) || 0;
         const a = el.animate(INTRO_FRAMES[kind], {
-          duration: kind === 'clip' ? 1500 : kind === 'word' ? 1300 : 1250,
-          delay: curtain + baseDelay + i * 110 + sub * 75,
+          duration: DUR_REVEAL,
+          delay: curtain + baseDelay + i * 60 + sub * 40,
           easing: kind === 'clip' ? EASE_INOUT : EASE_OUT,
           fill: 'backwards',
         });
