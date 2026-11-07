@@ -38,7 +38,6 @@ const LOCKED: Record<string, string> = {
   "components/overlays/ReserveDrawer.tsx: .daystrip .day[aria-pressed=\"true\"]": "code token, not text",
   "components/overlays/SearchOverlay.tsx: FURAMA DINING WORLD": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
   "components/site/Footer.tsx: FURAMA DINING WORLD": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
-  "components/site/Footer.tsx: FURAMA": "brand wordmark: the footer's great outline wordmark (aria-hidden decoration)",
   "components/site/Header.tsx: DINING WORLD": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
   "components/site/Header.tsx: FURAMA": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",
   "components/site/IntroCurtain.tsx: DINING WORLD": "brand wordmark (inventory §2.2/§2.17/§2.18, class L)",

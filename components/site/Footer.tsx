@@ -7,12 +7,13 @@ import { socialKey } from '@/lib/content/footer';
 import { homeHref } from '@/lib/i18n/href';
 import { useReveal } from '@/lib/motion';
 
-const GIANT = 'FURAMA';
+const WORDMARK = 'FURAMA DINING WORLD';
+/** Each half of the band repeats the wordmark this often: wider than a 2560 px screen at the band's largest size. */
+const BAND_REPEATS = 4;
 
 export function Footer() {
   const { goHomeTop, locale, site, strings } = useSite();
   const reveal = useReveal<HTMLDivElement>('fade');
-  const giant = useReveal<HTMLDivElement>('title');
   // The destinations staff mark for the footer, each as "name · address · phone" (destinations.show_in_footer; R24: edited on the destinations screen).
   const venues = site.destinations.filter((d) => d.showInFooter);
   const email = site.settings.email;
@@ -30,7 +31,7 @@ export function Footer() {
             goHomeTop();
           }}
         >
-          FURAMA DINING WORLD
+          {WORDMARK}
         </a>
         <div className="footer-tagline">{strings['footer.tagline']}</div>
         <div className="footer-socials">
@@ -72,15 +73,21 @@ export function Footer() {
         </div>
       </div>
 
-      {/* The wordmark again, very large and in outline, its letters rising as the page ends. */}
-      <div ref={giant} data-reveal="title" className="footer-giant" aria-hidden="true">
-        {GIANT.split('').map((letter, i) => (
-          <span key={i} className="sw">
-            <span className="sw-in" data-word="">
-              {letter}
+      {/* The wordmark running right to left without end, in outline: decoration (the wordmark above names the brand),
+          so hidden from screen readers. Two identical halves slide by one half's width and start over. It pauses under
+          the pointer and stands still when motion is reduced (styles/layout.css). */}
+      <div className="footer-band" aria-hidden="true">
+        <div className="footer-band-track">
+          {[0, 1].map((half) => (
+            <span key={half} className="footer-band-half">
+              {Array.from({ length: BAND_REPEATS }, (_, i) => (
+                <span key={i} className="footer-band-item">
+                  {WORDMARK}
+                </span>
+              ))}
             </span>
-          </span>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Clears the fixed mobile tab bar. */}
