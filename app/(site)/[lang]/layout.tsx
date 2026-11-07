@@ -4,6 +4,7 @@ import { fontVariables } from '@/lib/fonts';
 import { SCRIPT_FONTS } from '@/lib/fonts/scripts';
 import { catalogLanguage } from '@/lib/i18n/catalog';
 import { DEFAULT_LOCALE, LOCALE_CODE_RE, toBcp47 } from '@/lib/i18n/locales';
+import { MOTION_BOOTSTRAP } from '@/lib/intro-landing';
 import { MotionProvider } from '@/lib/motion';
 import { getEnabledLocales } from '@/lib/server/content/locales';
 import '../../globals.css';
@@ -33,10 +34,10 @@ export async function generateStaticParams() {
 }
 
 /*
- * Sets [data-motion] before first paint so reveal elements can start hidden
- * without flashing, while a visitor without JS still gets everything visible.
+ * MOTION_BOOTSTRAP (lib/intro-landing.ts) runs before first paint: [data-motion] so reveal elements can start hidden
+ * without flashing (a visitor without JS still gets everything visible), and [data-intro="play"] so the opening
+ * title card covers the home page from its first frame rather than appearing over it after hydration.
  */
-const MOTION_BOOTSTRAP = `try{document.documentElement.dataset.motion=matchMedia('(prefers-reduced-motion: reduce)').matches?'off':'on'}catch(e){}`;
 
 /**
  * The script stylesheet of a URL code, or null for Latin and Vietnamese. This

@@ -11,21 +11,33 @@ const GONE_MS = 800;
 const WORD = 'FURAMA';
 
 /**
- * Opening title card, once per session, on a home page, never when motion is reduced: the
+ * Opening title card, once per session, on a home page, never when motion is reduced, from the first frame: the
  * wordmark's letters rise one by one, a gold rule draws under them, then the
  * card splits in two and the halves slide away from the hero.
  */
 export function IntroCurtain() {
-  const [show, setShow] = useState(false);
+  // Rendered from the server on, so the card is in the first frame's HTML; its CSS shows it only under
+  // <html data-intro="play">, which the guest root layout's before-paint script sets (lib/intro-landing.ts).
+  const [present, setPresent] = useState(true);
 
   useEffect(() => {
-    if (!claimIntroCurtain(LIFT_MS, window.location.pathname)) return;
-    setShow(true);
-    const timer = window.setTimeout(() => setShow(false), GONE_MS);
+    const start = claimIntroCurtain(LIFT_MS);
+    const root = document.documentElement;
+    const done = () => {
+      setPresent(false);
+      delete root.dataset.intro;
+      delete root.dataset.introAt;
+    };
+    if (start === null) {
+      done();
+      return;
+    }
+    // Its timeline runs from the first paint (CSS), not from now: it leaves when that 800 ms is up.
+    const timer = window.setTimeout(done, Math.max(0, start + GONE_MS - performance.now()));
     return () => window.clearTimeout(timer);
   }, []);
 
-  if (!show) return null;
+  if (!present) return null;
 
   return (
     <div className="intro-curtain" aria-hidden="true">
