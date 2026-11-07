@@ -811,9 +811,17 @@ export function SiteProvider({
     };
   }, [overlay]);
 
-  /* Each page shown starts at the top (the pending-scroll effect above may then move it). */
+  /* Each page a guest moves to starts at the top (the pending-scroll effect above may then move it). Not the page the
+     visit began on: its scroll is the browser's (restored on reload or back) or the guest's own, and a guest who
+     scrolled before hydration was pulled back to the top (e2e responsive-chrome, a dropdown at the screen's foot). */
+  const firstPage = useRef(true);
   useEffect(() => {
-    if (pageRoot) window.scrollTo(0, 0);
+    if (!pageRoot) return;
+    if (firstPage.current) {
+      firstPage.current = false;
+      return;
+    }
+    window.scrollTo(0, 0);
   }, [pageRoot]);
 
   const chosenCalendar = calendarFor(calendar, booking.restaurant);

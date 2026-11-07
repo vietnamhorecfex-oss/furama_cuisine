@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, type RefObject } from 'react';
+import { INTRO_SEEN_KEY } from '@/lib/intro-landing';
 import { DUR_REVEAL, EASE_INOUT, EASE_OUT, readMotionLevel, useMotion } from '@/lib/motion';
 
 /*
@@ -40,28 +41,26 @@ export function expectMorphArrival() {
   morphArrival = true;
 }
 
-/** The home page of a language ("/en", "/vi/", "/zh-hans"): the one page the opening curtain plays on. */
-export function isHomeLanding(pathname: string): boolean {
-  return /^\/[a-z]{2,3}(?:-[a-z0-9]+)*\/?$/.test(pathname);
-}
+export { isHomeLanding } from '@/lib/intro-landing';
 
 /**
- * True once per session (sessionStorage), when the curtain should play: the session's first page, and only when
- * that page is a home page. Records when it lifts.
+ * The session's first page, once React runs (components/site/IntroCurtain.tsx). Marks the session as having had its
+ * card, whatever the page, so a guest who landed on a restaurant page meets none later. When the before-paint script
+ * chose to play it ([data-intro="play"], lib/intro-landing.ts), records when the curtain lifts, counted from the
+ * moment it started rather than from hydration, so the hero's words rise as it parts; returns that start, else null.
  */
-export function claimIntroCurtain(lift: number, pathname: string): boolean {
-  if (!readMotionLevel()) return false;
+export function claimIntroCurtain(lift: number): number | null {
   try {
-    if (sessionStorage.getItem('fc-intro-seen')) return false;
-    sessionStorage.setItem('fc-intro-seen', '1');
-    // A guest who lands on a restaurant page (a search result, a shared link) came for that page: no title card
-    // between them and it, and none later in the session either (the key above is already set).
-    if (!isHomeLanding(pathname)) return false;
+    sessionStorage.setItem(INTRO_SEEN_KEY, '1');
   } catch {
-    return false;
+    // Storage refused (a private window): the card can still play this once.
   }
-  curtainLiftsAt = performance.now() + lift;
-  return true;
+  const root = document.documentElement;
+  if (root.dataset.intro !== 'play' || !readMotionLevel()) return null;
+  const at = Number(root.dataset.introAt);
+  const start = Number.isFinite(at) ? at : performance.now();
+  curtainLiftsAt = start + lift;
+  return start;
 }
 
 /**
