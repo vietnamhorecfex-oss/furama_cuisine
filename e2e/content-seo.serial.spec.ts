@@ -92,7 +92,7 @@ test('a share picture reaches the home page and, as its fallback, Tàya House’
   const csp = await watchCsp(page);
   const visitor = await guest(browser);
   try {
-    expect(await head(visitor, HOME_PATH)).toMatchObject({ ogTitle: 'Furama Cuisine', ogImage: null });
+    expect(await head(visitor, HOME_PATH)).toMatchObject({ ogTitle: 'Furama Dining World', ogImage: null });
     // L7-13: Tàya House's shared link is its own, not the home page's.
     expect(await head(visitor, TAYA)).toEqual({ title: 'Tàya House — Furama Cuisine', ogTitle: 'Tàya House — Furama Cuisine', ogImage: null });
 

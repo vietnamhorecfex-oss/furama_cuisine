@@ -240,7 +240,14 @@ test('the hero’s words are the hero screen’s: an edited lede reaches the gue
   const form = page.getByRole('form', { name: 'Chữ hero và phim' });
   const save = async (value: string) => {
     await page.goto('/admin/content/hero');
-    await form.getByLabel('Câu dẫn', { exact: true }).fill(value);
+    // The form streams in after the document hydrates: typed too early, the textarea kept the text and its
+    // hydration added the stored value to it (CI, the first visit after signing in). Type until it holds.
+    await expectHydrated(page);
+    const field = form.getByLabel('Câu dẫn', { exact: true });
+    await expect(async () => {
+      await field.fill(value);
+      await expect(field).toHaveValue(value, { timeout: 500 });
+    }).toPass({ timeout: 10_000 });
     await form.getByRole('button', { name: 'Lưu chữ hero và phim' }).click();
     await expect(form.getByRole('status')).toContainText('Đã lưu 1 mục');
   };

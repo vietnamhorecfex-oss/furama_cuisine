@@ -95,6 +95,28 @@ main[data-view='home'][data-hero='none'] {
   .hdr-full {
     display: block;
   }
+
+  /* A language longer than English (e2e i18n-overflow stretches the labels by 30%) pushed RESERVE 87 px past the
+     gutter at 1440. The logo and the actions keep their size; the nav gives way, its labels taking a second line
+     instead of running out of the row. English fits on one line, so it sits exactly where it did. */
+  .hdr-full .hdr-logo,
+  .hdr-full .hdr-actions {
+    flex-shrink: 0;
+  }
+
+  .hdr-full .hdr-nav {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .hdr-full .hdr-nav .hdr-link {
+    flex: 0 1 auto;
+    min-width: 0;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
 }
 
 /*
