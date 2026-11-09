@@ -87,9 +87,9 @@ test('a strings screen edits one language: Vietnamese text saved on ?lang=vi sho
     await expect(form).toContainText('Đang sửa: Tiếng Việt');
     await expectHydrated(page);
     const field = form.getByLabel(/^Tiêu đề mục Stories/);
-    await expect(field).toHaveValue('');
+    // The registry's own Vietnamese shows until staff write theirs (lib/i18n/registry.ts, vi).
+    await expect(field).toHaveValue('Câu chuyện từ căn bếp');
     await expect(field).toHaveAttribute('placeholder', 'Stories from our Kitchens');
-    await expect(form.locator('label', { hasText: 'Tiêu đề mục Stories' })).toContainText('Chưa dịch');
     await field.fill('Chuyện từ gian bếp');
     await form.getByRole('button', { name: 'Lưu stories' }).click();
     await expect(form.getByRole('status')).toContainText('Đã lưu 1 mục');
