@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { homeSections } from '@/lib/content/home-sections';
 import type { HeroSlide } from '@/lib/content/types';
 import { formatMessage } from '@/lib/i18n/format';
@@ -9,6 +9,7 @@ import { useSite } from '@/components/site/SiteProvider';
 import { CmsImage, cmsPictureProps } from '@/components/ui/CmsImage';
 import { SplitWords } from '@/components/ui/SplitWords';
 import { useMotionAllowed } from '@/lib/motion';
+import { HERO_VIDEO } from '@/lib/media/hero-video';
 
 /** The hero's headline, a line each (registry hero.title_*, spec §7.2 content/hero). */
 const titleOf = (copy: Copy<'hero'>) => [copy['hero.title_1'], copy['hero.title_2'], copy['hero.title_3']] as const;
@@ -32,6 +33,12 @@ export function HeroHeading({ copy }: { copy: Copy<'hero'> }) {
  * and which buttons show (the film and finder sections, homeSections) from the chrome.
  * Pictures go through next/image's optimiser (R3; components/ui/CmsImage.tsx); slide 1
  * is an art-directed <picture> of both files' optimised srcsets.
+ *
+ * The background film (HERO_VIDEO, lib/media/hero-video.ts, owner 2026-11-09) takes the slideshow's place for a
+ * guest who allows motion and does not save data: it loads after hydration and fades in over slide 1 once it runs,
+ * so slide 1 is its poster and the first paint, and it has its own pause button on every width (WCAG 2.2.2). A guest
+ * who reduces motion or saves data gets the slides as before (still, with their dots), so the slides staff manage
+ * on the hero screen still show.
  */
 export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'> }) {
   const { site, open, overlay, scrollToId, locale } = useSite();
@@ -51,8 +58,20 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
   const count = slides.length;
   // WCAG 2.2.2: a slideshow that moves on its own for more than five seconds needs a way to stop it.
   // `motion` is whether it may run at all (not when motion is reduced); `paused` is the guest's choice.
-  const motion = useMotionAllowed() && slides.length > 1;
+  const motionAllowed = useMotionAllowed();
+  const filmOn = useFilmAllowed(HERO_VIDEO.length > 0 && motionAllowed);
+  const motion = motionAllowed && count > 1 && !filmOn;
   const [paused, setPaused] = useState(false);
+  const [filmRunning, setFilmRunning] = useState(false);
+  const video = useRef<HTMLVideoElement>(null);
+
+  /* The film runs while the hero is the guest's view: not behind an overlay, not once they paused it. */
+  useEffect(() => {
+    const el = video.current;
+    if (!filmOn || !el) return;
+    if (overlay || paused) el.pause();
+    else el.play().catch(() => {});
+  }, [filmOn, overlay, paused]);
   const autoplayMs = site.settings.heroAutoplayMs;
   const shown = homeSections(site.sections);
 
@@ -70,7 +89,7 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
   const pad = (n: number) => String(n).padStart(2, '0');
 
   return (
-    <section id="top" className="hero" style={{ ['--hero-ms' as string]: `${autoplayMs}ms` }}>
+    <section id="top" className="hero" data-film={filmOn || undefined} style={{ ['--hero-ms' as string]: `${autoplayMs}ms` }}>
       <div className="hero-slides">
         {slides.map((s, i) => (
           <div
@@ -92,6 +111,25 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
             </div>
           </div>
         ))}
+        {filmOn && (
+          <div className="hero-film-layer" data-running={filmRunning || undefined} data-parallax="0.3">
+            <video
+              ref={video}
+              className="fill"
+              autoPlay
+              muted
+              loop
+              playsInline
+              disablePictureInPicture
+              aria-hidden="true"
+              onPlaying={() => setFilmRunning(true)}
+            >
+              {HERO_VIDEO.map((v) => (
+                <source key={v.src} src={v.src} media={v.media} type="video/mp4" />
+              ))}
+            </video>
+          </div>
+        )}
       </div>
 
       <div className="hero-scrim" aria-hidden="true" />
@@ -139,7 +177,21 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
             )}
           </div>
 
-          {count > 1 && (
+          {filmOn ? (
+            <div className="hero-dots" data-film="">
+              <button
+                type="button"
+                className="hero-pause"
+                data-ready={filmRunning || undefined}
+                aria-label={paused ? copy['hero.video_play_aria'] : copy['hero.video_pause_aria']}
+                aria-pressed={paused}
+                onClick={() => setPaused((p) => !p)}
+              >
+                <span aria-hidden="true" data-paused={paused} />
+              </button>
+            </div>
+          ) : (
+            count > 1 && (
             <div className="hero-dots" data-intro="6">
               <span className="hero-count" aria-hidden="true">
                 <span className="hero-count-now">{pad(slide + 1)}</span>
@@ -170,6 +222,7 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
                 </button>
               )}
             </div>
+            )
           )}
         </div>
 
@@ -195,3 +248,15 @@ function FirstSlide({ slide }: { slide: HeroSlide }) {
     </picture>
   );
 }
+
+/**
+ * Whether the background film may load: motion allowed (passed in) and the guest's browser not asking to save data.
+ * False on the server and in the first render, so the film never competes with the poster for the first paint.
+ */
+function useFilmAllowed(allowed: boolean): boolean {
+  const saveData = useSyncExternalStore(noSubscribe, readSaveData, () => true);
+  return allowed && !saveData;
+}
+
+const noSubscribe = () => () => {};
+const readSaveData = () => (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;

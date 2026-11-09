@@ -64,6 +64,10 @@ export default async function HeroPage({ searchParams }: { searchParams: ScreenS
 
       <section className="a-section-card" aria-labelledby="hero-slides-title">
         <h2 id="hero-slides-title">Slide</h2>
+        <p className="a-muted">
+          Đầu trang chủ đang chạy video nền (cố định trong mã nguồn, không đổi ở đây). Slide 1 là ảnh hiện trước khi video chạy;
+          khách tắt hiệu ứng chuyển động hoặc bật tiết kiệm dữ liệu thì thấy các slide dưới đây thay cho video.
+        </p>
         <SlideList items={items} listToken={token} warnings={limitWarnings('heroSlides', shown)} images={images} upload={upload} />
         <h3>Thêm slide</h3>
         <SlideForm

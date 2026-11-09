@@ -1601,3 +1601,35 @@ a.dest-hit:hover {
 .offer-cta:hover {
   color: var(--gold-deep);
 }
+
+/* The background film (Hero, lib/media/hero-video.ts): over the slides, under the scrim. It fades in once it
+   runs, so a slow start shows slide 1, its poster, rather than a black box. While it shows, the slides waiting
+   their turn are not drawn, so their pictures are not fetched. */
+.hero-film-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity var(--dur-reveal) ease;
+}
+
+.hero-film-layer[data-running] {
+  opacity: 1;
+}
+
+.hero[data-film] .hero-slide:not(:first-child) {
+  display: none;
+}
+
+/* The film's pause button shows on every width (the dots are desktop only), once the film runs. */
+.hero-dots[data-film] {
+  display: flex;
+}
+
+.hero-dots[data-film] .hero-pause {
+  margin-inline-start: -11px;
+}
+
+.hero-dots[data-film] .hero-pause:not([data-ready]) {
+  visibility: hidden;
+}
