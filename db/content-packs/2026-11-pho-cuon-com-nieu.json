@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-pho-cuon-com-nieu",
+  "note": "Phố Cuốn now also serves clay-pot rice: its name is \"Phố Cuốn - Cơm Niêu Cổ Vị\" (owner, 2026-11-09).",
+  "changes": [
+    { "kind": "row", "entity": "restaurants", "id": "pho-cuon", "column": "name", "from": "Phố Cuốn", "to": "Phố Cuốn - Cơm Niêu Cổ Vị" }
+  ]
+}
