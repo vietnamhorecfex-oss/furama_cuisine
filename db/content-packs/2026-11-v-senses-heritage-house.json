@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-v-senses-heritage-house",
+  "note": "V-Senses Cafe is a Vietnamese heritage house, not a Northern Vietnamese kitchen (owner, 2026-11-09).",
+  "changes": [
+    { "kind": "text", "entity": "restaurants", "id": "v-senses-cafe", "column": "type_label", "from": "Northern Vietnamese · Furama Villas", "to": "Vietnamese Heritage House · Furama Villas" }
+  ]
+}
