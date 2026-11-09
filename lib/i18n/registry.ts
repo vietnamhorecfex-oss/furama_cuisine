@@ -33,7 +33,11 @@ export type AdminScreen = (typeof ADMIN_SCREENS)[number];
 export type StringDef = {
   /** English default; always present. */
   en: string;
-  /** Vietnamese default; only for email.* and legal.* (spec §5.1). */
+  /**
+   * Vietnamese default (spec §5.1): email.* and legal.* since phase 7, and every guest key since 2026-11-09 (the
+   * owner asked for /vi in Vietnamese). Staff override it on the key's screen. The agreed policy text (AGREED_KEYS,
+   * lib/legal.ts) keeps none until a lawyer reviews a translation: a new one needs a legal_versions migration.
+   */
   vi?: string;
   /** Longest value an editor may save, counted in characters. */
   maxLength: number;
@@ -55,6 +59,7 @@ export type StringDef = {
 export const REGISTRY = {
   'error.restaurant_unavailable': {
     en: 'This restaurant is not taking online bookings right now. Please call us on {phone}.',
+    vi: 'Nhà hàng này tạm thời chưa nhận đặt bàn trực tuyến. Vui lòng gọi cho chúng tôi theo số {phone}.',
     maxLength: 140,
     vars: ['phone'],
     context:
@@ -64,6 +69,7 @@ export const REGISTRY = {
   },
   'error.party_too_large': {
     en: 'For more than {max} guests, please call us on {phone}.',
+    vi: 'Với nhóm trên {max} khách, vui lòng gọi cho chúng tôi theo số {phone}.',
     maxLength: 140,
     vars: ['max', 'phone'],
     context:
@@ -73,6 +79,7 @@ export const REGISTRY = {
   },
   'error.outside_window': {
     en: 'That date can’t be booked online — please choose one of the dates shown.',
+    vi: 'Ngày này không đặt trực tuyến được — vui lòng chọn một trong các ngày hiển thị.',
     maxLength: 140,
     context:
       'The date is outside this restaurant’s booking window (staff set it per restaurant, from 1 to 90 days), or is not a real date. Do not name a span of days or weeks: it differs per restaurant.',
@@ -81,6 +88,7 @@ export const REGISTRY = {
   },
   'error.slot_unavailable': {
     en: '{restaurant} does not serve at that time.',
+    vi: '{restaurant} không phục vụ vào giờ này.',
     maxLength: 140,
     vars: ['restaurant'],
     context: 'The time is not in the restaurant’s service hours. {restaurant} is the restaurant name; keep it as is.',
@@ -89,6 +97,7 @@ export const REGISTRY = {
   },
   'error.past': {
     en: 'That time can no longer be booked online — please choose a later time or another day.',
+    vi: 'Giờ này không còn đặt trực tuyến được — vui lòng chọn giờ muộn hơn hoặc ngày khác.',
     maxLength: 140,
     context:
       'The chosen sitting is too close to book online (the lead time before it), or online booking for today has closed (the same-day cut-off). Must read right for both.',
@@ -97,6 +106,7 @@ export const REGISTRY = {
   },
   'error.invalid_name': {
     en: 'Please enter your name.',
+    vi: 'Vui lòng nhập họ tên.',
     maxLength: 140,
     context: 'Name field is empty or invalid.',
     screen: 'ui-text',
@@ -104,6 +114,7 @@ export const REGISTRY = {
   },
   'error.invalid_phone': {
     en: 'Please enter a valid phone number.',
+    vi: 'Vui lòng nhập số điện thoại hợp lệ.',
     maxLength: 140,
     context: 'Phone field failed validation.',
     screen: 'ui-text',
@@ -111,6 +122,7 @@ export const REGISTRY = {
   },
   'error.invalid_email': {
     en: 'Please check your email address.',
+    vi: 'Vui lòng kiểm tra lại địa chỉ email.',
     maxLength: 140,
     context: 'Email field failed validation.',
     screen: 'ui-text',
@@ -118,6 +130,7 @@ export const REGISTRY = {
   },
   'error.full': {
     en: 'That slot just filled up — please choose another time.',
+    vi: 'Khung giờ này vừa hết chỗ — vui lòng chọn giờ khác.',
     maxLength: 140,
     context: 'No covers left at the chosen time.',
     screen: 'ui-text',
@@ -125,6 +138,7 @@ export const REGISTRY = {
   },
   'error.duplicate': {
     en: 'We already have a request for this table under your number.',
+    vi: 'Chúng tôi đã có một yêu cầu đặt bàn này theo số điện thoại của quý khách.',
     maxLength: 140,
     context: 'The same phone number already has an active request for this restaurant, date and time.',
     screen: 'ui-text',
@@ -132,6 +146,7 @@ export const REGISTRY = {
   },
   'error.closed': {
     en: 'The restaurant is closed at that time — please choose another time or day.',
+    vi: 'Nhà hàng không mở cửa vào giờ này — vui lòng chọn giờ hoặc ngày khác.',
     maxLength: 140,
     context:
       'A closure, or a day without service, covers the chosen date, or only the chosen meal while another meal that day still takes bookings. Must read right for both.',
@@ -140,6 +155,7 @@ export const REGISTRY = {
   },
   'error.consent_required': {
     en: 'Please tick the box to agree to how we use your details.',
+    vi: 'Vui lòng đánh dấu ô đồng ý với cách chúng tôi sử dụng thông tin của quý khách.',
     maxLength: 140,
     context:
       'Under the consent checkbox of the reservation form, when the guest sends the request without ticking it (spec §11). Names the box, not the law.',
@@ -148,6 +164,7 @@ export const REGISTRY = {
   },
   'error.too_many_requests': {
     en: 'This number already has {limit} table requests for that day. To book more, please call us on {phone}.',
+    vi: 'Số điện thoại này đã có {limit} yêu cầu đặt bàn trong ngày đó. Để đặt thêm, vui lòng gọi {phone}.',
     maxLength: 160,
     vars: ['limit', 'phone'],
     context:
@@ -157,6 +174,7 @@ export const REGISTRY = {
   },
   'error.bot_blocked': {
     en: 'We could not accept this request online. Please call us on {phone} to book.',
+    vi: 'Chúng tôi chưa thể nhận yêu cầu này trực tuyến. Vui lòng gọi {phone} để đặt bàn.',
     maxLength: 140,
     vars: ['phone'],
     context:
@@ -166,6 +184,7 @@ export const REGISTRY = {
   },
   'error.unknown': {
     en: 'Something went wrong with your request. Please try again.',
+    vi: 'Đã có lỗi khi gửi yêu cầu. Vui lòng thử lại.',
     maxLength: 140,
     context: 'Any server error not covered by another code.',
     screen: 'ui-text',
@@ -173,6 +192,7 @@ export const REGISTRY = {
   },
   'error.restaurant_fallback': {
     en: 'The restaurant',
+    vi: 'Nhà hàng',
     maxLength: 40,
     context:
       'Stands for the restaurant’s name in a booking refusal that arrives without it (error.slot_unavailable’s {restaurant}). It starts the sentence: capital first letter.',
@@ -181,6 +201,7 @@ export const REGISTRY = {
   },
   'error.network': {
     en: 'We could not reach the reservations desk. Please try again, or call us on {phone}.',
+    vi: 'Không kết nối được với bộ phận đặt bàn. Vui lòng thử lại, hoặc gọi {phone}.',
     maxLength: 140,
     vars: ['phone'],
     context:
@@ -190,6 +211,7 @@ export const REGISTRY = {
   },
   'booking.day_closed': {
     en: 'Closed',
+    vi: 'Đóng cửa',
     maxLength: 40,
     context: 'Reservation form, on a date that takes no bookings when the closure has no public reason. Short: it also fits a dropdown note.',
     screen: 'booking',
@@ -197,6 +219,7 @@ export const REGISTRY = {
   },
   'booking.day_full': {
     en: 'Fully booked',
+    vi: 'Hết bàn',
     maxLength: 40,
     context: 'Reservation form, on a date with no tables left at any time. Short: it also fits a dropdown note.',
     screen: 'booking',
@@ -204,6 +227,7 @@ export const REGISTRY = {
   },
   'booking.day_past': {
     en: 'No more tables today',
+    vi: 'Hôm nay đã hết bàn',
     maxLength: 40,
     context:
       'Reservation form, on today once every sitting has closed to online booking. Short: it also fits a dropdown note, and follows a date in booking.day_note ("Mon 5 Oct: No more tables today").',
@@ -212,6 +236,7 @@ export const REGISTRY = {
   },
   'booking.day_note': {
     en: '{date}: {reason}',
+    vi: '{date}: {reason}',
     maxLength: 60,
     vars: ['date', 'reason'],
     context:
@@ -221,6 +246,7 @@ export const REGISTRY = {
   },
   'booking.meal_closed': {
     en: 'Not available on this date.',
+    vi: 'Không phục vụ vào ngày này.',
     maxLength: 80,
     context: 'Under a meal heading (Lunch, Dinner…) when a closure takes out that meal only. The public reason, if any, follows on its own line.',
     screen: 'booking',
@@ -228,6 +254,7 @@ export const REGISTRY = {
   },
   'booking.no_tables': {
     en: 'No tables left on this date — please choose another day.',
+    vi: 'Ngày này đã hết bàn — vui lòng chọn ngày khác.',
     maxLength: 120,
     context:
       'Reservation form, under TIME, when every time of the chosen date is taken for this party size (the slots show struck through). Read out by screen readers when it appears.',
@@ -236,6 +263,7 @@ export const REGISTRY = {
   },
   'booking.no_dates': {
     en: 'No dates are open for online booking. Please call us on {phone}.',
+    vi: 'Hiện chưa có ngày nào mở đặt bàn trực tuyến. Vui lòng gọi {phone}.',
     maxLength: 140,
     vars: ['phone'],
     context:
@@ -246,6 +274,7 @@ export const REGISTRY = {
   // ── "Gọi để đặt bàn" (R20, phase 6): when online booking is off, the number to call instead. ──
   'booking.all_offline': {
     en: 'Online booking is not available right now. Please call us on {phone} to book a table.',
+    vi: 'Đặt bàn trực tuyến tạm thời chưa mở. Vui lòng gọi {phone} để đặt bàn.',
     maxLength: 140,
     vars: ['phone'],
     context:
@@ -255,6 +284,7 @@ export const REGISTRY = {
   },
   'booking.call_tag': {
     en: 'Call {phone}',
+    vi: 'Gọi {phone}',
     maxLength: 40,
     vars: ['phone'],
     context:
@@ -264,6 +294,7 @@ export const REGISTRY = {
   },
   'booking.call_action': {
     en: 'Call',
+    vi: 'Gọi',
     maxLength: 20,
     context:
       'Search results, the action at the end of a row ("→" follows), for a restaurant with no page of its own whose online booking staff have switched off: a tap calls it. Short: the row is narrow on a phone.',
@@ -272,6 +303,7 @@ export const REGISTRY = {
   },
   'booking.day_outside': {
     en: 'Not open for booking yet',
+    vi: 'Chưa mở đặt bàn',
     maxLength: 40,
     context:
       'Reservation form: why a date cannot be booked when it lies beyond this restaurant’s booking window (staff set it per restaurant). Used as {reason} in booking.date_moved. Short.',
@@ -280,6 +312,7 @@ export const REGISTRY = {
   },
   'booking.date_moved': {
     en: '{date} can’t be booked ({reason}). Your table is now set for {to}.',
+    vi: '{date} không đặt được ({reason}). Bàn của quý khách đã chuyển sang {to}.',
     maxLength: 160,
     vars: ['date', 'reason', 'to'],
     context:
@@ -289,6 +322,7 @@ export const REGISTRY = {
   },
   'booking.loading': {
     en: 'Checking tables…',
+    vi: 'Đang kiểm tra bàn…',
     maxLength: 40,
     context:
       'Reservation form, while availability loads: under DATE before the first dates arrive, in place of the time slots, and beside REQUEST BOOKING when it is pressed before the dates have arrived.',
@@ -297,6 +331,7 @@ export const REGISTRY = {
   },
   'booking.done_requested': {
     en: 'Your table request at {restaurant} has been received. Our team will contact you shortly to confirm.',
+    vi: '{restaurant} đã nhận yêu cầu đặt bàn của quý khách. Chúng tôi sẽ liên hệ ngay để xác nhận.',
     maxLength: 200,
     vars: ['restaurant'],
     context:
@@ -306,6 +341,7 @@ export const REGISTRY = {
   },
   'booking.done_confirmed': {
     en: 'Your table at {restaurant} is confirmed. We look forward to welcoming you.',
+    vi: 'Bàn của quý khách tại {restaurant} đã được xác nhận. Rất hân hạnh được đón tiếp quý khách.',
     maxLength: 200,
     vars: ['restaurant'],
     context:
@@ -315,6 +351,7 @@ export const REGISTRY = {
   },
   'booking.retry': {
     en: 'Try again',
+    vi: 'Thử lại',
     maxLength: 30,
     context:
       'Reservation form, a button under error.network when the dates or the times could not be loaded (server error or no connection); it asks the server again.',
@@ -324,6 +361,7 @@ export const REGISTRY = {
   // ── Booking bar and reservation form (client: SiteProvider) ──
   'booking.title': {
     en: 'Where would you like to dine?',
+    vi: 'Quý khách muốn dùng bữa ở đâu?',
     maxLength: 60,
     context: 'The heading of the booking bar above the footer (home page). A question to the guest.',
     screen: 'booking',
@@ -331,6 +369,7 @@ export const REGISTRY = {
   },
   'booking.label_destination': {
     en: 'Destination',
+    vi: 'Điểm đến',
     maxLength: 24,
     context: 'Caption of the destination choice in the booking bar and the reservation form.',
     screen: 'booking',
@@ -338,6 +377,7 @@ export const REGISTRY = {
   },
   'booking.label_restaurant': {
     en: 'Restaurant',
+    vi: 'Nhà hàng',
     maxLength: 24,
     context: 'Caption of the restaurant choice in the booking bar and the reservation form.',
     screen: 'booking',
@@ -345,6 +385,7 @@ export const REGISTRY = {
   },
   'booking.label_date': {
     en: 'Date',
+    vi: 'Ngày',
     maxLength: 24,
     context: 'Caption of the date choice in the booking bar, and of the date line on the reservation form’s thank-you screen.',
     screen: 'booking',
@@ -352,6 +393,7 @@ export const REGISTRY = {
   },
   'booking.label_time': {
     en: 'Time',
+    vi: 'Giờ',
     maxLength: 24,
     context: 'Caption of the time choice in the booking bar, and of the time line on the thank-you screen.',
     screen: 'booking',
@@ -359,6 +401,7 @@ export const REGISTRY = {
   },
   'booking.label_guests': {
     en: 'Guests',
+    vi: 'Số khách',
     maxLength: 24,
     context: 'Caption of the party size choice in the booking bar, and of the party line on the thank-you screen.',
     screen: 'booking',
@@ -366,6 +409,7 @@ export const REGISTRY = {
   },
   'booking.label_reference': {
     en: 'Reference',
+    vi: 'Mã đặt bàn',
     maxLength: 24,
     context: 'The thank-you screen: caption of the booking reference (a short code the guest quotes when calling).',
     screen: 'booking',
@@ -373,6 +417,7 @@ export const REGISTRY = {
   },
   'booking.find_table': {
     en: 'FIND A TABLE',
+    vi: 'TÌM BÀN',
     maxLength: 24,
     context: 'The booking bar’s button that opens the reservation form with its choices (an arrow follows it). Capitals.',
     screen: 'booking',
@@ -380,6 +425,7 @@ export const REGISTRY = {
   },
   'booking.slot_full': {
     en: 'Full',
+    vi: 'Hết chỗ',
     maxLength: 16,
     context: 'Booking bar, time list: the note on a time with no table left for the party. One short word.',
     screen: 'booking',
@@ -387,6 +433,7 @@ export const REGISTRY = {
   },
   'booking.slot_left': {
     en: '{count} left',
+    vi: 'Còn {count}',
     maxLength: 20,
     vars: ['count'],
     context: 'Booking bar, time list: the note on a time with few tables left (6 or fewer). {count} is the number of covers left; keep it. Short.',
@@ -395,6 +442,7 @@ export const REGISTRY = {
   },
   'booking.slot_full_aria': {
     en: '{time} — fully booked',
+    vi: '{time} — đã hết chỗ',
     maxLength: 60,
     vars: ['time'],
     context: 'Reservation form, screen-reader name of a time button that is fully booked. {time} is the time (19:00); keep it.',
@@ -403,6 +451,7 @@ export const REGISTRY = {
   },
   'booking.slot_left_aria': {
     en: '{time} — {count} covers left',
+    vi: '{time} — còn {count} chỗ',
     maxLength: 60,
     vars: ['time', 'count'],
     context: 'Reservation form, screen-reader name of a time button: the time and the covers left. Keep {time} and {count}.',
@@ -411,6 +460,7 @@ export const REGISTRY = {
   },
   'booking.guests_count': {
     en: '{count, plural, one {# guest} other {# guests}}',
+    vi: '{count, plural, other {# khách}}',
     maxLength: 60,
     vars: ['count'],
     context: 'The party size as the booking bar, the reservation form and its thank-you screen write it ("2 guests"). ICU plural: keep the one/other forms and #.',
@@ -419,6 +469,7 @@ export const REGISTRY = {
   },
   'booking.drawer_aria': {
     en: 'Reserve a table',
+    vi: 'Đặt bàn',
     maxLength: 40,
     context: 'Screen-reader name of the reservation form (a dialog).',
     screen: 'booking',
@@ -426,6 +477,7 @@ export const REGISTRY = {
   },
   'booking.thanks': {
     en: 'Thank you, {name}.',
+    vi: 'Cảm ơn {name}.',
     maxLength: 60,
     vars: ['name'],
     context: 'Reservation form, the thank-you screen’s heading. {name} is the name the guest typed, or booking.thanks_anon when empty; keep it.',
@@ -434,6 +486,7 @@ export const REGISTRY = {
   },
   'booking.thanks_anon': {
     en: 'you',
+    vi: 'quý khách',
     maxLength: 20,
     context: 'Stands for the guest’s name in booking.thanks when the name field was empty ("Thank you, you."). Lower case.',
     screen: 'booking',
@@ -441,6 +494,7 @@ export const REGISTRY = {
   },
   'booking.done': {
     en: 'DONE',
+    vi: 'XONG',
     maxLength: 16,
     context: 'Reservation form, the thank-you screen’s button that closes it. Capitals.',
     screen: 'booking',
@@ -448,6 +502,7 @@ export const REGISTRY = {
   },
   'booking.fewer_guests': {
     en: 'Fewer guests',
+    vi: 'Bớt khách',
     maxLength: 40,
     context: 'Reservation form, screen-reader name of the − button of the party size.',
     screen: 'booking',
@@ -455,6 +510,7 @@ export const REGISTRY = {
   },
   'booking.more_guests': {
     en: 'More guests',
+    vi: 'Thêm khách',
     maxLength: 40,
     context: 'Reservation form, screen-reader name of the + button of the party size.',
     screen: 'booking',
@@ -462,6 +518,7 @@ export const REGISTRY = {
   },
   'booking.section_date': {
     en: 'DATE',
+    vi: 'NGÀY',
     maxLength: 20,
     context: 'Reservation form, the label above the strip of dates. Capitals.',
     screen: 'booking',
@@ -469,6 +526,7 @@ export const REGISTRY = {
   },
   'booking.dates_earlier': {
     en: 'Earlier dates',
+    vi: 'Ngày trước',
     maxLength: 30,
     context: 'Reservation form, the name of the arrow beside DATE that scrolls the strip of dates back (for a mouse; a finger swipes the strip).',
     screen: 'booking',
@@ -476,6 +534,7 @@ export const REGISTRY = {
   },
   'booking.dates_later': {
     en: 'Later dates',
+    vi: 'Ngày sau',
     maxLength: 30,
     context: 'Reservation form, the name of the arrow beside DATE that scrolls the strip of dates on (for a mouse; a finger swipes the strip).',
     screen: 'booking',
@@ -483,6 +542,7 @@ export const REGISTRY = {
   },
   'booking.section_guests': {
     en: 'GUESTS',
+    vi: 'SỐ KHÁCH',
     maxLength: 20,
     context: 'Reservation form, the label of the party size stepper. Capitals.',
     screen: 'booking',
@@ -490,6 +550,7 @@ export const REGISTRY = {
   },
   'booking.section_time': {
     en: 'TIME',
+    vi: 'GIỜ',
     maxLength: 20,
     context: 'Reservation form, the label above the times. Capitals.',
     screen: 'booking',
@@ -497,6 +558,7 @@ export const REGISTRY = {
   },
   'booking.your_details': {
     en: 'YOUR DETAILS',
+    vi: 'THÔNG TIN CỦA QUÝ KHÁCH',
     maxLength: 30,
     context: 'Reservation form, the label above the name, phone, email and requests. Capitals.',
     screen: 'booking',
@@ -504,6 +566,7 @@ export const REGISTRY = {
   },
   'booking.your_table': {
     en: 'YOUR TABLE',
+    vi: 'BÀN CỦA QUÝ KHÁCH',
     maxLength: 30,
     context: 'Reservation form, the small label of the summary at the foot (date · time · guests). Capitals.',
     screen: 'booking',
@@ -511,6 +574,7 @@ export const REGISTRY = {
   },
   'booking.sending': {
     en: 'SENDING…',
+    vi: 'ĐANG GỬI…',
     maxLength: 24,
     context: 'Reservation form, the send button while the request is on its way. Capitals.',
     screen: 'booking',
@@ -518,6 +582,7 @@ export const REGISTRY = {
   },
   'booking.submit': {
     en: 'REQUEST BOOKING',
+    vi: 'GỬI YÊU CẦU ĐẶT BÀN',
     maxLength: 24,
     context: 'Reservation form, the button that sends the table request. Capitals.',
     screen: 'booking',
@@ -544,6 +609,7 @@ export const REGISTRY = {
   },
   'legal.link': {
     en: 'Privacy policy',
+    vi: 'Chính sách bảo mật',
     maxLength: 40,
     context: 'Link to the privacy policy page, in the reservation form next to the consent box and in the site footer.',
     screen: 'legal',
@@ -650,6 +716,7 @@ export const REGISTRY = {
   // ── Home sections: read by the home page on the server, handed to each section (pageKeys) ──
   'stories.title': {
     en: 'Stories from our Kitchens',
+    vi: 'Câu chuyện từ căn bếp',
     maxLength: 40,
     context: 'Home page, title of the Stories section (links to articles about the kitchens). Two short lines at most on a phone.',
     screen: 'stories',
@@ -657,6 +724,7 @@ export const REGISTRY = {
   },
   'stories.lede': {
     en: 'Chefs, ingredients and the cultures behind every plate.',
+    vi: 'Đầu bếp, nguyên liệu và những nền văn hoá phía sau mỗi món ăn.',
     maxLength: 120,
     context: 'Home page, one sentence under the Stories title.',
     screen: 'stories',
@@ -664,6 +732,7 @@ export const REGISTRY = {
   },
   'heritage.kicker': {
     en: 'Since 1997 · Furama Resort Danang',
+    vi: 'Từ 1997 · Furama Resort Danang',
     maxLength: 48,
     context: 'Home page, small line above the Heritage title, on a photo. One line on a phone.',
     screen: 'heritage',
@@ -671,6 +740,7 @@ export const REGISTRY = {
   },
   'heritage.title_1': {
     en: 'A culinary heritage',
+    vi: 'Di sản ẩm thực',
     maxLength: 28,
     context: 'Home page, Heritage title, first of two lines (the box has a fixed height: keep each line short).',
     screen: 'heritage',
@@ -678,6 +748,7 @@ export const REGISTRY = {
   },
   'heritage.title_2': {
     en: 'that keeps evolving',
+    vi: 'không ngừng đổi mới',
     maxLength: 28,
     context: 'Home page, Heritage title, second line; continues the first line as one sentence.',
     screen: 'heritage',
@@ -685,6 +756,7 @@ export const REGISTRY = {
   },
   'heritage.cta': {
     en: 'OUR STORY',
+    vi: 'CÂU CHUYỆN',
     maxLength: 24,
     context: 'Home page, Heritage button to the group’s story (an external page). Written in capitals; an arrow follows it.',
     screen: 'heritage',
@@ -694,6 +766,7 @@ export const REGISTRY = {
   // loader, on the server) and the note VIEW OFFER puts in the reservation form (the browser) ──
   'offers.title': {
     en: 'Offers',
+    vi: 'Ưu đãi',
     maxLength: 30,
     context: 'Home page, title of the Offers section (cards for set menus and special evenings).',
     screen: 'offers',
@@ -701,6 +774,7 @@ export const REGISTRY = {
   },
   'offers.lede': {
     en: 'Seasonal menus and special evenings across our restaurants — valid until 31 December 2026.',
+    vi: 'Thực đơn theo mùa và những buổi tối đặc biệt tại các nhà hàng — áp dụng đến 31 tháng 12 năm 2026.',
     maxLength: 160,
     context:
       'Home page, one sentence under the Offers title. Any date written here is plain text: each offer’s own dates (offers.valid_from/valid_until) decide when its card shows.',
@@ -709,6 +783,7 @@ export const REGISTRY = {
   },
   'offers.cta': {
     en: 'VIEW OFFER',
+    vi: 'XEM ƯU ĐÃI',
     maxLength: 24,
     context: 'Home page, the button on an offer card that opens the reservation form for its restaurant. Capitals.',
     screen: 'offers',
@@ -716,6 +791,7 @@ export const REGISTRY = {
   },
   'offers.price_plus_plus': {
     en: '{currency} {amount}++ per guest',
+    vi: '{amount} {currency}++ mỗi khách',
     maxLength: 60,
     vars: ['currency', 'amount'],
     context: 'Offer card, the price when service charge and tax come on top ("++"). {currency} is the code (VND), {amount} the formatted number; keep both.',
@@ -724,6 +800,7 @@ export const REGISTRY = {
   },
   'offers.price_net': {
     en: '{currency} {amount} net per guest',
+    vi: '{amount} {currency} (đã gồm phí) mỗi khách',
     maxLength: 60,
     vars: ['currency', 'amount'],
     context: 'Offer card, the price when service charge and tax are included ("net"). {currency} is the code (VND), {amount} the formatted number; keep both.',
@@ -732,6 +809,7 @@ export const REGISTRY = {
   },
   'offers.note': {
     en: 'Offer: {title}',
+    vi: 'Ưu đãi: {title}',
     maxLength: 60,
     vars: ['title'],
     context:
@@ -743,6 +821,7 @@ export const REGISTRY = {
   // the same three title lines name the page from a hidden <h1> when the hero is left out (phase-6 F-A, L7-16) ──
   'hero.title_1': {
     en: 'Many Flavours.',
+    vi: 'Muôn vị ẩm thực.',
     maxLength: 28,
     context:
       'Home page, hero title, line 1 of 3, very large over the photo. Also the start of the page’s hidden heading when the hero is switched off. Keep each line short.',
@@ -751,6 +830,7 @@ export const REGISTRY = {
   },
   'hero.title_2': {
     en: 'Many Destinations.',
+    vi: 'Muôn điểm đến.',
     maxLength: 28,
     context: 'Home page, hero title, line 2 of 3. Desktop only: a phone shows lines 1 and 3 (spec §6.5).',
     screen: 'hero',
@@ -758,6 +838,7 @@ export const REGISTRY = {
   },
   'hero.title_3': {
     en: 'One Furama Dining World.',
+    vi: 'Một Furama Dining World.',
     maxLength: 28,
     context: 'Home page, hero title, line 3 of 3; ends the sentence of lines 1 and 2.',
     screen: 'hero',
@@ -765,6 +846,7 @@ export const REGISTRY = {
   },
   'hero.lede': {
     en: 'From beachfront dining to vibrant city destinations – discover the restaurants, cuisines and people of Furama Dining World.',
+    vi: 'Từ bữa tối bên bờ biển đến những điểm đến sôi động giữa lòng phố — khám phá nhà hàng, ẩm thực và con người Furama Dining World.',
     maxLength: 160,
     context: 'Home page, one sentence under the hero title, over the photo.',
     screen: 'hero',
@@ -772,6 +854,7 @@ export const REGISTRY = {
   },
   'hero.cta_explore': {
     en: 'EXPLORE OUR RESTAURANTS',
+    vi: 'KHÁM PHÁ NHÀ HÀNG',
     maxLength: 32,
     context: 'Home page, the hero’s main button; scrolls to the restaurants. Capitals; an arrow follows it.',
     screen: 'hero',
@@ -779,6 +862,7 @@ export const REGISTRY = {
   },
   'hero.cta_film': {
     en: 'WATCH THE FILM',
+    vi: 'XEM PHIM',
     maxLength: 24,
     context: 'Home page, the hero’s button that opens the film dialog (shown while the film section is on). Capitals.',
     screen: 'hero',
@@ -786,6 +870,7 @@ export const REGISTRY = {
   },
   'hero.cta_find': {
     en: 'FIND A RESTAURANT',
+    vi: 'TÌM NHÀ HÀNG',
     maxLength: 24,
     context: 'Home page, the hero’s button that opens the restaurant finder (phones). Capitals; an arrow follows it.',
     screen: 'hero',
@@ -793,6 +878,7 @@ export const REGISTRY = {
   },
   'hero.slide_aria': {
     en: 'Slide {n}',
+    vi: 'Ảnh {n}',
     maxLength: 24,
     vars: ['n'],
     context: 'Screen-reader name of one dot under the hero, which shows that slide. {n} is the slide’s number; keep it.',
@@ -801,6 +887,7 @@ export const REGISTRY = {
   },
   'hero.pause_aria': {
     en: 'Pause the slideshow',
+    vi: 'Dừng trình chiếu ảnh',
     maxLength: 40,
     context: 'Screen-reader name of the button after the hero’s dots that stops the slides changing on their own.',
     screen: 'hero',
@@ -808,6 +895,7 @@ export const REGISTRY = {
   },
   'hero.play_aria': {
     en: 'Play the slideshow',
+    vi: 'Tiếp tục trình chiếu ảnh',
     maxLength: 40,
     context: 'Screen-reader name of the same button once the slides are paused: it starts them again.',
     screen: 'hero',
@@ -815,6 +903,7 @@ export const REGISTRY = {
   },
   'hero.video_pause_aria': {
     en: 'Pause the video',
+    vi: 'Dừng video',
     maxLength: 40,
     context: 'Screen-reader name of the button under the hero’s headline that stops the background video.',
     screen: 'hero',
@@ -822,6 +911,7 @@ export const REGISTRY = {
   },
   'hero.video_play_aria': {
     en: 'Play the video',
+    vi: 'Phát video',
     maxLength: 40,
     context: 'Screen-reader name of the same button once the background video is paused: it plays it again.',
     screen: 'hero',
@@ -830,6 +920,7 @@ export const REGISTRY = {
   // ── The film dialog (spec §5.2 sections[film]): a client component of the chrome (CLIENT_KEYS) ──
   'film.aria': {
     en: 'Furama Dining World film',
+    vi: 'Phim Furama Dining World',
     maxLength: 60,
     context: 'Screen-reader name of the film dialog.',
     screen: 'hero',
@@ -837,6 +928,7 @@ export const REGISTRY = {
   },
   'film.close_aria': {
     en: 'Close film',
+    vi: 'Đóng phim',
     maxLength: 40,
     context: 'Screen-reader name of the × button and the backdrop that close the film dialog.',
     screen: 'hero',
@@ -844,6 +936,7 @@ export const REGISTRY = {
   },
   'film.title': {
     en: 'One Furama Dining World',
+    vi: 'Một Furama Dining World',
     maxLength: 40,
     context: 'Film dialog, the large title over the poster while no video link is set.',
     screen: 'hero',
@@ -851,6 +944,7 @@ export const REGISTRY = {
   },
   'film.coming_soon': {
     en: 'THE FILM · COMING SOON',
+    vi: 'PHIM · SẮP RA MẮT',
     maxLength: 40,
     context: 'Film dialog, the small line under the title while no video link is set. Capitals.',
     screen: 'hero',
@@ -858,6 +952,7 @@ export const REGISTRY = {
   },
   'film.player_title': {
     en: 'One Furama Dining World — the film',
+    vi: 'Một Furama Dining World — bộ phim',
     maxLength: 80,
     context: 'Screen-reader name of the video player (YouTube or Vimeo) inside the film dialog.',
     screen: 'hero',
@@ -867,6 +962,7 @@ export const REGISTRY = {
   // home page and of "More at …" on a restaurant page (CLIENT_KEYS) ──
   'restaurants.title': {
     en: 'Our Restaurants',
+    vi: 'Nhà hàng của chúng tôi',
     maxLength: 32,
     context: 'Home page, title of the restaurants section (the grid of every restaurant, with the finder’s filters).',
     screen: 'restaurants',
@@ -874,6 +970,7 @@ export const REGISTRY = {
   },
   'restaurants.view_all': {
     en: 'VIEW ALL RESTAURANTS',
+    vi: 'XEM TẤT CẢ NHÀ HÀNG',
     maxLength: 32,
     context: 'Home page, the link beside the restaurants title; clears the filters and shows every restaurant. Capitals.',
     screen: 'restaurants',
@@ -881,6 +978,7 @@ export const REGISTRY = {
   },
   'restaurants.showing': {
     en: 'Showing {shown} of {total} restaurants',
+    vi: 'Đang hiện {shown} / {total} nhà hàng',
     maxLength: 60,
     vars: ['shown', 'total'],
     context: 'Home page, above the filtered restaurants: how many match the filters. {shown} and {total} are numbers; keep both.',
@@ -889,6 +987,7 @@ export const REGISTRY = {
   },
   'restaurants.no_matches': {
     en: 'No matches',
+    vi: 'Không có kết quả',
     maxLength: 32,
     context: 'Home page, above the restaurants when the filters match none.',
     screen: 'restaurants',
@@ -896,6 +995,7 @@ export const REGISTRY = {
   },
   'restaurants.remove_filter_sr': {
     en: ', remove filter',
+    vi: ', bỏ bộ lọc',
     maxLength: 40,
     context: 'Screen readers only, after a filter’s name on its chip button (“Vietnamese, remove filter”). Starts with a comma and a space.',
     screen: 'restaurants',
@@ -903,6 +1003,7 @@ export const REGISTRY = {
   },
   'restaurants.clear_all': {
     en: 'CLEAR ALL',
+    vi: 'XOÁ TẤT CẢ',
     maxLength: 24,
     context: 'Home page, the button that removes every restaurant filter. Capitals.',
     screen: 'restaurants',
@@ -910,6 +1011,7 @@ export const REGISTRY = {
   },
   'restaurants.empty_title': {
     en: 'No restaurants match these filters',
+    vi: 'Không có nhà hàng nào khớp bộ lọc',
     maxLength: 60,
     context: 'Home page, the title of the empty state when the filters match no restaurant.',
     screen: 'restaurants',
@@ -917,6 +1019,7 @@ export const REGISTRY = {
   },
   'restaurants.empty_lede': {
     en: 'Try another cuisine, occasion or destination.',
+    vi: 'Thử chọn ẩm thực, dịp hoặc điểm đến khác.',
     maxLength: 100,
     context: 'Home page, one sentence under the empty state’s title.',
     screen: 'restaurants',
@@ -924,6 +1027,7 @@ export const REGISTRY = {
   },
   'restaurants.show_all': {
     en: 'SHOW ALL RESTAURANTS',
+    vi: 'HIỆN TẤT CẢ NHÀ HÀNG',
     maxLength: 32,
     context: 'Home page, the empty state’s button that clears the filters. Capitals.',
     screen: 'restaurants',
@@ -931,6 +1035,7 @@ export const REGISTRY = {
   },
   'restaurants.card_view': {
     en: 'View restaurant',
+    vi: 'Xem nhà hàng',
     maxLength: 24,
     context: 'A restaurant card, the tag on a restaurant with its own page; the card opens it. An arrow follows it.',
     screen: 'restaurants',
@@ -938,6 +1043,7 @@ export const REGISTRY = {
   },
   'restaurants.card_reserve': {
     en: 'Reserve a table',
+    vi: 'Đặt bàn',
     maxLength: 24,
     context: 'A restaurant card, the tag on a restaurant without its own page that books online; the card opens the reservation form. An arrow follows it.',
     screen: 'restaurants',
@@ -948,6 +1054,7 @@ export const REGISTRY = {
   // the highlights' default title on the server ──
   'detail.back_all': {
     en: 'ALL RESTAURANTS',
+    vi: 'TẤT CẢ NHÀ HÀNG',
     maxLength: 32,
     context: 'Restaurant page, the back button above the name (desktop); returns to the home page’s restaurants. Capitals; an arrow comes before it.',
     screen: 'restaurants',
@@ -955,6 +1062,7 @@ export const REGISTRY = {
   },
   'detail.back': {
     en: 'BACK',
+    vi: 'QUAY LẠI',
     maxLength: 16,
     context: 'Restaurant page on a phone, the small back button floating over the photo. Capitals; an arrow comes before it.',
     screen: 'restaurants',
@@ -962,6 +1070,7 @@ export const REGISTRY = {
   },
   'detail.story_label': {
     en: 'Brand Story',
+    vi: 'Câu chuyện thương hiệu',
     maxLength: 40,
     context: 'Restaurant page, small label above the restaurant’s story, when the restaurant has none of its own (its editor’s “Nhãn câu chuyện”).',
     screen: 'restaurants',
@@ -969,6 +1078,7 @@ export const REGISTRY = {
   },
   'detail.call': {
     en: 'CALL',
+    vi: 'GỌI',
     maxLength: 16,
     context: 'Restaurant page and its phone tab bar, the link that calls the restaurant. Capitals.',
     screen: 'restaurants',
@@ -976,6 +1086,7 @@ export const REGISTRY = {
   },
   'detail.map': {
     en: 'MAP',
+    vi: 'BẢN ĐỒ',
     maxLength: 16,
     context: 'Restaurant page and its phone tab bar, the link that opens the map in a new tab. Capitals.',
     screen: 'restaurants',
@@ -983,6 +1094,7 @@ export const REGISTRY = {
   },
   'detail.menu': {
     en: 'MENU',
+    vi: 'THỰC ĐƠN',
     maxLength: 16,
     context: 'Restaurant page and its phone tab bar: opens the menu PDF, or scrolls to the highlights without one. Capitals.',
     screen: 'restaurants',
@@ -990,6 +1102,7 @@ export const REGISTRY = {
   },
   'detail.actions_aria': {
     en: 'Restaurant actions',
+    vi: 'Thao tác nhà hàng',
     maxLength: 60,
     context: 'Screen-reader name of the phone tab bar of a restaurant page (CALL, MAP, MENU, RESERVE).',
     screen: 'restaurants',
@@ -997,6 +1110,7 @@ export const REGISTRY = {
   },
   'detail.highlights_title': {
     en: 'At {name}',
+    vi: 'Tại {name}',
     maxLength: 60,
     vars: ['name'],
     context:
@@ -1006,6 +1120,7 @@ export const REGISTRY = {
   },
   'detail.more_title': {
     en: 'More at {destination}',
+    vi: 'Thêm tại {destination}',
     maxLength: 60,
     vars: ['destination'],
     context: 'Restaurant page, the title above the other restaurants of the same destination. {destination} is its name; keep it.',
@@ -1014,6 +1129,7 @@ export const REGISTRY = {
   },
   'detail.more_all': {
     en: 'ALL RESTAURANTS',
+    vi: 'TẤT CẢ NHÀ HÀNG',
     maxLength: 32,
     context: 'Restaurant page, the link beside “More at …” to every restaurant on the home page. Capitals.',
     screen: 'restaurants',
@@ -1023,6 +1139,7 @@ export const REGISTRY = {
   // section (page props); the rows themselves are experiences rows ──
   'experiences.eyebrow': {
     en: 'Experiences',
+    vi: 'Trải nghiệm',
     maxLength: 32,
     context: 'Home page, small line above the Experiences title (beside a large photo).',
     screen: 'experiences',
@@ -1030,6 +1147,7 @@ export const REGISTRY = {
   },
   'experiences.title_1': {
     en: 'More than a meal.',
+    vi: 'Hơn cả một bữa ăn.',
     maxLength: 40,
     context: 'Home page, Experiences title, first of two lines (each line is one short sentence).',
     screen: 'experiences',
@@ -1037,6 +1155,7 @@ export const REGISTRY = {
   },
   'experiences.title_2': {
     en: 'A meaningful experience.',
+    vi: 'Một trải nghiệm đáng nhớ.',
     maxLength: 40,
     context: 'Home page, Experiences title, second line.',
     screen: 'experiences',
@@ -1046,6 +1165,7 @@ export const REGISTRY = {
   // section (page props); the chips themselves are cuisines rows ──
   'cuisines.title': {
     en: 'Explore by Cuisine',
+    vi: 'Khám phá theo ẩm thực',
     maxLength: 40,
     context: 'Home page, title of the cuisine rail (round pictures that filter the restaurants by cuisine).',
     screen: 'cuisines',
@@ -1053,6 +1173,7 @@ export const REGISTRY = {
   },
   'cuisines.all': {
     en: 'ALL CUISINES',
+    vi: 'TẤT CẢ ẨM THỰC',
     maxLength: 32,
     context: 'Home page, the link beside the cuisine title; clears the cuisine filter and scrolls to the restaurants. Capitals.',
     screen: 'cuisines',
@@ -1062,6 +1183,7 @@ export const REGISTRY = {
   // the section (page props); the cards themselves are destinations rows ──
   'destinations.title': {
     en: 'Our Destinations',
+    vi: 'Điểm đến',
     maxLength: 32,
     context: 'Home page, title of the destinations section (one card per place: the resort, the dining house …).',
     screen: 'destinations',
@@ -1069,6 +1191,7 @@ export const REGISTRY = {
   },
   'destinations.lede': {
     en: 'Different places. One culinary family.',
+    vi: 'Mỗi nơi một vẻ. Chung một gia đình ẩm thực.',
     maxLength: 100,
     context: 'Home page, one sentence under the destinations title.',
     screen: 'destinations',
@@ -1076,6 +1199,7 @@ export const REGISTRY = {
   },
   'destinations.count': {
     en: '{count, plural, one {# venue} other {# venues}}',
+    vi: '{count, plural, other {# địa điểm}}',
     maxLength: 80,
     vars: ['count'],
     context:
@@ -1087,6 +1211,7 @@ export const REGISTRY = {
   // (CLIENT_KEYS). The menu's own items are nav_items rows (content/navigation) ──
   'ui.search': {
     en: 'SEARCH',
+    vi: 'TÌM KIẾM',
     maxLength: 24,
     context: 'Header (desktop), the button that opens the search dialog. Capitals.',
     screen: 'ui-text',
@@ -1094,6 +1219,7 @@ export const REGISTRY = {
   },
   'ui.reserve': {
     en: 'RESERVE',
+    vi: 'ĐẶT BÀN',
     maxLength: 16,
     context: 'The gold button that opens the reservation form: in the header (desktop and phone) and in the phone tab bar. Capitals; keep it short.',
     screen: 'ui-text',
@@ -1101,6 +1227,7 @@ export const REGISTRY = {
   },
   'ui.reserve_table': {
     en: 'RESERVE A TABLE',
+    vi: 'ĐẶT BÀN',
     maxLength: 32,
     context: 'The longer reservation button: the phone menu’s, a restaurant page’s (an arrow follows it there), and the title above the reservation form. Capitals.',
     screen: 'ui-text',
@@ -1108,6 +1235,7 @@ export const REGISTRY = {
   },
   'ui.search_link': {
     en: 'Search',
+    vi: 'Tìm kiếm',
     maxLength: 24,
     context: 'Phone menu, the last link (after the sections), which opens the search dialog. An arrow follows it.',
     screen: 'ui-text',
@@ -1115,6 +1243,7 @@ export const REGISTRY = {
   },
   'ui.nav_aria': {
     en: 'Main',
+    vi: 'Điều hướng chính',
     maxLength: 40,
     context: 'Screen-reader name of the header’s list of section links (desktop).',
     screen: 'ui-text',
@@ -1122,6 +1251,7 @@ export const REGISTRY = {
   },
   'ui.language_aria': {
     en: 'Language',
+    vi: 'Ngôn ngữ',
     maxLength: 40,
     context: 'Screen-reader name of the header’s language list (desktop).',
     screen: 'ui-text',
@@ -1129,6 +1259,7 @@ export const REGISTRY = {
   },
   'ui.preview_banner': {
     en: 'Preview — this language is not open to guests yet.',
+    vi: 'Xem trước — ngôn ngữ này chưa mở cho khách.',
     maxLength: 80,
     context: 'Bar at the top of a page staff preview in a language that is still off (Draft Mode). Only staff see it.',
     screen: 'ui-text',
@@ -1136,6 +1267,7 @@ export const REGISTRY = {
   },
   'ui.preview_exit': {
     en: 'Exit preview',
+    vi: 'Thoát xem trước',
     maxLength: 30,
     context: 'Link in the preview bar that leaves Draft Mode. Keep short.',
     screen: 'ui-text',
@@ -1143,6 +1275,7 @@ export const REGISTRY = {
   },
   'ui.open_menu': {
     en: 'Open menu',
+    vi: 'Mở menu',
     maxLength: 40,
     context: 'Screen-reader name of the phone header’s menu button (three lines).',
     screen: 'ui-text',
@@ -1150,6 +1283,7 @@ export const REGISTRY = {
   },
   'ui.menu_aria': {
     en: 'Menu',
+    vi: 'Menu',
     maxLength: 40,
     context: 'Screen-reader name of the phone menu dialog.',
     screen: 'ui-text',
@@ -1157,6 +1291,7 @@ export const REGISTRY = {
   },
   'ui.close_menu': {
     en: 'Close menu',
+    vi: 'Đóng menu',
     maxLength: 40,
     context: 'Screen-reader name of the × button that closes the phone menu.',
     screen: 'ui-text',
@@ -1164,6 +1299,7 @@ export const REGISTRY = {
   },
   'ui.sections_aria': {
     en: 'Sections',
+    vi: 'Các mục',
     maxLength: 40,
     context: 'Screen-reader name of the list of section links in the phone menu, and of the phone tab bar on the home page.',
     screen: 'ui-text',
@@ -1171,6 +1307,7 @@ export const REGISTRY = {
   },
   'ui.tab_explore': {
     en: 'EXPLORE',
+    vi: 'KHÁM PHÁ',
     maxLength: 16,
     context: 'Home page, phone tab bar: back to the top of the page. Capitals; three tabs share the bar.',
     screen: 'ui-text',
@@ -1178,6 +1315,7 @@ export const REGISTRY = {
   },
   'ui.tab_restaurants': {
     en: 'RESTAURANTS',
+    vi: 'NHÀ HÀNG',
     maxLength: 16,
     context: 'Home page, phone tab bar: scrolls to the restaurants. Capitals; three tabs share the bar.',
     screen: 'ui-text',
@@ -1186,6 +1324,7 @@ export const REGISTRY = {
   // ── Words several parts of the site share (spec §7.2 ui-text: common.*): chrome and client sections (CLIENT_KEYS) ──
   'common.coming_soon': {
     en: 'Coming soon',
+    vi: 'Sắp ra mắt',
     maxLength: 24,
     context: 'A place still to open: the teaser destination card, and the finder’s “More cities” choice. Short.',
     screen: 'ui-text',
@@ -1193,6 +1332,7 @@ export const REGISTRY = {
   },
   'common.not_found': {
     en: 'Page not found',
+    vi: 'Không tìm thấy trang',
     maxLength: 40,
     context: 'The page for an address that does not exist (an unknown restaurant), inside the site’s header and footer: its title.',
     screen: 'ui-text',
@@ -1200,6 +1340,7 @@ export const REGISTRY = {
   },
   'common.back_home': {
     en: 'Back to Furama Dining World',
+    vi: 'Về trang chủ Furama Dining World',
     maxLength: 40,
     context: 'The page for an address that does not exist: the link back to the home page.',
     screen: 'ui-text',
@@ -1207,6 +1348,7 @@ export const REGISTRY = {
   },
   'common.close': {
     en: 'Close',
+    vi: 'Đóng',
     maxLength: 20,
     context: 'Screen-reader name of the × buttons and the dark backdrop that close the reservation form and the phone finder.',
     screen: 'ui-text',
@@ -1214,6 +1356,7 @@ export const REGISTRY = {
   },
   'common.today': {
     en: 'Today',
+    vi: 'Hôm nay',
     maxLength: 20,
     context: 'The first day of the reservation form’s date strip, and its note in the booking bar’s date list.',
     screen: 'ui-text',
@@ -1221,6 +1364,7 @@ export const REGISTRY = {
   },
   'common.tomorrow': {
     en: 'Tomorrow',
+    vi: 'Ngày mai',
     maxLength: 20,
     context: 'The second day’s note in the booking bar’s date list.',
     screen: 'ui-text',
@@ -1229,6 +1373,7 @@ export const REGISTRY = {
   // ── Reservation form fields (client: SiteProvider) ──
   'form.name': {
     en: 'Full name *',
+    vi: 'Họ và tên *',
     maxLength: 40,
     context: 'Reservation form, caption of the name field; the * marks it as required.',
     screen: 'ui-text',
@@ -1236,6 +1381,7 @@ export const REGISTRY = {
   },
   'form.phone': {
     en: 'Phone *',
+    vi: 'Số điện thoại *',
     maxLength: 40,
     context: 'Reservation form, caption of the phone field; the * marks it as required.',
     screen: 'ui-text',
@@ -1243,6 +1389,7 @@ export const REGISTRY = {
   },
   'form.email': {
     en: 'Email',
+    vi: 'Email',
     maxLength: 40,
     context: 'Reservation form, caption of the email field (optional).',
     screen: 'ui-text',
@@ -1250,6 +1397,7 @@ export const REGISTRY = {
   },
   'form.note': {
     en: 'Special requests',
+    vi: 'Yêu cầu đặc biệt',
     maxLength: 40,
     context: 'Reservation form, caption of the free-text field for the guest’s requests.',
     screen: 'ui-text',
@@ -1257,6 +1405,7 @@ export const REGISTRY = {
   },
   'form.ph_name': {
     en: 'Nguyễn Minh Anh',
+    vi: 'Nguyễn Minh Anh',
     maxLength: 60,
     context: 'Reservation form, the example name shown greyed in the empty name field.',
     screen: 'ui-text',
@@ -1264,6 +1413,7 @@ export const REGISTRY = {
   },
   'form.ph_phone': {
     en: '+84 905 000 000',
+    vi: '0905 000 000',
     maxLength: 40,
     context: 'Reservation form, the example number shown greyed in the empty phone field.',
     screen: 'ui-text',
@@ -1271,6 +1421,7 @@ export const REGISTRY = {
   },
   'form.ph_email': {
     en: 'you@example.com',
+    vi: 'ban@example.com',
     maxLength: 60,
     context: 'Reservation form, the example address shown greyed in the empty email field.',
     screen: 'ui-text',
@@ -1278,6 +1429,7 @@ export const REGISTRY = {
   },
   'form.ph_note': {
     en: 'Occasion, dietary needs, seating preference',
+    vi: 'Dịp đặc biệt, chế độ ăn, chỗ ngồi mong muốn',
     maxLength: 80,
     context: 'Reservation form, the example shown greyed in the empty requests field: what a guest may write there.',
     screen: 'ui-text',
@@ -1287,6 +1439,7 @@ export const REGISTRY = {
   'footer.tagline': {
     // furamavietnam.com: "Culinary Heritage Resort in Danang", established in 1997.
     en: 'CULINARY HERITAGE | DA NANG | SINCE 1997',
+    vi: 'DI SẢN ẨM THỰC | ĐÀ NẴNG | TỪ 1997',
     maxLength: 60,
     context: 'The line under the FURAMA DINING WORLD wordmark in the footer, and at the foot of the phone menu. Capitals, three short parts.',
     screen: 'contact',
@@ -1294,6 +1447,7 @@ export const REGISTRY = {
   },
   'footer.member': {
     en: 'BY FURAMA RESORT DANANG',
+    vi: 'THUỘC FURAMA RESORT DANANG',
     maxLength: 40,
     context: 'The small line at the right of the footer’s top band, under the social links: who runs the restaurants. Capitals.',
     screen: 'contact',
@@ -1301,6 +1455,7 @@ export const REGISTRY = {
   },
   'social.facebook': {
     en: 'FACEBOOK',
+    vi: 'FACEBOOK',
     maxLength: 20,
     context: 'The footer’s link to the Facebook page, by the name of the platform (social_links.platform facebook). Capitals, like the other links.',
     screen: 'contact',
@@ -1308,6 +1463,7 @@ export const REGISTRY = {
   },
   'social.instagram': {
     en: 'INSTAGRAM',
+    vi: 'INSTAGRAM',
     maxLength: 20,
     context: 'The footer’s link to the Instagram page, by the name of the platform (social_links.platform instagram). Capitals, like the other links.',
     screen: 'contact',
@@ -1315,6 +1471,7 @@ export const REGISTRY = {
   },
   'social.youtube': {
     en: 'YOUTUBE',
+    vi: 'YOUTUBE',
     maxLength: 20,
     context: 'The footer’s link to the YouTube page, by the name of the platform (social_links.platform youtube). Capitals, like the other links.',
     screen: 'contact',
@@ -1322,6 +1479,7 @@ export const REGISTRY = {
   },
   'social.tiktok': {
     en: 'TIKTOK',
+    vi: 'TIKTOK',
     maxLength: 20,
     context: 'The footer’s link to the TikTok page, by the name of the platform (social_links.platform tiktok). Capitals, like the other links.',
     screen: 'contact',
@@ -1329,6 +1487,7 @@ export const REGISTRY = {
   },
   'social.zalo': {
     en: 'ZALO',
+    vi: 'ZALO',
     maxLength: 20,
     context: 'The footer’s link to the Zalo page, by the name of the platform (social_links.platform zalo). Capitals, like the other links.',
     screen: 'contact',
@@ -1336,6 +1495,7 @@ export const REGISTRY = {
   },
   'social.x': {
     en: 'X',
+    vi: 'X',
     maxLength: 20,
     context: 'The footer’s link to the X (Twitter) page, by the name of the platform (social_links.platform x). Capitals, like the other links.',
     screen: 'contact',
@@ -1343,6 +1503,7 @@ export const REGISTRY = {
   },
   'social.tripadvisor': {
     en: 'TRIPADVISOR',
+    vi: 'TRIPADVISOR',
     maxLength: 20,
     context: 'The footer’s link to the Tripadvisor page, by the name of the platform (social_links.platform tripadvisor). Capitals, like the other links.',
     screen: 'contact',
@@ -1350,6 +1511,7 @@ export const REGISTRY = {
   },
   'social.wechat': {
     en: 'WECHAT',
+    vi: 'WECHAT',
     maxLength: 20,
     context: 'The footer’s link to the WeChat page, by the name of the platform (social_links.platform wechat). Capitals, like the other links.',
     screen: 'contact',
@@ -1357,6 +1519,7 @@ export const REGISTRY = {
   },
   'social.kakao': {
     en: 'KAKAOTALK',
+    vi: 'KAKAOTALK',
     maxLength: 20,
     context: 'The footer’s link to the KakaoTalk page, by the name of the platform (social_links.platform kakao). Capitals, like the other links.',
     screen: 'contact',
@@ -1364,6 +1527,7 @@ export const REGISTRY = {
   },
   'social.line': {
     en: 'LINE',
+    vi: 'LINE',
     maxLength: 20,
     context: 'The footer’s link to the LINE page, by the name of the platform (social_links.platform line). Capitals, like the other links.',
     screen: 'contact',
@@ -1372,6 +1536,7 @@ export const REGISTRY = {
   // ── Metadata: read on the server by generateMetadata, never sent to the browser; the SEO screen ──
   'seo.home_title': {
     en: 'Furama Dining World — Many Flavours. Many Destinations.',
+    vi: 'Furama Dining World — Muôn vị ẩm thực. Muôn điểm đến.',
     maxLength: 70,
     context: 'The browser tab title of the home page, and what search results show as its link. About 60 characters at most is best for search results.',
     screen: 'seo',
@@ -1379,6 +1544,7 @@ export const REGISTRY = {
   },
   'seo.home_description': {
     en: 'From beachfront dining to vibrant city destinations – discover the restaurants, cuisines and people of Furama Dining World in Da Nang.',
+    vi: 'Từ bữa tối bên bờ biển đến những điểm đến sôi động giữa lòng phố — khám phá nhà hàng, ẩm thực và con người Furama Dining World tại Đà Nẵng.',
     maxLength: 200,
     context:
       'The home page’s description for search results (meta description); also the description of a restaurant page that has none of its own. About 160 characters at most is best.',
@@ -1387,6 +1553,7 @@ export const REGISTRY = {
   },
   'seo.og_title': {
     en: 'Furama Dining World',
+    vi: 'Furama Dining World',
     maxLength: 70,
     context: 'The title a shared link to the home page shows (Facebook, Zalo, messaging apps: og:title).',
     screen: 'seo',
@@ -1394,6 +1561,7 @@ export const REGISTRY = {
   },
   'seo.og_description': {
     en: 'Furama Dining World — the restaurants of Furama Resort Danang, Furama Dining House and Dining Village Mega Market in Da Nang.',
+    vi: 'Furama Dining World — hệ thống nhà hàng của Furama Resort Danang, Furama Dining House và Dining Village Mega Market tại Đà Nẵng.',
     maxLength: 200,
     context: 'The description a shared link to the home page shows under its title (og:description).',
     screen: 'seo',
@@ -1401,6 +1569,7 @@ export const REGISTRY = {
   },
   'seo.page_title': {
     en: '{page} — Furama Dining World',
+    vi: '{page} — Furama Dining World',
     maxLength: 70,
     vars: ['page'],
     context: 'The tab title of a page other than the home page: a restaurant page without an SEO title of its own, the privacy policy. {page} is the page’s name (the restaurant’s, “Privacy policy”); keep it.',
@@ -1409,6 +1578,7 @@ export const REGISTRY = {
   },
   'seo.not_found_title': {
     en: 'Page not found — Furama Dining World',
+    vi: 'Không tìm thấy trang — Furama Dining World',
     maxLength: 70,
     context: 'The tab title of the page shown for an address that does not exist (an unknown restaurant).',
     screen: 'seo',
@@ -1417,6 +1587,7 @@ export const REGISTRY = {
   // ── Search overlay: a client component of the chrome (CLIENT_KEYS) ──
   'search.aria': {
     en: 'Search',
+    vi: 'Tìm kiếm',
     maxLength: 40,
     context: 'Screen-reader name of the search dialog.',
     screen: 'ui-text',
@@ -1424,6 +1595,7 @@ export const REGISTRY = {
   },
   'search.close': {
     en: 'Close search',
+    vi: 'Đóng tìm kiếm',
     maxLength: 40,
     context: 'Screen-reader name of the × button that closes the search dialog.',
     screen: 'ui-text',
@@ -1431,6 +1603,7 @@ export const REGISTRY = {
   },
   'search.placeholder': {
     en: 'Search restaurants, cuisines, places',
+    vi: 'Tìm nhà hàng, ẩm thực, địa điểm',
     maxLength: 60,
     context: 'Search dialog, grey hint inside the empty search box; also its screen-reader name.',
     screen: 'ui-text',
@@ -1438,6 +1611,7 @@ export const REGISTRY = {
   },
   'search.popular': {
     en: 'POPULAR CUISINES',
+    vi: 'ẨM THỰC PHỔ BIẾN',
     maxLength: 32,
     context: 'Search dialog, label above the cuisine chips shown before the guest types. Capitals.',
     screen: 'ui-text',
@@ -1445,6 +1619,7 @@ export const REGISTRY = {
   },
   'search.results': {
     en: '{count, plural, one {# RESULT} other {# RESULTS}}',
+    vi: '{count, plural, other {# KẾT QUẢ}}',
     maxLength: 80,
     vars: ['count'],
     context: 'Search dialog, how many restaurants match. ICU plural: keep {count, plural, …} and # (the number). Capitals.',
@@ -1453,6 +1628,7 @@ export const REGISTRY = {
   },
   'search.view': {
     en: 'View',
+    vi: 'Xem',
     maxLength: 16,
     context: 'Search result action for a restaurant with its own page. An arrow follows it.',
     screen: 'ui-text',
@@ -1460,6 +1636,7 @@ export const REGISTRY = {
   },
   'search.reserve': {
     en: 'Reserve',
+    vi: 'Đặt bàn',
     maxLength: 16,
     context: 'Search result action that opens the reservation form. An arrow follows it.',
     screen: 'ui-text',
@@ -1467,6 +1644,7 @@ export const REGISTRY = {
   },
   'search.none': {
     en: 'No matches for “{query}”. Try a cuisine such as Vietnamese or Italian.',
+    vi: 'Không có kết quả cho “{query}”. Thử tìm một nền ẩm thực như Việt Nam hoặc Ý.',
     maxLength: 160,
     vars: ['query'],
     context: 'Search dialog, nothing matches. {query} is what the guest typed; keep it inside the quotes.',
@@ -1476,6 +1654,7 @@ export const REGISTRY = {
   // ── Meals (service_periods.meal) and the finder's "all" choices: chrome and booking form (CLIENT_KEYS) ──
   'meal.breakfast': {
     en: 'Breakfast',
+    vi: 'Bữa sáng',
     maxLength: 20,
     context: 'Name of the Breakfast service: finder Occasion option, filter chip, time group in the reservation form, booking bar note.',
     screen: 'booking',
@@ -1483,6 +1662,7 @@ export const REGISTRY = {
   },
   'meal.lunch': {
     en: 'Lunch',
+    vi: 'Bữa trưa',
     maxLength: 20,
     context: 'Name of the Lunch service (same places as meal.breakfast).',
     screen: 'booking',
@@ -1490,6 +1670,7 @@ export const REGISTRY = {
   },
   'meal.dinner': {
     en: 'Dinner',
+    vi: 'Bữa tối',
     maxLength: 20,
     context: 'Name of the Dinner service (same places as meal.breakfast).',
     screen: 'booking',
@@ -1497,6 +1678,7 @@ export const REGISTRY = {
   },
   'meal.drinks': {
     en: 'Drinks',
+    vi: 'Đồ uống',
     maxLength: 20,
     context: 'Name of the Drinks service, a bar or lounge sitting (same places as meal.breakfast).',
     screen: 'booking',
@@ -1504,6 +1686,7 @@ export const REGISTRY = {
   },
   'finder.all_cuisines': {
     en: 'All cuisines',
+    vi: 'Tất cả ẩm thực',
     maxLength: 32,
     context: 'Finder, Cuisine dropdown: the choice that does not filter.',
     screen: 'booking',
@@ -1511,6 +1694,7 @@ export const REGISTRY = {
   },
   'finder.any_occasion': {
     en: 'Any occasion',
+    vi: 'Mọi bữa',
     maxLength: 32,
     context: 'Finder, Occasion dropdown: the choice that does not filter by meal.',
     screen: 'booking',
@@ -1518,6 +1702,7 @@ export const REGISTRY = {
   },
   'finder.any_destination': {
     en: 'Any destination',
+    vi: 'Mọi điểm đến',
     maxLength: 32,
     context: 'Finder, Destination dropdown: the choice that does not filter by place.',
     screen: 'booking',
@@ -1525,6 +1710,7 @@ export const REGISTRY = {
   },
   'finder.title': {
     en: 'Find a restaurant',
+    vi: 'Tìm nhà hàng',
     maxLength: 40,
     context: 'The finder under the home page’s hero: its screen-reader name on desktop; on a phone, the title of the finder sheet.',
     screen: 'booking',
@@ -1532,6 +1718,7 @@ export const REGISTRY = {
   },
   'finder.location': {
     en: 'Location',
+    vi: 'Thành phố',
     maxLength: 24,
     context: 'Finder, caption of the city choice (desktop).',
     screen: 'booking',
@@ -1539,6 +1726,7 @@ export const REGISTRY = {
   },
   'finder.cuisine': {
     en: 'Cuisine',
+    vi: 'Ẩm thực',
     maxLength: 24,
     context: 'Finder, caption of the cuisine choice (desktop dropdown and phone chips).',
     screen: 'booking',
@@ -1546,6 +1734,7 @@ export const REGISTRY = {
   },
   'finder.occasion': {
     en: 'Occasion',
+    vi: 'Bữa',
     maxLength: 24,
     context: 'Finder, caption of the meal choice (desktop dropdown and phone chips).',
     screen: 'booking',
@@ -1553,6 +1742,7 @@ export const REGISTRY = {
   },
   'finder.destination': {
     en: 'Destination',
+    vi: 'Điểm đến',
     maxLength: 24,
     context: 'Finder, caption of the destination choice (desktop dropdown and phone chips).',
     screen: 'booking',
@@ -1560,6 +1750,7 @@ export const REGISTRY = {
   },
   'finder.city': {
     en: 'Da Nang',
+    vi: 'Đà Nẵng',
     maxLength: 30,
     context: 'Finder, the one city the site covers today (the Location choice).',
     screen: 'booking',
@@ -1567,6 +1758,7 @@ export const REGISTRY = {
   },
   'finder.more_cities': {
     en: 'More cities',
+    vi: 'Thành phố khác',
     maxLength: 30,
     context: 'Finder, Location choice: the greyed-out option for cities to come; common.coming_soon is its note.',
     screen: 'booking',
@@ -1574,6 +1766,7 @@ export const REGISTRY = {
   },
   'finder.submit': {
     en: 'SHOW RESTAURANTS',
+    vi: 'XEM NHÀ HÀNG',
     maxLength: 30,
     context: 'Finder, the button that filters the restaurant list and scrolls to it (an arrow follows it). Capitals.',
     screen: 'booking',

@@ -25,8 +25,8 @@ export type Booking = {
   guests: number;
 };
 
-/** "Thu, 1 Oct". */
-export const fmtDay = (d: IsoDate) => formatDay(d).label;
+/** "Thu, 1 Oct", in the guest's language ("Thứ 5, 1 thg 10"). */
+export const fmtDay = (d: IsoDate, locale?: string) => formatDay(d, locale).label;
 
 export const findRestaurant = (restaurants: Restaurant[], id: string) =>
   restaurants.find((r) => r.id === id);

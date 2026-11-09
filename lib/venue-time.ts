@@ -3,6 +3,8 @@
  * Runs in the browser and on the server alike, so both agree on "today" and
  * on how long until a sitting, whatever timezone either machine is set to.
  */
+import { toBcp47 } from '@/lib/i18n/locales';
+
 export const VENUE_TZ = 'Asia/Ho_Chi_Minh';
 
 /** A calendar date as YYYY-MM-DD. */
@@ -65,10 +67,34 @@ const partOf = (options: Intl.DateTimeFormatOptions) =>
   new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', ...options });
 const WEEKDAY = partOf({ weekday: 'short' });
 const MONTH = partOf({ month: 'short' });
+const dayFormats = new Map<string, Intl.DateTimeFormat>();
 
-/** Display pieces for a date ("Thu", "1", "Oct") and the joined "Thu, 1 Oct". */
-export function formatDay(d: IsoDate) {
+/** The guest's language's own short date ("Thứ 3, 10 thg 11"), or null for English and a language Intl has no data for. */
+function localDay(at: Date, locale: string) {
+  if (locale === 'en') return null;
+  let f = dayFormats.get(locale);
+  if (!f) {
+    try {
+      if (Intl.DateTimeFormat.supportedLocalesOf([toBcp47(locale)]).length === 0) return null;
+      f = new Intl.DateTimeFormat(toBcp47(locale), { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
+    } catch {
+      return null;
+    }
+    dayFormats.set(locale, f);
+  }
+  const parts = f.formatToParts(at);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? '';
+  return { weekday: part('weekday'), day: part('day'), month: part('month'), label: f.format(at) };
+}
+
+/**
+ * Display pieces for a date ("Thu", "1", "Oct") and the joined "Thu, 1 Oct", in the guest's language: English as
+ * en-US spells the parts, another language as Intl writes it ("Thứ 5", "1", "thg 10", "Thứ 5, 1 thg 10").
+ */
+export function formatDay(d: IsoDate, locale = 'en') {
   const at = new Date(utcMidnight(d));
+  const local = localDay(at, locale);
+  if (local) return local;
   const weekday = WEEKDAY.format(at);
   const month = MONTH.format(at);
   const day = String(at.getUTCDate());

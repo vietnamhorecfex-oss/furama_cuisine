@@ -64,8 +64,11 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)('content strings per language (d
   });
 
   it('loads a language: empty and "Chưa dịch" without a row, the registry’s Vietnamese where it has one', async () => {
+    // The agreed policy text has no registry Vietnamese (it waits for a reviewed translation).
+    const legal = await screen('legal', 'vi');
+    expect(legal.field('legal.title')).toMatchObject({ value: '', overridden: false, token: '', english: REGISTRY['legal.title'].en, state: 'missing' });
     const stories = await screen('stories', 'vi');
-    expect(stories.field('stories.title')).toMatchObject({ value: '', overridden: false, token: '', english: REGISTRY['stories.title'].en, state: 'missing' });
+    expect(stories.field('stories.title')).toMatchObject({ value: REGISTRY['stories.title'].vi, overridden: false, token: '', state: 'reviewed' });
     const emails = await screen('emails', 'vi');
     const staff = emails.field('email.staff.new.heading');
     expect(staff).toMatchObject({ value: REGISTRY['email.staff.new.heading'].vi, overridden: false, state: 'reviewed' });
@@ -89,9 +92,10 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)('content strings per language (d
     expect((await screen('stories', 'vi')).field('stories.title')).toMatchObject({ english: 'Stories from the Kitchens', state: 'stale' });
 
     expect(await saveStrings(getPool(), LAN, (await screen('stories', 'vi')).input({ 'stories.title': '' }))).toMatchObject({ ok: true });
+    // Emptied, the row goes: the guest reads the registry's Vietnamese again.
     expect(await query(`SELECT locale FROM content_strings ORDER BY locale`)).toEqual([{ locale: 'en' }]);
-    expect(await viGuestSees('stories.title')).toBe('Stories from the Kitchens');
-    expect((await screen('stories', 'vi')).field('stories.title').state).toBe('missing');
+    expect(await viGuestSees('stories.title')).toBe(REGISTRY['stories.title'].vi);
+    expect((await screen('stories', 'vi')).field('stories.title')).toMatchObject({ value: REGISTRY['stories.title'].vi, overridden: false });
   });
 
   it('refuses a translation whose variables differ from the English text’s, by name or by kind (spec §7.4)', async () => {
@@ -132,7 +136,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)('content strings per language (d
     await saveStrings(getPool(), LAN, (await screen('stories', 'vi')).input({ 'stories.title': 'Chuyện từ bếp' }));
     const [viEdit, ...rest] = await loadScreenHistory(getPool(), 'stories', 'vi');
     expect(rest).toEqual([]);
-    expect(viEdit).toMatchObject({ key: 'stories.title', action: 'create', before: { value: '', overridden: false }, after: { value: 'Chuyện từ bếp' } });
+    expect(viEdit).toMatchObject({ key: 'stories.title', action: 'create', before: { value: REGISTRY['stories.title'].vi, overridden: false }, after: { value: 'Chuyện từ bếp' } });
     const [enEdit] = await loadScreenHistory(getPool(), 'stories', 'en');
 
     const token = (await screen('stories', 'vi')).field('stories.title').token;

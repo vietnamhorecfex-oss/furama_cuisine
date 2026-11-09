@@ -970,6 +970,46 @@ Apply it after the official-photos pack.
 one seeded text that names it (Tàya House's SEO title); the code carries the
 name Furama Dining World everywhere else.
 
+### Translation packs
+
+A translation pack (`db/translation-packs/*.json`) holds reviewed
+translations, into one language, of the content staff edit in the admin:
+restaurants and their highlights, destinations, cuisines, Experiences,
+stories, offers, the menu, and image alt text. `scripts/apply-translation-pack.mjs`
+applies it through `applyTranslationPack`
+(`lib/server/content-admin/translation-pack.ts`) as if an editor had saved
+each item's language tab: one transaction, the editors' own locks, one
+`audit_log` row per item (a highlight's under its restaurant), actor
+`script:apply-translation-pack`.
+
+**It never overwrites a staff edit.** Each item names the English it
+translates (every text of the item's English row) and applies only while
+that row still reads exactly so and the item has no row in the pack's
+language yet. Anything else is skipped and printed with the reason. A file
+is named by its pathname (`/assets/chef.jpg`, or its copy moved to Blob).
+The row is reviewed, so guests see it, with origin `ai`, stamped with the
+English row's `source_hash`: a later English edit shows "EN đã đổi" on
+`/admin/translations`.
+
+```
+DATABASE_URL_UNPOOLED=<production's direct URL> node scripts/apply-translation-pack.mjs db/translation-packs/2026-11-vietnamese.json            # dry run
+DATABASE_URL_UNPOOLED=<production's direct URL> node scripts/apply-translation-pack.mjs db/translation-packs/2026-11-vietnamese.json --apply
+```
+
+Redeploy afterwards so cached guest pages pick up the translations. To undo
+one item, use "Khôi phục bản trước lần này" on its History row by
+`script:apply-translation-pack`.
+
+`db/translation-packs/2026-11-vietnamese.json` (owner, 2026-11-09: /vi in
+Vietnamese) translates the content as the migrations and the content packs
+up to 2026-11 leave it: 54 items. Names (restaurants, destinations,
+addresses) stay as they are, and so do image alt texts that are only a name.
+The guest interface text is in the code: every registry key has its
+Vietnamese default (`lib/i18n/registry.ts`, `vi`), except the agreed policy
+text (`AGREED_KEYS`, `lib/legal.ts`), which stays English on /vi until a
+lawyer reviews a translation and a migration records its `legal_versions`
+row.
+
 ### Media in Vercel Blob (phase 7A)
 
 Uploads go to Vercel Blob (spec §11), in a store connected to the project in

@@ -196,6 +196,8 @@ export async function saveStrings(pool: Pool, actor: AuditActor, input: StringsI
     for (const [key, value] of submitted) {
       const row = await lockedString(client, key, locale);
       if ((row?.value ?? stringDefault(key, locale)) === value) continue;
+      // An emptied translation with no row: there was nothing of its own to take away.
+      if (!row && locale !== DEFAULT_LOCALE && value === '') continue;
       if ((row?.token ?? '') !== (input.tokens[key] ?? '')) {
         return conflictFromHistory(client, 'content_strings', key, { by: row?.updated_by ?? null, at: row?.updated_at ?? new Date() }, locale);
       }
@@ -245,7 +247,8 @@ async function writeString(
   row: StringRow | null,
   restoredFrom: string | null,
 ) {
-  const toDefault = value === stringDefault(key, locale);
+  // An emptied translation is no row too: the guest reads the registry's text in that language, else English.
+  const toDefault = value === stringDefault(key, locale) || (locale !== DEFAULT_LOCALE && value === '');
   if (toDefault) {
     await client.query('DELETE FROM content_strings WHERE key = $1 AND locale = $2', [key, locale]);
   } else {
@@ -269,7 +272,7 @@ async function writeString(
     entityId: key,
     locale,
     before: { value: row?.value ?? stringDefault(key, locale), overridden: !!row },
-    after: { value, overridden: !toDefault, ...(restoredFrom ? { meta: { restored_from: restoredFrom } } : {}) },
+    after: { value: toDefault ? stringDefault(key, locale) : value, overridden: !toDefault, ...(restoredFrom ? { meta: { restored_from: restoredFrom } } : {}) },
   });
 }
 
