@@ -36,19 +36,19 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)('content strings read layer (dat
     expect((await read('en'))['error.full']).toBe('Sold out for that time.');
   });
 
-  it('shows reviewed vi rows, falls back to English per key, and hides machine rows by default', async () => {
+  it('shows reviewed vi rows, else the registry’s Vietnamese, else English per key, and hides machine rows by default', async () => {
     await put('error.full', 'en', 'Sold out.');
     await put('error.past', 'vi', 'Đã qua giờ.');
     await put('error.network', 'vi', 'Bản dịch máy', 'machine');
     const out = await read('vi');
     expect(out['error.past']).toBe('Đã qua giờ.');
-    expect(out['error.full']).toBe('Sold out.');
-    expect(out['error.network']).toBe(REGISTRY['error.network'].en);
+    expect(out['error.full']).toBe(REGISTRY['error.full'].vi);
+    expect(out['error.network']).toBe(REGISTRY['error.network'].vi);
   });
 
   it('never shows a machine row', async () => {
     await put('error.network', 'vi', 'Bản dịch máy', 'machine');
-    expect((await read('vi'))['error.network']).toBe(REGISTRY['error.network'].en);
+    expect((await read('vi'))['error.network']).toBe(REGISTRY['error.network'].vi);
   });
 
   it('asks for the client keys in one query and returns every one', async () => {

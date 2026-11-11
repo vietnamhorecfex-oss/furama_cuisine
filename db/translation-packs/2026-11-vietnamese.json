@@ -1,0 +1,99 @@
+{
+  "locale": "vi",
+  "note": "Vietnamese for the content staff edit in the admin (owner, 2026-11-09: /vi in Vietnamese). Each item names the English it translates; an item whose English staff have changed since, or that already has a Vietnamese row, is skipped. Brand and restaurant names stay as they are. Image alt texts that are only a name are left out: they read the same.",
+  "items": [
+    { "entity": "cuisines", "id": "cafe-lounge", "en": { "label": "Café & Lounge" }, "vi": { "label": "Cà phê & Lounge" } },
+    { "entity": "cuisines", "id": "hotpot", "en": { "label": "Hotpot" }, "vi": { "label": "Lẩu" } },
+    { "entity": "cuisines", "id": "international", "en": { "label": "International" }, "vi": { "label": "Quốc tế" } },
+    { "entity": "cuisines", "id": "italian", "en": { "label": "Italian" }, "vi": { "label": "Ý" } },
+    { "entity": "cuisines", "id": "japanese", "en": { "label": "Japanese" }, "vi": { "label": "Nhật Bản" } },
+    { "entity": "cuisines", "id": "steak-grill", "en": { "label": "Steak & Grill" }, "vi": { "label": "Bít tết & Nướng" } },
+    { "entity": "cuisines", "id": "thai", "en": { "label": "Thai" }, "vi": { "label": "Thái Lan" } },
+    { "entity": "cuisines", "id": "vietnamese", "en": { "label": "Vietnamese" }, "vi": { "label": "Việt Nam" } },
+
+    {
+      "entity": "destinations",
+      "id": "dining-house",
+      "en": { "name": "Furama Dining House", "card_title_1": "Furama", "card_title_2": "Dining House", "card_blurb_1": "4 floors · 4 flavours", "card_blurb_2": "1 night out", "address": "73 Trần Bạch Đằng, An Thượng, Ngũ Hành Sơn, Đà Nẵng" },
+      "vi": { "card_blurb_1": "4 tầng · 4 hương vị", "card_blurb_2": "1 buổi tối trọn vẹn" }
+    },
+    {
+      "entity": "destinations",
+      "id": "future",
+      "en": { "card_title_1": "Future", "card_title_2": "Locations", "card_blurb_1": "Bringing great food", "card_blurb_2": "to more places" },
+      "vi": { "card_title_1": "Điểm đến", "card_title_2": "Sắp tới", "card_blurb_1": "Mang ẩm thực ngon", "card_blurb_2": "đến nhiều nơi hơn" }
+    },
+    {
+      "entity": "destinations",
+      "id": "resort",
+      "en": { "name": "Furama Resort Danang", "card_title_1": "Furama", "card_title_2": "Resort Danang", "card_blurb_1": "Iconic beachfront dining", "card_blurb_2": "since 1997", "address": "103–105 Võ Nguyên Giáp, Ngũ Hành Sơn, Đà Nẵng" },
+      "vi": { "card_blurb_1": "Ẩm thực biểu tượng bên biển", "card_blurb_2": "từ năm 1997" }
+    },
+
+    { "entity": "experiences", "id": "1", "en": { "title": "Culinary Experiences", "blurb": "Tàya House cooking classes · Seafood & Steak Buffet · Champa dance nights" }, "vi": { "title": "Trải nghiệm ẩm thực", "blurb": "Lớp học nấu ăn Tàya House · Buffet Hải sản & Bít tết · Đêm múa Chăm" } },
+    { "entity": "experiences", "id": "2", "en": { "title": "Private Dining & Events", "blurb": "Weddings · Corporate · Celebrations · MICE dining" }, "vi": { "title": "Tiệc riêng & Sự kiện", "blurb": "Tiệc cưới · Doanh nghiệp · Kỷ niệm · Ẩm thực MICE" } },
+    { "entity": "experiences", "id": "3", "en": { "title": "Vietnamese Culture", "blurb": "Lantern making · Vietnamese coffee · Cocktail class" }, "vi": { "title": "Văn hoá Việt", "blurb": "Làm đèn lồng · Cà phê Việt · Lớp pha chế cocktail" } },
+
+    { "entity": "nav_items", "id": "1", "en": { "label": "Restaurants" }, "vi": { "label": "Nhà hàng" } },
+    { "entity": "nav_items", "id": "2", "en": { "label": "Destinations" }, "vi": { "label": "Điểm đến" } },
+    { "entity": "nav_items", "id": "3", "en": { "label": "Experiences" }, "vi": { "label": "Trải nghiệm" } },
+    { "entity": "nav_items", "id": "4", "en": { "label": "Offers" }, "vi": { "label": "Ưu đãi" } },
+    { "entity": "nav_items", "id": "5", "en": { "label": "Stories" }, "vi": { "label": "Câu chuyện" } },
+    { "entity": "nav_items", "id": "6", "en": { "label": "About" }, "vi": { "label": "Giới thiệu" } },
+
+    { "entity": "offers", "id": "1", "en": { "title": "Seafood & Steak Buffet Dinner", "schedule": "Nightly 18:30–22:00" }, "vi": { "title": "Buffet tối Hải sản & Bít tết", "schedule": "Tối hằng ngày 18:30–22:00" } },
+    { "entity": "offers", "id": "2", "en": { "title": "Vietnamese Cooking Class", "schedule": "Daily 11:00 or 14:00 · for 2–7 guests" }, "vi": { "title": "Lớp học nấu ăn Việt Nam", "schedule": "Hằng ngày 11:00 hoặc 14:00 · cho 2–7 khách" } },
+    { "entity": "offers", "id": "3", "en": { "title": "Afternoon Tea & Dessert Buffet", "schedule": "Daily 14:30–17:00" }, "vi": { "title": "Trà chiều & Buffet tráng miệng", "schedule": "Hằng ngày 14:30–17:00" } },
+
+    { "entity": "restaurant_highlights", "id": "1", "en": { "title": "Vietnamese Cooking Class", "detail": "Daily at 11:00 or 14:00 · from VND 799,000++ per guest (2–7 guests)" }, "vi": { "title": "Lớp học nấu ăn Việt Nam", "detail": "Hằng ngày lúc 11:00 hoặc 14:00 · từ 799.000 VND++ mỗi khách (2–7 khách)" } },
+    { "entity": "restaurant_highlights", "id": "2", "en": { "title": "Healthy Drinks & Snacks", "detail": "In the Lagoon Garden, daily 10:00–22:00" }, "vi": { "title": "Đồ uống & Món nhẹ lành mạnh", "detail": "Tại Lagoon Garden, hằng ngày 10:00–22:00" } },
+    { "entity": "restaurant_highlights", "id": "3", "en": { "title": "Private Gatherings", "detail": "Outdoor celebrations and intimate events" }, "vi": { "title": "Tiệc riêng", "detail": "Tiệc ngoài trời và sự kiện thân mật" } },
+    { "entity": "restaurant_highlights", "id": "4", "en": { "title": "Cooking Class & Stay", "detail": "From USD 420 · 2 nights for 2 guests" }, "vi": { "title": "Lớp nấu ăn & Lưu trú", "detail": "Từ 420 USD · 2 đêm cho 2 khách" } },
+
+    { "entity": "restaurants", "id": "cafe-indochine", "en": { "type_label": "Fusion · European, Indian & Asian" }, "vi": { "type_label": "Fusion · Âu, Ấn & Á" } },
+    { "entity": "restaurants", "id": "chaoshan-hotpot", "en": { "type_label": "Teochew Fresh Beef Hotpot · 3F" }, "vi": { "type_label": "Lẩu bò tươi Triều Châu · Tầng 3" } },
+    { "entity": "restaurants", "id": "danaksara", "en": { "type_label": "Central Vietnamese · Furama Villas" }, "vi": { "type_label": "Ẩm thực miền Trung · Furama Villas" } },
+    { "entity": "restaurants", "id": "don-ciprianis", "en": { "type_label": "Italian Trattoria" }, "vi": { "type_label": "Trattoria Ý" } },
+    { "entity": "restaurants", "id": "hai-van-lounge", "en": { "type_label": "Lounge · Live Jazz" }, "vi": { "type_label": "Lounge · Nhạc Jazz sống" } },
+    { "entity": "restaurants", "id": "hura-izakaya", "en": { "type_label": "Japanese Izakaya · 4F" }, "vi": { "type_label": "Izakaya Nhật Bản · Tầng 4" } },
+    { "entity": "restaurants", "id": "pho-cuon", "en": { "type_label": "Vietnamese · 1F" }, "vi": { "type_label": "Việt Nam · Tầng 1" } },
+    {
+      "entity": "restaurants",
+      "id": "taya-house",
+      "en": {
+        "type_label": "Vietnamese · Cooking Class",
+        "detail_kicker": "A Wellness Dining Home · Furama Resort Danang",
+        "story": "Beneath the Lagoon Garden, the resort’s “Green Oasis in the Heart of the City” tells a journey from Mường Khụ, a land of stones, to Danang by the sea — with cooking classes led by Cơ Tu chef A Rất Thị Hép.",
+        "seo_title": "Tàya House — Furama Dining World",
+        "seo_description": "A wellness dining home beneath the Lagoon Garden at Furama Resort Danang, with Vietnamese cooking classes led by Cơ Tu chef A Rất Thị Hép."
+      },
+      "vi": {
+        "type_label": "Việt Nam · Lớp học nấu ăn",
+        "detail_kicker": "Ngôi nhà ẩm thực an lành · Furama Resort Danang",
+        "story": "Dưới tán Lagoon Garden, “Ốc đảo xanh giữa lòng thành phố” của khu nghỉ dưỡng, Tàya House kể hành trình từ Mường Khụ, vùng đất của đá, đến Đà Nẵng bên biển — cùng những lớp học nấu ăn do đầu bếp người Cơ Tu A Rất Thị Hép hướng dẫn.",
+        "seo_description": "Ngôi nhà ẩm thực an lành dưới tán Lagoon Garden tại Furama Resort Danang, với lớp học nấu ăn Việt Nam do đầu bếp người Cơ Tu A Rất Thị Hép hướng dẫn."
+      }
+    },
+    { "entity": "restaurants", "id": "thai-siam-kitchen", "en": { "type_label": "Thai · 2F" }, "vi": { "type_label": "Thái Lan · Tầng 2" } },
+    { "entity": "restaurants", "id": "the-fan", "en": { "type_label": "Steak & Wine · 3F" }, "vi": { "type_label": "Bít tết & Rượu vang · Tầng 3" } },
+    { "entity": "restaurants", "id": "v-senses-cafe", "en": { "type_label": "Vietnamese Heritage House · Furama Villas" }, "vi": { "type_label": "Nhà di sản Việt · Furama Villas" } },
+    { "entity": "restaurants", "id": "yum-food-village", "en": { "type_label": "Multi-cuisine Food Court · 3F" }, "vi": { "type_label": "Khu ẩm thực đa phong cách · Tầng 3" } },
+
+    { "entity": "stories", "id": "1", "en": { "category": "Restaurant News", "title": "Grand opening: one house, four flavours in An Thượng" }, "vi": { "category": "Tin nhà hàng", "title": "Khai trương: một ngôi nhà, bốn hương vị tại An Thượng" } },
+    { "entity": "stories", "id": "2", "en": { "category": "Restaurant News", "title": "Steakhouse The Fan: a journey of four restaurants where food and art meet" }, "vi": { "category": "Tin nhà hàng", "title": "Steakhouse The Fan: hành trình bốn nhà hàng, nơi ẩm thực gặp nghệ thuật" } },
+    { "entity": "stories", "id": "3", "en": { "category": "Restaurant News", "title": "Thai Siam Kitchen, a bridge between Vietnam and Thailand" }, "vi": { "category": "Tin nhà hàng", "title": "Thai Siam Kitchen, nhịp cầu giữa Việt Nam và Thái Lan" } },
+    { "entity": "stories", "id": "4", "en": { "category": "Furama Resort Danang", "title": "A Premium Central Vietnam Seafood & Steak Buffet Gala" }, "vi": { "title": "Tiệc Gala Buffet Hải sản & Bít tết miền Trung cao cấp" } },
+
+    { "entity": "media", "id": "/assets/chef-cafe-indochine-teppanyaki.jpg", "en": { "alt": "Chefs at the Teppanyaki station of the Seafood & Steak Buffet, Café Indochine" }, "vi": { "alt": "Đầu bếp tại quầy Teppanyaki của Buffet Hải sản & Bít tết, Café Indochine" } },
+    { "entity": "media", "id": "/assets/chef.jpg", "en": { "alt": "A Furama chef at work" }, "vi": { "alt": "Đầu bếp Furama đang làm việc" } },
+    { "entity": "media", "id": "/assets/film-resort-beach.jpg", "en": { "alt": "Thatched umbrellas and sun loungers on the beach at Furama Resort Danang" }, "vi": { "alt": "Dù lá và ghế tắm nắng trên bãi biển Furama Resort Danang" } },
+    { "entity": "media", "id": "/assets/hero-beach.jpg", "en": { "alt": "Dining at Furama Cuisine" }, "vi": { "alt": "Dùng bữa tại Furama" } },
+    { "entity": "media", "id": "/assets/hero-hall-m.jpg", "en": { "alt": "Dining at Furama Cuisine" }, "vi": { "alt": "Dùng bữa tại Furama" } },
+    { "entity": "media", "id": "/assets/hero-resort-courtyard-sunset-m.jpg", "en": { "alt": "The courtyard of Furama Resort Danang at sunset, its terraces leading to the sea" }, "vi": { "alt": "Khoảng sân Furama Resort Danang lúc hoàng hôn, những bậc thềm dẫn ra biển" } },
+    { "entity": "media", "id": "/assets/hero-resort-courtyard-sunset.jpg", "en": { "alt": "The courtyard of Furama Resort Danang at sunset, its terraces leading to the sea" }, "vi": { "alt": "Khoảng sân Furama Resort Danang lúc hoàng hôn, những bậc thềm dẫn ra biển" } },
+    { "entity": "media", "id": "/assets/taya-class.jpg", "en": { "alt": "Cooking class photo" }, "vi": { "alt": "Lớp học nấu ăn" } },
+    { "entity": "media", "id": "/assets/taya-house-garden-day.jpg", "en": { "alt": "Tàya House, the Muong stilt house in the Lagoon Garden" }, "vi": { "alt": "Tàya House, ngôi nhà sàn Mường trong Lagoon Garden" } },
+    { "entity": "media", "id": "/assets/taya-lounge.jpg", "en": { "alt": "Tàya House interior" }, "vi": { "alt": "Không gian bên trong Tàya House" } },
+    { "entity": "media", "id": "/assets/taya-stay.jpg", "en": { "alt": "Cooking class & stay" }, "vi": { "alt": "Lớp nấu ăn & lưu trú" } }
+  ]
+}

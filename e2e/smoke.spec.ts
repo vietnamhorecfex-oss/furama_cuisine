@@ -35,6 +35,21 @@ test('the hero plays its background film in the slideshow’s place; it can be p
   await expect.poll(() => video.evaluate((el: HTMLVideoElement) => el.paused)).toBe(false);
 });
 
+test('an upright phone plays the portrait cut of the film; a desktop the wide one', async ({ browser }) => {
+  for (const [viewport, file] of [
+    [{ width: 390, height: 844 }, '/video/hero-film-720x1280.mp4'],
+    [{ width: 1440, height: 900 }, '/video/hero-film-1920.mp4'],
+  ] as const) {
+    const context = await browser.newContext({ viewport });
+    await context.addInitScript(() => sessionStorage.setItem('fc-intro-seen', '1'));
+    const page = await context.newPage();
+    await page.goto(HOME_PATH);
+    await expect(page.locator('#top .hero-film-layer')).toHaveAttribute('data-running', 'true');
+    expect(await page.locator('#top .hero-film-layer video').evaluate((el: HTMLVideoElement) => new URL(el.currentSrc).pathname)).toBe(file);
+    await context.close();
+  }
+});
+
 test('a reduced-motion guest gets no film and no slideshow, so no pause button', async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: 'reduce' });
   const page = await context.newPage();

@@ -38,6 +38,7 @@ db/
   migrations/NNN_*.sql   # migration đánh số, chạy theo thứ tự
   checks/                # preflight/postcheck SQL cho từng migration trên Neon
   content-packs/*.json   # gói nội dung đã duyệt (ảnh, chữ) — scripts/apply-content-pack.mjs áp dụng, chỉ thay chỗ còn là seed
+  translation-packs/*.json # gói bản dịch đã duyệt — scripts/apply-translation-pack.mjs áp dụng, chỉ chỗ tiếng Anh còn như gói ghi và chưa có bản dịch
 test/                    # integration, guards (luật kiến trúc), helpers, fixtures
 e2e/                     # Playwright
 ```
@@ -116,14 +117,14 @@ Mỗi cổng có chế độ fake/log cho dev và test (`EMAIL_DELIVERY=log`, fa
 
 ### Luật 7 — Migration
 Một DB, schema `public`. Migration mới = `db/migrations/NNN_*.sql` kế tiếp, kèm mục "### Migration NNN" trong README và file `db/checks` nếu cần *(CI)*. Cột cũ chờ xoá thì không đọc nữa *(CI: legacy-columns)*.
-Nội dung khách đọc thuộc CMS: migration chỉ *thêm* (file ảnh mới vào `media`), còn thay nội dung đã seed trên DB thật thì qua content pack (`db/content-packs/`, `lib/server/content-admin/content-pack.ts`) — một transaction, audit từng mục, bỏ qua chỗ staff đã sửa.
+Nội dung khách đọc thuộc CMS: migration chỉ *thêm* (file ảnh mới vào `media`), còn thay nội dung đã seed trên DB thật thì qua content pack (`db/content-packs/`, `lib/server/content-admin/content-pack.ts`) — một transaction, audit từng mục, bỏ qua chỗ staff đã sửa. Bản dịch nội dung cho cả lô thì qua translation pack (`db/translation-packs/`, `lib/server/content-admin/translation-pack.ts`), cùng nguyên tắc.
 
 ---
 
 ## 4. Site khách & i18n
 
 - Ngôn ngữ là **code**: `lib/i18n/site-locales.ts` (bật/tắt, thứ tự, mặc định). Không có bảng `locales`, không có màn admin. Đổi ngôn ngữ = sửa file + deploy. SQL cần ngôn ngữ mặc định dùng `DEFAULT_LOCALE_SQL`; ngôn ngữ của khách qua `guestLocale()`.
-- Khách chỉ thấy bản dịch **đã duyệt**; thiếu thì về ngôn ngữ mặc định. Email khách chỉ gửi bằng ngôn ngữ đó khi đủ mọi key.
+- Khách chỉ thấy bản dịch **đã duyệt**; thiếu thì về ngôn ngữ mặc định. Chữ giao diện có mặc định tiếng Việt ngay trong registry (`vi`), trừ chữ chính sách khách đồng ý (`AGREED_KEYS`): bản dịch đó cần luật sư duyệt và migration `legal_versions`. Email khách chỉ gửi bằng ngôn ngữ đó khi đủ mọi key.
 - Trang khách gọi `await requireEnabledLocale(...)` trước khi đọc gì *(CI)*.
 - Chữ khách nhìn thấy nằm trong registry (`lib/i18n/registry.ts`) hoặc DB, không literal trong component *(CI)*.
 - Truy vấn DOM trong phạm vi trang đang hiện (`usePageRoot()`), không cả document *(CI)*.

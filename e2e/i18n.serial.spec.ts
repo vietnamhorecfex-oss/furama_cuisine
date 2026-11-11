@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import type { Browser, Page } from '@playwright/test';
-import { REGISTRY } from '../lib/i18n/registry';
+import { REGISTRY, type StringDef, type StringKey } from '../lib/i18n/registry';
 import { expectHydrated } from './csp';
 import { STAFF, db, expect, seedStaff, signInAs, test } from './staff-fixtures';
 
@@ -87,9 +87,9 @@ test('a strings screen edits one language: Vietnamese text saved on ?lang=vi sho
     await expect(form).toContainText('Đang sửa: Tiếng Việt');
     await expectHydrated(page);
     const field = form.getByLabel(/^Tiêu đề mục Stories/);
-    await expect(field).toHaveValue('');
+    // The registry's own Vietnamese shows until staff write theirs (lib/i18n/registry.ts, vi).
+    await expect(field).toHaveValue('Câu chuyện từ căn bếp');
     await expect(field).toHaveAttribute('placeholder', 'Stories from our Kitchens');
-    await expect(form.locator('label', { hasText: 'Tiêu đề mục Stories' })).toContainText('Chưa dịch');
     await field.fill('Chuyện từ gian bếp');
     await form.getByRole('button', { name: 'Lưu stories' }).click();
     await expect(form.getByRole('status')).toContainText('Đã lưu 1 mục');
@@ -182,24 +182,25 @@ function logged(): Logged[] {
   }
 }
 
-/** Books Café Indochine's last open day from `path` (its drawer in English but for `submit`), and returns the reference. */
+/** Books Café Indochine's last open day from `path`, its drawer read in that page's language (the registry's Vietnamese on /vi), and returns the reference. */
 async function bookFrom(visitor: Page, path: string, email: string, submit: string): Promise<string> {
+  const t = (key: StringKey) => (path.startsWith('/vi') ? ((REGISTRY[key] as StringDef).vi ?? REGISTRY[key].en) : REGISTRY[key].en);
   await visitor.goto(path);
   await visitor.locator('.rcard:visible', { hasText: 'Café Indochine' }).first().click();
-  const drawer = visitor.getByRole('dialog', { name: 'Reserve a table' });
+  const drawer = visitor.getByRole('dialog', { name: t('booking.drawer_aria') });
   await drawer.locator('.daystrip .day[data-state="open"]').last().click();
   await drawer.locator('.slot:not([disabled])').first().click();
-  await drawer.getByLabel('Full name *', { exact: true }).fill('Nguyễn Minh Anh');
+  await drawer.getByLabel(t('form.name'), { exact: true }).fill('Nguyễn Minh Anh');
   const digits = String(Date.now()).slice(-6);
-  await drawer.getByLabel('Phone *', { exact: true }).fill(`0907 ${digits.slice(0, 3)} ${digits.slice(3)}`);
-  await drawer.getByLabel('Email', { exact: true }).fill(email);
+  await drawer.getByLabel(t('form.phone'), { exact: true }).fill(`0907 ${digits.slice(0, 3)} ${digits.slice(3)}`);
+  await drawer.getByLabel(t('form.email'), { exact: true }).fill(email);
   await drawer.getByRole('checkbox', { name: REGISTRY['booking.consent'].en }).check();
   await drawer.getByRole('button', { name: submit }).click();
   await expect(drawer.locator('.drawer-ref')).toHaveText(/^FC-[0-9A-HJKMNP-TV-Z]{8}$/);
   return (await drawer.locator('.drawer-ref').textContent()) ?? '';
 }
 
-/** Saves booking.submit's Vietnamese on the booking screen's strings form ('' puts the English back). */
+/** Saves booking.submit's Vietnamese on the booking screen's strings form ('' puts the registry's Vietnamese back). */
 async function saveSubmitWord(page: Page, value: string) {
   await page.goto('/admin/content/booking?lang=vi');
   await expectHydrated(page);
@@ -217,7 +218,7 @@ test('a booking on /vi is kept in Vietnamese with the consent it showed; its ema
   const c = db();
   await c.connect();
   try {
-    // A Vietnamese drawer word, saved on the booking screen so the cached /vi pages learn of it (the rest falls back to English).
+    // A Vietnamese drawer word of staff's own, saved on the booking screen so the cached /vi pages learn of it (the rest is the registry's Vietnamese).
     await signInAs(page, STAFF.admin);
     await saveSubmitWord(page, 'GỬI YÊU CẦU');
 
@@ -245,7 +246,7 @@ test('a booking on /vi is kept in Vietnamese with the consent it showed; its ema
     expect(enAck.text).toMatch(/\b\d{2}:\d{2} \(Da Nang time, GMT\+7\)/);
     await visitor.context().close();
   } finally {
-    // Emptied, the key falls back to English again, through the screen so no cached page keeps the word.
+    // Emptied, the key falls back to the registry's Vietnamese again, through the screen so no cached page keeps the word.
     await saveSubmitWord(page, '');
     await c.end();
   }

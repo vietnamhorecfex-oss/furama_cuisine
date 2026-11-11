@@ -3,6 +3,7 @@ import { formatMessage, usesIcuSyntax } from './format';
 import { checkMessage, messageArgs } from './icu';
 import { ADMIN_SCREENS, CLIENT_KEYS, HOME_KEYS, KEY_PATTERN, REGISTRY, STRING_KEYS, keysForScreen, sectionKeys, type StringDef } from './registry';
 import { resolveStrings } from './resolve';
+import { AGREED_KEYS } from '@/lib/legal';
 
 describe('registry', () => {
   it.each(STRING_KEYS)('%s is well formed', (key) => {
@@ -92,12 +93,22 @@ describe('resolveStrings', () => {
     expect(out['error.full']).toBe('Sold out.');
     expect(out['error.past']).toContain('can no longer be booked online');
   });
-  it('falls back per key: a missing vi row shows the English row, not an empty string', () => {
+  it('falls back per key: a vi row, else the registry’s Vietnamese, else the English row (the agreed policy text has no registry Vietnamese)', () => {
+    const vi = ['error.full', 'error.past', 'legal.title'] as const;
     const rows = [
       { key: 'error.full', locale: 'en', value: 'Sold out.' },
       { key: 'error.past', locale: 'vi', value: 'Đã qua giờ.' },
+      { key: 'legal.title', locale: 'en', value: 'Our privacy policy' },
     ];
-    const out = resolveStrings(rows, keys, 'vi', 'en');
-    expect(out).toEqual({ 'error.full': 'Sold out.', 'error.past': 'Đã qua giờ.' });
+    const out = resolveStrings(rows, vi, 'vi', 'en');
+    expect(out).toEqual({ 'error.full': REGISTRY['error.full'].vi, 'error.past': 'Đã qua giờ.', 'legal.title': 'Our privacy policy' });
+  });
+});
+
+describe('Vietnamese defaults (/vi in Vietnamese, owner 2026-11-09)', () => {
+  it('every key has one but the agreed policy text, which waits for a reviewed translation and its legal_versions migration', () => {
+    const agreed = new Set<string>(AGREED_KEYS);
+    const missing = STRING_KEYS.filter((k) => !agreed.has(k) && !(REGISTRY[k] as StringDef).vi);
+    expect(missing).toEqual([]);
   });
 });

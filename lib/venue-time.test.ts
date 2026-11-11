@@ -75,3 +75,13 @@ describe('formatDay', () => {
     expect(formatDay('2026-09-03').month).toBe('Sep');
   });
 });
+
+describe('formatDay in the guest’s language', () => {
+  it('keeps English as it was, and writes Vietnamese as Intl does', () => {
+    expect(formatDay('2026-11-10', 'en')).toEqual({ weekday: 'Tue', day: '10', month: 'Nov', label: 'Tue, 10 Nov' });
+    expect(formatDay('2026-11-10', 'vi')).toEqual({ weekday: 'Thứ 3', day: '10', month: 'thg 11', label: 'Thứ 3, 10 thg 11' });
+  });
+  it('falls back to English for a language Intl has no data for', () => {
+    expect(formatDay('2026-11-10', 'zz').label).toBe('Tue, 10 Nov');
+  });
+});

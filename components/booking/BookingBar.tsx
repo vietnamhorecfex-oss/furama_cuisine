@@ -32,7 +32,7 @@ export function BookingBar() {
     const open = d.state === 'open';
     return {
       value: d.date,
-      label: fmtDay(d.date),
+      label: fmtDay(d.date, locale),
       note: open ? (i === 0 ? strings['common.today'] : i === 1 ? strings['common.tomorrow'] : undefined) : dayReason({ ...d, reason: undefined }, strings),
       hint: open ? undefined : dayReason(d, strings),
       disabled: !open,

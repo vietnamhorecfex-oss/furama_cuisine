@@ -97,6 +97,7 @@ function DayStrip({
   groupPhone,
   moved,
   failure,
+  locale,
 }: {
   label: ReactNode;
   days: DayInfo[];
@@ -106,6 +107,7 @@ function DayStrip({
   groupPhone: GroupPhone | null;
   moved: DateMove | null;
   failure: ReactNode;
+  locale: string;
 }) {
   /* The unavailable day a guest last tapped, and the calendar it was tapped on. */
   const [tapped, setTapped] = useState<{ days: DayInfo[]; day: DayInfo } | null>(null);
@@ -115,12 +117,12 @@ function DayStrip({
   const message = failure
     ? ''
     : note
-    ? formatMessage(strings['booking.day_note'], { date: fmtDay(note.date), reason: dayReason(note, strings) })
+    ? formatMessage(strings['booking.day_note'], { date: fmtDay(note.date, locale), reason: dayReason(note, strings) })
     : moved
       ? formatMessage(strings['booking.date_moved'], {
-          date: fmtDay(moved.from),
+          date: fmtDay(moved.from, locale),
           reason: movedReason(moved, days, strings),
-          to: fmtDay(moved.to),
+          to: fmtDay(moved.to, locale),
         })
       : loading
         ? strings['booking.loading']
@@ -204,7 +206,7 @@ function DayStrip({
       {shown && (
         <div ref={stripRef} className="daystrip" data-more-before={more.before || undefined} data-more-after={more.after || undefined}>
           {days.map((d, i) => {
-            const day = formatDay(d.date);
+            const day = formatDay(d.date, locale);
             const open = d.state === 'open';
             const isSelected = open && d.date === selected;
             return (
@@ -401,7 +403,7 @@ export function ReserveDrawer() {
     .map((r) => ({ value: r.id, label: r.name }));
 
   const guestLabel = (n: number) => formatMessage(strings['booking.guests_count'], { count: n }, locale);
-  const summary = [booking.date ? fmtDay(booking.date) : '', booking.time, guestLabel(booking.guests)]
+  const summary = [booking.date ? fmtDay(booking.date, locale) : '', booking.time, guestLabel(booking.guests)]
     .filter(Boolean)
     .join(' · ');
 
@@ -464,7 +466,7 @@ export function ReserveDrawer() {
                 <div className="drawer-summary">
                   <div className="drawer-summary-row">
                     <span>{strings['booking.label_date']}</span>
-                    <span>{confirmedDate ? fmtDay(confirmedDate) : ''}</span>
+                    <span>{confirmedDate ? fmtDay(confirmedDate, locale) : ''}</span>
                   </div>
                   <div className="drawer-summary-row">
                     <span>{strings['booking.label_time']}</span>
@@ -515,6 +517,7 @@ export function ReserveDrawer() {
                     selected={booking.date}
                     onPick={(date) => setBooking({ date })}
                     strings={strings}
+                    locale={locale}
                     groupPhone={groupPhone}
                     moved={dateMoved?.restaurant === booking.restaurant ? dateMoved : null}
                     failure={
