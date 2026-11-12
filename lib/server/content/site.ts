@@ -2,6 +2,7 @@ import 'server-only';
 import { cacheLife, cacheTag } from 'next/cache';
 import { LOADERS } from '@/lib/cache-plan';
 import { TAGS } from '@/lib/cache-tags';
+import { packFallback } from './pack-fallback';
 import type { SiteSettings } from '@/lib/content/types';
 import { loadSiteSettings } from './settings.queries';
 import { loadCuisines, loadDestinations, loadNav, loadSections, loadSocials } from './site.queries';
@@ -20,28 +21,28 @@ export async function getSections(locale: string) {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.sections.tags, TAGS.i18n(locale));
-  return loadSections(locale);
+  return packFallback.sections(locale, await loadSections(locale));
 }
 
 export async function getCuisines(locale: string) {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.cuisines.tags, TAGS.i18n(locale));
-  return loadCuisines(locale);
+  return packFallback.cuisines(locale, await loadCuisines(locale));
 }
 
 export async function getDestinations(locale: string) {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.destinations.tags, TAGS.i18n(locale));
-  return loadDestinations(locale);
+  return packFallback.destinations(locale, await loadDestinations(locale));
 }
 
 export async function getNav(locale: string) {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.nav.tags, TAGS.i18n(locale));
-  return loadNav(locale);
+  return packFallback.nav(locale, await loadNav(locale));
 }
 
 export async function getSocials() {

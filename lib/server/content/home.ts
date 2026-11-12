@@ -2,6 +2,7 @@ import 'server-only';
 import { cacheLife, cacheTag } from 'next/cache';
 import { LOADERS } from '@/lib/cache-plan';
 import { TAGS } from '@/lib/cache-tags';
+import { packFallback } from './pack-fallback';
 import { loadExperiences, loadHeroSlides, loadOffers, loadStories } from './home.queries';
 
 /* The home page's lists, cached (see lib/server/content/site.ts for the rules). */
@@ -10,21 +11,21 @@ export async function getHeroSlides(locale: string) {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.heroSlides.tags, TAGS.i18n(locale));
-  return loadHeroSlides(locale);
+  return packFallback.heroSlides(locale, await loadHeroSlides(locale));
 }
 
 export async function getExperiences(locale: string) {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.experiences.tags, TAGS.i18n(locale));
-  return loadExperiences(locale);
+  return packFallback.experiences(locale, await loadExperiences(locale));
 }
 
 export async function getStories(locale: string) {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.stories.tags, TAGS.i18n(locale));
-  return loadStories(locale);
+  return packFallback.stories(locale, await loadStories(locale));
 }
 
 /**
@@ -39,5 +40,5 @@ export async function getOffers(locale: string) {
   'use cache';
   cacheLife('hours');
   cacheTag(...LOADERS.offers.tags, TAGS.i18n(locale));
-  return loadOffers(locale);
+  return packFallback.offers(locale, await loadOffers(locale));
 }

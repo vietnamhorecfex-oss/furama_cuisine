@@ -130,8 +130,6 @@ test('the Vietnamese email screen previews the Vietnamese being typed, the staff
 test('an Editor approves a machine translation on Bản dịch: /vi shows it only once it is reviewed', async ({ page, browser }) => {
   const c = db();
   await c.connect();
-  const { rows } = await c.query<{ title: string }>(`SELECT title FROM offer_i18n WHERE offer_id = 2 AND locale = 'en'`);
-  const english = rows[0].title;
   const machine = 'Lớp nấu ăn (máy dịch)';
   try {
     await c.query(`INSERT INTO offer_i18n (offer_id, locale, title, status, origin, ai_model) VALUES (2, 'vi', $1, 'machine', 'ai', 'e2e')`, [machine]);
@@ -140,7 +138,8 @@ test('an Editor approves a machine translation on Bản dịch: /vi shows it onl
     const visitor = await guest(browser);
     const titles = () => visitor.locator('#offers .offer-title').allTextContents();
     await visitor.goto('/vi');
-    expect(await titles()).toContain(english);
+    // Without a reviewed row the card shows the shipped pack's Vietnamese, else the English: never the machine's.
+    expect(await titles()).toHaveLength(3);
     expect(await titles()).not.toContain(machine);
 
     const editor = await (await browser.newContext()).newPage();
@@ -252,29 +251,35 @@ test('a booking on /vi is kept in Vietnamese with the consent it showed; its ema
   }
 });
 
-test('an Editor applies the shipped Vietnamese pack from Bản dịch: the preview changes nothing, applying puts /vi’s menu in Vietnamese', async ({ page, browser }) => {
+test('/vi reads the shipped Vietnamese pack before anyone applies it; an Editor applies it from Bản dịch, the preview writing nothing', async ({ page, browser }) => {
   const c = db();
   await c.connect();
   const nav = async (visitor: Page) => {
     await visitor.goto('/vi');
     const links = visitor.locator('.hdr-nav .hdr-link');
     await expect(links.first()).toBeAttached();
-    return links.allTextContents();
+    return (await links.allTextContents()).map((t) => t.trim());
   };
+  const viRows = async () => Number((await c.query<{ n: string }>(`SELECT count(*) AS n FROM nav_item_i18n WHERE locale = 'vi'`)).rows[0].n);
   try {
+    const visitor = await guest(browser);
+    // Nothing applied yet: the guest pages fall back on the pack's Vietnamese (lib/server/content/pack-fallback.ts).
+    expect(await viRows()).toBe(0);
+    expect(await nav(visitor)).toContain('Nhà hàng');
+
     await signInAs(page, STAFF.editor);
     await page.goto('/admin/translations');
     await expectHydrated(page);
     const form = page.getByRole('form', { name: /^Gói bản dịch: Tiếng Việt/ });
-    const visitor = await guest(browser);
 
     await form.getByRole('button', { name: 'Xem trước' }).click();
     await expect(form.getByRole('status')).toContainText(/^Xem trước: sẽ áp \d+ mục/);
-    expect((await nav(visitor)).map((t) => t.trim())).toContain('Restaurants');
+    expect(await viRows()).toBe(0);
 
     await form.getByRole('button', { name: 'Áp dụng' }).click();
     await expect(form.getByRole('status')).toContainText(/^Đã áp \d+ mục/);
-    await expect.poll(async () => (await nav(visitor)).map((t) => t.trim())).toContain('Nhà hàng');
+    expect(await viRows()).toBeGreaterThan(0);
+    expect(await nav(visitor)).toContain('Nhà hàng');
 
     // Pressed again it changes nothing: every item now has its Vietnamese row.
     await form.getByRole('button', { name: 'Áp dụng' }).click();

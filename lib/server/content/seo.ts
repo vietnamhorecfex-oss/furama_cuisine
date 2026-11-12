@@ -4,6 +4,7 @@ import { LOADERS } from '@/lib/cache-plan';
 import { TAGS } from '@/lib/cache-tags';
 import type { Media } from '@/lib/content/types';
 import { sectionKeys } from '@/lib/i18n/registry';
+import { packFallback } from './pack-fallback';
 import { loadShareImage } from './seo.queries';
 
 /*
@@ -21,5 +22,5 @@ export async function getShareImage(locale: string): Promise<Media | null> {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.shareImage.tags, TAGS.i18n(locale));
-  return loadShareImage(locale);
+  return packFallback.media(locale, await loadShareImage(locale));
 }
