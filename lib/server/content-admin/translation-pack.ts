@@ -1,5 +1,6 @@
 import 'server-only';
 import type { Pool, PoolClient } from 'pg';
+import type { ContentTable } from '@/lib/cache-plan';
 import { DEFAULT_LOCALE } from '@/lib/i18n/locales';
 import { LISTED_LOCALE_CODES } from '@/lib/i18n/site-locales';
 import { sourceHash } from '@/lib/i18n/source-hash';
@@ -19,7 +20,8 @@ import { STORY } from './stories';
  * reviewed translations of the content staff edit in the admin, into one
  * language, applied in one transaction as if an editor had saved each item's
  * language tab, with one audit_log row per item (its History can take the
- * translation away again). Run by scripts/apply-translation-pack.mjs.
+ * translation away again). Run by scripts/apply-translation-pack.mjs, or from
+ * /admin/translations for a pack shipped with the code (shipped-translation-packs.ts).
  *
  * Each item names the English it translates, every text of the item's English
  * row. It applies only while that row still reads exactly so and the item has
@@ -111,6 +113,11 @@ const TARGETS: Record<TranslationEntity, Target> = {
     },
   },
 };
+
+/** The tables the applied items touched: what a save of them expires (tagsForSave). */
+export function translationPackTables(outcomes: readonly TranslationOutcome[]): ContentTable[] {
+  return [...new Set(outcomes.filter((o) => o.applied).flatMap((o) => TARGETS[o.item.entity].def.tables))];
+}
 
 const isText = (v: unknown): v is string => typeof v === 'string' && v.trim() !== '';
 

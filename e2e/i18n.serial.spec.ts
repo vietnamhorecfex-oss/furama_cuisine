@@ -251,3 +251,39 @@ test('a booking on /vi is kept in Vietnamese with the consent it showed; its ema
     await c.end();
   }
 });
+
+test('an Editor applies the shipped Vietnamese pack from Bản dịch: the preview changes nothing, applying puts /vi’s menu in Vietnamese', async ({ page, browser }) => {
+  const c = db();
+  await c.connect();
+  const nav = async (visitor: Page) => {
+    await visitor.goto('/vi');
+    const links = visitor.locator('.hdr-nav .hdr-link');
+    await expect(links.first()).toBeAttached();
+    return links.allTextContents();
+  };
+  try {
+    await signInAs(page, STAFF.editor);
+    await page.goto('/admin/translations');
+    await expectHydrated(page);
+    const form = page.getByRole('form', { name: /^Gói bản dịch: Tiếng Việt/ });
+    const visitor = await guest(browser);
+
+    await form.getByRole('button', { name: 'Xem trước' }).click();
+    await expect(form.getByRole('status')).toContainText(/^Xem trước: sẽ áp \d+ mục/);
+    expect((await nav(visitor)).map((t) => t.trim())).toContain('Restaurants');
+
+    await form.getByRole('button', { name: 'Áp dụng' }).click();
+    await expect(form.getByRole('status')).toContainText(/^Đã áp \d+ mục/);
+    await expect.poll(async () => (await nav(visitor)).map((t) => t.trim())).toContain('Nhà hàng');
+
+    // Pressed again it changes nothing: every item now has its Vietnamese row.
+    await form.getByRole('button', { name: 'Áp dụng' }).click();
+    await expect(form.getByRole('status')).toContainText('Đã áp 0 mục');
+    await visitor.context().close();
+  } finally {
+    for (const table of ['cuisine_i18n', 'destination_i18n', 'experience_i18n', 'nav_item_i18n', 'offer_i18n', 'restaurant_highlight_i18n', 'restaurant_i18n', 'story_i18n', 'media_i18n']) {
+      await c.query(`DELETE FROM ${table} WHERE locale = 'vi' AND origin = 'ai'`);
+    }
+    await c.end();
+  }
+});

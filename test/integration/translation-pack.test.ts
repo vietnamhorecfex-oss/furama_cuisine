@@ -5,7 +5,8 @@ import { Pool } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sourceHash } from '@/lib/i18n/source-hash';
 import type { AuditActor } from '@/lib/server/audit';
-import { applyTranslationPack, translationPackErrors, type TranslationItem, type TranslationPack } from '@/lib/server/content-admin/translation-pack';
+import { SHIPPED_TRANSLATION_PACKS } from '@/lib/server/content-admin/shipped-translation-packs';
+import { applyTranslationPack, translationPackErrors, translationPackTables, type TranslationItem, type TranslationPack } from '@/lib/server/content-admin/translation-pack';
 import { databaseUrl, resetDatabase, TEST_DATABASE_URL } from '../helpers/db';
 
 /*
@@ -35,6 +36,13 @@ const audits = async (entityType: string, entityId: string) =>
 describe('translationPackErrors', () => {
   it('accepts the shipped Vietnamese pack', () => {
     expect(translationPackErrors(JSON.parse(readFileSync('db/translation-packs/2026-11-vietnamese.json', 'utf8')))).toEqual([]);
+  });
+
+  it('every pack the admin can apply is valid, and is a file of db/translation-packs', () => {
+    for (const shipped of SHIPPED_TRANSLATION_PACKS) {
+      expect(translationPackErrors(shipped.pack)).toEqual([]);
+      expect(shipped.pack).toEqual(JSON.parse(readFileSync(`db/translation-packs/${shipped.id}.json`, 'utf8')));
+    }
   });
 
   it('refuses English as the target, an unknown list, a column that is not a text, a translation of nothing, an id of the wrong type, an item twice', () => {
@@ -123,6 +131,8 @@ describe.skipIf(!TEST_DATABASE_URL)('translation packs (own database)', () => {
     expect((await row('media_i18n', 'media_id', file.id)).alt).toBe('Ảnh');
     expect(await audits('restaurants', hl.restaurant_id)).toHaveLength(1);
     expect(await audits('media', file.id)).toHaveLength(1);
+    // What the admin's "Áp dụng" expires: the highlights' tables and the library's.
+    expect(translationPackTables(outcomes)).toEqual(expect.arrayContaining(['restaurant_highlight_i18n', 'media_i18n']));
   });
 
   it('a dry run reports what it would do and changes nothing; the script runs it so', async () => {
