@@ -1000,6 +1000,13 @@ Redeploy afterwards so cached guest pages pick up the translations. To undo
 one item, use "Khôi phục bản trước lần này" on its History row by
 `script:apply-translation-pack`.
 
+**Before anyone applies it,** the guest pages already read a shipped pack
+(`SHIPPED_PACK_FILES`, `lib/server/content/pack-fallback.ts`): in the pack's
+language, a field that still shows the very English the pack translated
+shows the pack's translation. A translation staff saved, or an English text
+staff edited, is left as it is. Applying the pack writes the same words as
+rows staff can then edit; it changes nothing a guest sees.
+
 **From the admin, without a database address:** a pack listed in
 `SHIPPED_TRANSLATION_PACKS` (`lib/server/content-admin/shipped-translation-packs.ts`)
 shows on `/admin/translations` under "Gói bản dịch". An Editor or Admin

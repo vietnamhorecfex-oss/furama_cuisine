@@ -2,6 +2,7 @@ import 'server-only';
 import { cacheLife, cacheTag } from 'next/cache';
 import { LOADERS } from '@/lib/cache-plan';
 import { TAGS } from '@/lib/cache-tags';
+import { packFallback } from './pack-fallback';
 import type { RestaurantDetail } from '@/lib/content/types';
 import type { Restaurant } from '@/lib/data';
 import { loadDetailSlugs, loadRestaurantDetail, loadRestaurants } from './restaurants.queries';
@@ -17,7 +18,7 @@ export async function getRestaurants(locale: string): Promise<Restaurant[]> {
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.restaurants.tags, TAGS.i18n(locale));
-  return loadRestaurants(locale);
+  return packFallback.restaurants(locale, await loadRestaurants(locale));
 }
 
 /** The slugs prerendered at build (generateStaticParams). */
@@ -39,7 +40,7 @@ export async function getRestaurantDetail(slug: string, locale: string): Promise
   'use cache';
   cacheLife('max');
   cacheTag(...LOADERS.detail.tags, TAGS.i18n(locale));
-  const detail = await loadRestaurantDetail(slug, locale);
+  const detail = packFallback.detail(locale, await loadRestaurantDetail(slug, locale));
   if (detail) cacheTag(TAGS.restaurant(detail.id));
   return detail;
 }
