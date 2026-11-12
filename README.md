@@ -1000,6 +1000,14 @@ Redeploy afterwards so cached guest pages pick up the translations. To undo
 one item, use "Khôi phục bản trước lần này" on its History row by
 `script:apply-translation-pack`.
 
+**From the admin, without a database address:** a pack listed in
+`SHIPPED_TRANSLATION_PACKS` (`lib/server/content-admin/shipped-translation-packs.ts`)
+shows on `/admin/translations` under "Gói bản dịch". An Editor or Admin
+presses "Xem trước" (it runs and rolls back, saying how many items would
+apply and which are skipped and why), then "Áp dụng". The same rules apply;
+the History rows are under that member of staff, and the guest pages update
+at once (no redeploy). Pressing it again changes nothing.
+
 `db/translation-packs/2026-11-vietnamese.json` (owner, 2026-11-09: /vi in
 Vietnamese) translates the content as the migrations and the content packs
 up to 2026-11 leave it: 54 items. Names (restaurants, destinations,

@@ -6,6 +6,8 @@ import { requirePagePermission } from '@/lib/server/dal/session';
 import { Icon } from '../_ui/Icon';
 import { PageHeader } from '../_ui/PageHeader';
 import { ReviewQueue } from './ReviewQueue';
+import { ApplyPack } from './ApplyPack';
+import { SHIPPED_TRANSLATION_PACKS } from '@/lib/server/content-admin/shipped-translation-packs';
 
 // Request-time like the whole admin (app/admin/layout.tsx); also opts navigations between admin pages out of dev instant validation (instant-navigation.md:568).
 export const instant = false;
@@ -99,6 +101,18 @@ export default async function TranslationsPage({ searchParams }: { searchParams:
           </table>
         )}
       </section>
+
+      {SHIPPED_TRANSLATION_PACKS.length > 0 ? (
+        <section aria-labelledby="packs-title" className="a-card-row">
+          <h2 id="packs-title">Gói bản dịch</h2>
+          <p className="a-muted">
+            Bản dịch đã duyệt, đi kèm bản cập nhật web. Chỉ áp chỗ chữ tiếng Anh vẫn như lúc dịch và chưa có bản dịch; chỗ đã có bản dịch hoặc tiếng Anh đã sửa thì bỏ qua. Mỗi mục có một dòng trong Lịch sử của nó.
+          </p>
+          {SHIPPED_TRANSLATION_PACKS.map((p) => (
+            <ApplyPack key={p.id} id={p.id} label={p.label} canApply={roleCan(staff.role, { content: ['update'] })} />
+          ))}
+        </section>
+      ) : null}
 
       <section aria-labelledby="queue-title" id="queue" className="a-card-row">
         <h2 id="queue-title">Hàng chờ duyệt ({queue.total})</h2>
