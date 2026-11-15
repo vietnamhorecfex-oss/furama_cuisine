@@ -1,0 +1,147 @@
+// Khung SEO/GEO cho Next.js App Router — chép từng phần vào `lib/seo.ts` và `app/robots.ts` của project.
+// Đuôi .ts.txt CÓ CHỦ ĐÍCH: nằm trong docs/team/templates/ mà mang đuôi .ts thì tsconfig của project typecheck nó,
+// gặp "CHUA_QUYET" (dưới) là `next build` của cả project hỏng. Chép ra rồi mới đổi thành .ts.
+// Nguyên tắc: N07 (một nguồn), N14 (tham số chính sách bắt buộc), N23 (không khai man), N26 (không rò tồn tại),
+// N28 (không nội suy thô vào script), N76–N78 (mục P — CHƯA qua dự án thật: ghi cạm bẫy gặp được vào tri thức).
+import type { MetadataRoute } from "next";
+
+export const SITE_URL = "https://example.com"; // ĐỔI. Một nguồn — nhiều môi trường thì đọc từ env.
+
+/** URL tuyệt đối; URL đã tuyệt đối (ảnh CMS) giữ nguyên — nối domain lần hai là chuỗi rác, Google bỏ cả khối. */
+export function absoluteUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
+// ── 1. Chính sách bot AI (N78) ────────────────────────────────────────────────────────────────────────────────
+// Tên bot đổi theo thời gian: đối chiếu tài liệu của OpenAI, Anthropic, Perplexity, Google, Apple lúc làm.
+// Đã đối chiếu: <DD/MM/YYYY>
+export const BOT_TRICH_DAN = ["OAI-SearchBot", "Claude-SearchBot", "PerplexityBot"] as const; // chặn ⇒ mất khỏi câu trả lời AI
+export const BOT_HUAN_LUYEN = [
+  "GPTBot",
+  "ClaudeBot",
+  "Google-Extended", // chặn KHÔNG gỡ trang khỏi AI Overviews — cái đó đi bằng Googlebot
+  "Applebot-Extended",
+  "CCBot",
+  "Meta-ExternalAgent",
+] as const;
+// Bot do người dùng gọi (ChatGPT-User, Claude-User, Perplexity-User) có thể không theo robots.txt — không liệt kê.
+
+type ChinhSach = "cho-phep" | "chan";
+
+// Quyết định của CHỦ DỰ ÁN (N57), ghi kèm người quyết + ngày trong CLAUDE.md mục SEO & GEO.
+// Cố ý để "CHUA_QUYET": tsc báo lỗi tới khi có người quyết — quên chọn là lỗi biên dịch, không phải lỗ hổng im lặng (N14).
+export const CHINH_SACH_BOT: { trichDan: ChinhSach; huanLuyen: ChinhSach } = {
+  trichDan: "CHUA_QUYET",
+  huanLuyen: "CHUA_QUYET",
+};
+
+type LuatRobots = { userAgent: string | string[]; allow?: string | string[]; disallow?: string | string[] };
+
+/** app/robots.ts: `export { robots as default } from "@/lib/seo";` */
+export function robots(): MetadataRoute.Robots {
+  // KHÔNG liệt kê /admin, /api… ở đây: robots.txt công khai, liệt kê là rò đường dẫn nội bộ (N26), và chặn crawl làm
+  // bot không thấy `noindex`. Trang nội bộ: `robots: { index: false }` trong metadata + tường đăng nhập.
+  const rules: LuatRobots[] = [{ userAgent: "*", allow: "/" }];
+  // Nhóm user-agent riêng THAY nhóm "*" cho bot đó — bot bị chặn phải có Disallow đầy đủ ở nhóm của nó.
+  if (CHINH_SACH_BOT.huanLuyen === "chan") rules.push({ userAgent: [...BOT_HUAN_LUYEN], disallow: "/" });
+  if (CHINH_SACH_BOT.trichDan === "chan") rules.push({ userAgent: [...BOT_TRICH_DAN], disallow: "/" });
+  return { rules, sitemap: `${SITE_URL}/sitemap.xml` };
+}
+// Kiểm thật (CDN/WAF có thể chặn dù robots mở): curl -A "OAI-SearchBot" -sI <url> ⇒ 200.
+
+// ── 2. Thực thể chính (N77) — Restaurant / Hotel / Resort / LocalBusiness ──────────────────────────────────────
+export const ENTITY_ID = `${SITE_URL}/#thuc-the`; // @id cố định: mọi trang gộp về MỘT thực thể
+
+export type GioMoCua = { ngay: Array<"Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday">; mo: string; dong: string };
+
+/** Đọc từ CMS/settings — CÙNG nguồn với trang Liên hệ, footer, llms.txt và hồ sơ Google Business (N07, N77). */
+export type ThucThe = {
+  loai: "Restaurant" | "Hotel" | "Resort" | "LocalBusiness";
+  ten: string;
+  moTa: string;
+  dienThoai?: string;
+  email?: string;
+  diaChi: { duong: string; quan?: string; thanhPho: string; tinh?: string; maBuuChinh?: string; quocGia: string };
+  toaDo?: { lat: number; lng: number };
+  gio: GioMoCua[];
+  anh: string[];
+  sameAs: string[]; // CHỈ hồ sơ thật của doanh nghiệp: Google Maps, Facebook, Instagram, TripAdvisor, Wikidata…
+  mucGia?: string; // vd "$$" hoặc "500.000–1.500.000 VND" — chỉ khi chủ dự án xác nhận
+  // Riêng từng loại — chỉ khai khi có dữ liệu thật (N23):
+  servesCuisine?: string[]; // Restaurant
+  menuUrl?: string; // Restaurant
+  acceptsReservations?: boolean; // Restaurant
+  checkinTime?: string; // Hotel/Resort, "14:00"
+  checkoutTime?: string; // Hotel/Resort, "12:00"
+};
+
+/** Bỏ trường rỗng: khai rỗng tệ hơn không khai (N23). */
+function chiKhiCo<T extends Record<string, unknown>>(o: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(o).filter(([, v]) => v !== undefined && v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)),
+  ) as Partial<T>;
+}
+
+export function jsonLdThucThe(t: ThucThe) {
+  return chiKhiCo({
+    "@context": "https://schema.org",
+    "@type": t.loai,
+    "@id": ENTITY_ID,
+    name: t.ten,
+    description: t.moTa,
+    url: SITE_URL,
+    telephone: t.dienThoai,
+    email: t.email,
+    image: t.anh.map(absoluteUrl),
+    priceRange: t.mucGia,
+    address: chiKhiCo({
+      "@type": "PostalAddress",
+      streetAddress: t.diaChi.duong,
+      addressLocality: t.diaChi.quan ? `${t.diaChi.quan}, ${t.diaChi.thanhPho}` : t.diaChi.thanhPho,
+      addressRegion: t.diaChi.tinh,
+      postalCode: t.diaChi.maBuuChinh,
+      addressCountry: t.diaChi.quocGia,
+    }),
+    geo: t.toaDo && { "@type": "GeoCoordinates", latitude: t.toaDo.lat, longitude: t.toaDo.lng },
+    // Qua nửa đêm: mo "18:00", dong "01:00" = 01:00 sáng HÔM SAU — đừng so chuỗi giờ để "sửa" nó.
+    openingHoursSpecification: t.gio.map((g) => ({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: g.ngay,
+      opens: g.mo,
+      closes: g.dong,
+    })),
+    sameAs: t.sameAs.filter((u) => u.startsWith("https://")),
+    servesCuisine: t.servesCuisine,
+    hasMenu: t.menuUrl && absoluteUrl(t.menuUrl),
+    acceptsReservations: t.acceptsReservations,
+    checkinTime: t.checkinTime,
+    checkoutTime: t.checkoutTime,
+    // KHÔNG: aggregateRating chép từ Google/TripAdvisor, starRating không chính thức, price bịa từ "giảm 15%" (N23).
+  });
+}
+
+// ── 3. Breadcrumb — khớp breadcrumb HIỂN THỊ trên trang ──────────────────────────────────────────────────────
+export function jsonLdBreadcrumb(muc: Array<{ ten: string; url: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: muc.map((m, i) => ({ "@type": "ListItem", position: i + 1, name: m.ten, item: absoluteUrl(m.url) })),
+  };
+}
+
+// ── 4. Nhúng vào trang ───────────────────────────────────────────────────────────────────────────────────────
+/**
+ * Chuỗi cho <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdChuoi(data) }} />.
+ * Thoát "<" để dữ liệu CMS chứa "</script>" không đóng thẻ sớm (N28).
+ */
+export function jsonLdChuoi(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+// ── 5. Redirect khi đổi URL (N76) ───────────────────────────────────────────────────────────────────────────
+// Lưu slug cũ (bảng/cột `old_slugs` hoặc file `redirects.json` trong repo), KHÔNG xoá. next.config:
+//   async redirects() { return (await import("./redirects.json")).default.map((r) => ({ ...r, permanent: true })); }
+// permanent: true ⇒ 308 (tương đương 301 với Google). Một bước tới đích 200 — không chuỗi, không dồn về trang chủ;
+// trang bỏ hẳn ⇒ notFound() (404) hoặc 410, không redirect. Sitemap chỉ chứa URL đích.
+export type Redirect = { source: string; destination: string };

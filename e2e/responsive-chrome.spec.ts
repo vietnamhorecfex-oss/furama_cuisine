@@ -131,9 +131,10 @@ test('keyboard focus fills a button and turns its label with it', async ({ page 
   const reserve = page.locator('.hdr-full .btn-gold');
   const explore = page.locator('.hero-explore');
   await expect(explore).toBeVisible();
-  // Tab until the header's RESERVE, then on to EXPLORE OUR RESTAURANTS.
+  // Tab until the header's RESERVE, then on to EXPLORE OUR RESTAURANTS. RESERVE brightens (--gold-hover) and keeps
+  // its dark label: a deep fill matched the header's own green and the button vanished (UX/UI audit, UI-04).
   for (const [button, ink] of [
-    [reserve, 'rgb(247, 242, 232)'],
+    [reserve, 'rgb(27, 42, 36)'],
     [explore, 'rgb(247, 242, 232)'],
   ] as const) {
     for (let i = 0; i < 40 && !(await button.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press('Tab');

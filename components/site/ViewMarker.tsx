@@ -48,7 +48,7 @@ export function ViewMarker({
 
   return (
     <PageRootContext value={ref}>
-      <main ref={ref} data-view={view} data-hero={hero ? undefined : 'none'}>
+      <main ref={ref} data-view={view} data-hero={hero ? undefined : 'none'} tabIndex={-1}>
         {children}
       </main>
     </PageRootContext>

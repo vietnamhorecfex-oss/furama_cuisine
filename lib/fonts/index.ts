@@ -20,8 +20,15 @@ import './fallbacks.css';
  * carries the CSS variable, which is that const's name (crimsonPro,
  * beVietnamPro). Renaming either const means renaming its family in all three
  * calls. Automatic fallbacks are off: fallbacks.css has the fallback faces
- * next/font/google generated, with its metrics. Preloads match the old
- * `subsets`: every file except Crimson Pro's vietnamese ones.
+ * next/font/google generated, with its metrics.
+ *
+ * One file is preloaded: Crimson Pro latin, upright, the hero's title. Every
+ * preload is fetched at high priority alongside the first screen's image, and
+ * the 16 files these calls used to preload (~305KB) held the phone's largest
+ * paint back (UX/UI audit 2026-11-15, PERF-01: preloading none of them took
+ * it from 4.9s to 1.4s on a throttled phone). The rest load when a face is
+ * first painted; the fallback faces carry the fonts' metrics, so the swap
+ * moves nothing (CLS +0.005 at most when the fonts came 2.5s late).
  *
  * If a Next.js change ever names the calls apart, the latin-ext and Vietnamese
  * faces would quietly stop applying, so scripts/check-prerender.mjs (run in CI
@@ -79,15 +86,34 @@ const crimsonProLatinExt = localFont({
     },
   ],
   display: 'swap',
+  preload: false,
   adjustFontFallback: false,
 });
 
-const crimsonPro = localFont({
+// The latin italic, not preloaded: its own call, as a call preloads all its files or none.
+// oxlint-disable-next-line no-unused-vars -- only its @font-face rules are needed
+const crimsonProLatinItalic = localFont({
   src: [
     { path: './crimson-pro/crimson-pro-latin-italic.woff2', weight: '300', style: 'italic' },
     { path: './crimson-pro/crimson-pro-latin-italic.woff2', weight: '400', style: 'italic' },
     { path: './crimson-pro/crimson-pro-latin-italic.woff2', weight: '500', style: 'italic' },
     { path: './crimson-pro/crimson-pro-latin-italic.woff2', weight: '600', style: 'italic' },
+  ],
+  declarations: [
+    { prop: 'font-family', value: "'crimsonPro'" },
+    {
+      prop: 'unicode-range',
+      value:
+        'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD',
+    },
+  ],
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
+});
+
+const crimsonPro = localFont({
+  src: [
     { path: './crimson-pro/crimson-pro-latin.woff2', weight: '300', style: 'normal' },
     { path: './crimson-pro/crimson-pro-latin.woff2', weight: '400', style: 'normal' },
     { path: './crimson-pro/crimson-pro-latin.woff2', weight: '500', style: 'normal' },
@@ -124,6 +150,7 @@ const beVietnamProVietnamese = localFont({
     },
   ],
   display: 'swap',
+  preload: false,
   adjustFontFallback: false,
 });
 
@@ -144,6 +171,7 @@ const beVietnamProLatinExt = localFont({
     },
   ],
   display: 'swap',
+  preload: false,
   adjustFontFallback: false,
 });
 
@@ -163,6 +191,7 @@ const beVietnamPro = localFont({
     },
   ],
   display: 'swap',
+  preload: false,
   adjustFontFallback: false,
   fallback: ['Be Vietnam Pro Fallback'],
   variable: '--font-be-vietnam',

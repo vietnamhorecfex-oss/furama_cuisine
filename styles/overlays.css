@@ -526,9 +526,12 @@
   resize: vertical;
 }
 
-.field input:focus,
-.field textarea:focus {
+/* The focus as the buttons show it, a 2px ring outside the edge: a 1px edge changing colour was hard to see. */
+.field input:focus-visible,
+.field textarea:focus-visible {
   border-color: var(--green);
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
 }
 
 .field input[data-invalid='true'] {
@@ -694,12 +697,17 @@
 }
 
 .drawer-thanks {
-  margin-top: 24px;
+  margin: 24px 0 0;
   font-family: var(--serif);
   font-weight: 300;
   font-size: 36px;
   line-height: 1.1;
   color: var(--ink);
+}
+
+/* Focused by script when the booking is made: no ring around the words. */
+.drawer-thanks:focus {
+  outline: none;
 }
 
 .drawer-done-lede {

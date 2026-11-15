@@ -93,6 +93,28 @@
   text-underline-offset: 2px;
 }
 
+/* The 404 for an address no route matches (app/global-not-found.tsx): the mark above, the title again in the other language. */
+.page-message .page-message-mark {
+  display: inline-block;
+  margin-bottom: 28px;
+}
+
+.page-message .page-message-mark .brand-mark {
+  width: 64px;
+}
+
+.page-message .page-message-alt {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.6em;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.page-message .page-message-more {
+  margin-top: 0;
+}
+
 /* The way home: the site's small-caps link, with a 44px touch area. */
 .page-message .page-message-home {
   min-height: 44px;

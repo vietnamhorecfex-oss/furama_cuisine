@@ -53,6 +53,8 @@ function OfferCard({ offer, cta }: { offer: Offer; cta: string }) {
         <button
           type="button"
           className="offer-cta"
+          // Three VIEW OFFERs read alike in a list of buttons: each names its offer after the visible words.
+          aria-label={`${cta}: ${offer.title}`}
           onClick={() => openReserve({ restaurant: offer.restaurantId }, { id: offer.id, title: offer.title })}
         >
           {cta}

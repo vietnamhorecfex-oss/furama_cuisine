@@ -75,6 +75,11 @@ export function SearchOverlay() {
           aria-label={strings['search.placeholder']}
         />
 
+        {/* How many restaurants the words find, read out as the guest types (the labels below are not live). */}
+        <p className="sr-only" role="status">
+          {q ? (results.length > 0 ? formatMessage(strings['search.results'], { count: results.length }, locale) : formatMessage(strings['search.none'], { query }, locale)) : ''}
+        </p>
+
         {!q && (
           <>
             <div className="search-label">{strings['search.popular']}</div>

@@ -1,0 +1,85 @@
+/* Token chuyển động — MỘT nguồn cho mọi thời lượng/easing của dự án (N07: một giá trị, một nguồn).
+ *
+ * CÁCH DÙNG KHUÔN NÀY:
+ *   1. `giam-doc-sang-tao` điền giá trị theo hướng đã chốt (docs/design/huong-thiet-ke.md, mục A4).
+ *      Đổi TÊN easing theo cá tính của hướng (vd --ease-rem thay --ease-ca-tinh) nhưng giữ đủ các vai.
+ *   2. `ky-su-giao-dien` chép vào `app/tokens-motion.css` (hoặc khối @theme của Tailwind v4) và import ở layout gốc.
+ *   3. Code KHÔNG được tự viết `300ms` hay `cubic-bezier(...)` — chỉ dùng var(--…). Soát bằng:
+ *        grep -rnE "[0-9]+m?s\b|cubic-bezier" app components --include=*.tsx --include=*.css | grep -v tokens-motion
+ *   4. Kiểm bản giảm chuyển động: DevTools → Rendering → Emulate prefers-reduced-motion: reduce — mọi chuyển
+ *      động phải tắt hoặc thành mờ dần ngắn; `scripts/kiem-trinh-duyet.mjs` cũng tự kiểm điều này.
+ */
+
+:root {
+  /* ── Thời lượng — thang có tên theo VAI, không theo số ─────────────────────────────── */
+  --dur-phan-hoi: 120ms;   /* nhấn, rê, bật/tắt — phải thấy "ăn tay" (≤ 200ms) */
+  --dur-nho: 200ms;        /* tooltip, menu nhỏ, đổi trạng thái thành phần */
+  --dur-chuyen-canh: 320ms;/* dialog, sheet, đổi tab, chuyển trang (250–400ms) */
+  --dur-dan-dung: 900ms;   /* khoảnh khắc chữ ký — chỉ một chỗ mỗi trang (≤ 1200ms) */
+
+  /* ── Easing — mỗi đường một vai ────────────────────────────────────────────────────── */
+  --ease-vao: cubic-bezier(0.16, 1, 0.3, 1);      /* thứ XUẤT HIỆN: nhanh rồi đậu êm */
+  --ease-ra: cubic-bezier(0.7, 0, 0.84, 0);       /* thứ BIẾN MẤT: chậm rồi đi nhanh */
+  --ease-doi: cubic-bezier(0.65, 0, 0.35, 1);     /* thứ ĐỔI CHỖ trên màn */
+  --ease-ca-tinh: cubic-bezier(0.34, 1.56, 0.64, 1); /* cá tính của hướng (đây: nảy nhẹ) — dùng TIẾT KIỆM */
+
+  /* ── Khoảng cách & so le ──────────────────────────────────────────────────────────── */
+  --dich-nho: 8px;         /* quãng trượt khi xuất hiện — nhỏ thôi, mắt chỉ cần gợi ý hướng */
+  --dich-vua: 24px;
+  --so-le: 60ms;           /* trễ giữa các phần tử trong một nhóm dàn dựng (tối đa ~6 phần tử) */
+}
+
+/* ── Giảm chuyển động: KHÔNG phải tuỳ chọn (N47, WCAG 2.3.3) ─────────────────────────────── */
+/* Thời lượng về gần 0 thay vì `none` để code lắng nghe transitionend/animationend vẫn chạy.     */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-phan-hoi: 1ms;
+    --dur-nho: 1ms;
+    --dur-chuyen-canh: 1ms;
+    --dur-dan-dung: 1ms;
+    --dich-nho: 0px;
+    --dich-vua: 0px;
+    --so-le: 0ms;
+  }
+  *, *::before, *::after {
+    animation-iteration-count: 1 !important; /* không gì lặp vô hạn khi người dùng xin giảm chuyển động */
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Mẫu dùng — xoá cái không cần ─────────────────────────────────────────────────────────── */
+
+/* Phản hồi khi nhấn: chỉ transform (N44). */
+.nut-nhan {
+  transition: transform var(--dur-phan-hoi) var(--ease-doi);
+}
+.nut-nhan:active {
+  transform: scale(0.97);
+}
+
+/* Xuất hiện khi cuộn tới — CSS thuần, không JS. Trình duyệt không hỗ trợ ⇒ phần tử hiện sẵn, không ẩn.
+ * KHÔNG dùng cho phần tử LCP (tiêu đề/ảnh lớn màn đầu): LCP chỉ tính khi nó hiện. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hien-khi-cuon {
+      animation: hien-len linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+@keyframes hien-len {
+  from { opacity: 0; transform: translateY(var(--dich-vua)); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Chuyển trang (View Transitions). MPA/cross-document: bật bằng dòng dưới; SPA: document.startViewTransition().
+ * Trình duyệt không hỗ trợ ⇒ chuyển trang bình thường. */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: var(--dur-chuyen-canh) var(--ease-ra) both mo-di; }
+::view-transition-new(root) { animation: var(--dur-chuyen-canh) var(--ease-vao) both hien-ra; }
+@keyframes mo-di { to { opacity: 0; } }
+@keyframes hien-ra { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}

@@ -369,8 +369,10 @@
   background: var(--gold);
 }
 
+/* The gold button sits on the header, whose solid state is --green-deep: a deep fill there left a label
+   floating with no button around it (UX/UI audit 2026-11-15, UI-04). It brightens instead. */
 .btn-gold::before {
-  background: var(--green-deep);
+  background: var(--gold-hover);
 }
 
 /*
@@ -385,9 +387,12 @@
   transform: scaleY(1);
 }
 
-.btn-slab:focus-visible,
-.btn-gold:focus-visible {
+.btn-slab:focus-visible {
   color: var(--on-dark);
+}
+
+.btn-gold:focus-visible {
+  color: var(--on-gold);
 }
 
 .btn-green:focus-visible {
@@ -413,7 +418,7 @@
 
   .btn-gold:hover {
     background: var(--gold);
-    color: var(--on-dark);
+    color: var(--on-gold);
   }
 }
 

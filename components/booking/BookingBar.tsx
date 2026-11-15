@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import { bookableDestinationOptions, mealLabel } from '@/lib/content/options';
 import { fmtDay } from '@/lib/booking';
 import { dayReason, slotOpen } from '@/lib/booking/client';
@@ -15,6 +16,7 @@ import { useReveal } from '@/lib/motion';
 export function BookingBar() {
   const { site, bookable, booking, setBooking, board, openReserve, days, maxParty, groupPhone, now, strings, loadFailed, locale } = useSite();
   const title = useReveal<HTMLHeadingElement>('title');
+  const titleId = useId();
   const ornament = useReveal<HTMLSpanElement>('fade');
   const panel = useReveal<HTMLDivElement>('up');
 
@@ -63,10 +65,11 @@ export function BookingBar() {
       : [{ value: booking.guests, label: guestLabel(booking.guests) }];
 
   return (
-    <section id="reserve" className="booking motif-lattice">
+    // Named by its title, so it is a region of its own: it sits between the page's <main> and the footer (axe "region").
+    <section id="reserve" className="booking motif-lattice" aria-labelledby={titleId}>
       <span className="band-waves booking-waves" aria-hidden="true" />
       <div className="shell">
-        <h2 ref={title} data-reveal="title" className="booking-title">
+        <h2 ref={title} id={titleId} data-reveal="title" className="booking-title">
           <SplitWords text={strings['booking.title']} />
         </h2>
         <FriezeDivider ref={ornament} reveal="fade" className="booking-orn" />

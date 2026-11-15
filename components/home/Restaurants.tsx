@@ -32,7 +32,7 @@ export function Restaurants() {
     <section id="restaurants" className="restaurants">
       <div className="shell">
         <div className="section-head">
-          <h2 ref={title} data-reveal="title" className="section-title">
+          <h2 ref={title} data-reveal="title" className="section-title" tabIndex={-1}>
             <SplitWords text={strings['restaurants.title']} />
           </h2>
           <button
@@ -46,9 +46,18 @@ export function Restaurants() {
           </button>
         </div>
 
+        {/* What a filter left, read out as it changes: always mounted, as a live region must be before it speaks. */}
+        <p className="sr-only" role="status">
+          {chips.length > 0
+            ? shownCount
+              ? formatMessage(strings['restaurants.showing'], { shown: shownCount, total: restaurants.length }, locale)
+              : strings['restaurants.no_matches']
+            : ''}
+        </p>
+
         {chips.length > 0 && (
           <div className="filter-bar">
-            <span className="filter-summary">
+            <span className="filter-summary" aria-hidden="true">
               {shownCount
                 ? formatMessage(strings['restaurants.showing'], { shown: shownCount, total: restaurants.length }, locale)
                 : strings['restaurants.no_matches']}

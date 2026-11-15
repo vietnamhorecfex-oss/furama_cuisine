@@ -739,7 +739,11 @@ export function SiteProvider({
       destination: finder.destination,
     });
     scrollToId('restaurants');
-  }, [finder, scrollToId]);
+    // The button pressed is left above the screen (and the sheet's goes with it): the focus follows to the list's
+    // title, so the next Tab is in the results and a screen reader is where the summary is (UX/UI audit, UX-07).
+    // After the sheet's close has given the focus back to what opened it (Chrome's useModalOverlays).
+    window.setTimeout(() => findSection('restaurants')?.querySelector<HTMLElement>('.section-title')?.focus({ preventScroll: true }), 60);
+  }, [finder, findSection, scrollToId]);
 
   const pickCuisine = useCallback(
     (cuisine: string) => {
