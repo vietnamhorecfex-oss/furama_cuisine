@@ -1640,6 +1640,22 @@ a.dest-hit:hover {
   margin-inline-start: -11px;
 }
 
+/* Before the browser decides between film and slideshow (Hero `decided`), a phone keeps the film row's place,
+   empty, where the film may play: its arrival no longer moves the copy above it. */
+@media (min-width: 760px) {
+  .hero-dots[data-film-maybe][aria-hidden] {
+    display: none;
+  }
+}
+
+@media (max-width: 759px) and (prefers-reduced-motion: no-preference) {
+  .hero-dots[data-film-maybe] {
+    display: flex;
+    min-height: 22px;
+    visibility: hidden;
+  }
+}
+
 .hero-dots[data-film] .hero-pause:not([data-ready]) {
   visibility: hidden;
 }
