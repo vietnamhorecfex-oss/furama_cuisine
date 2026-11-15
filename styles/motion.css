@@ -64,6 +64,26 @@
     transform: none;
     clip-path: inset(100% 0% 0% 0%);
   }
+
+  /*
+   * The entrance's net: the first screen's words and buttons wait hidden for
+   * the script's entrance (lib/motion-intro.tsx), and a slow phone ran that
+   * only once React was up, its title and RESERVE showing ~6.7s in for a page
+   * painted at ~2.2s (UX/UI audit 2026-11-15, PERF-03). If the script has not
+   * started it by INTRO_NET_MS, CSS plays it, after the opening curtain parts
+   * (500ms); the script then lets it finish rather than playing it again.
+   */
+  [data-motion='on'] [data-intro]:not([data-intro-done]) {
+    animation: intro-net var(--dur-reveal) var(--ease-out) 900ms both;
+  }
+}
+
+@keyframes intro-net {
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0% 0% 0% 0%);
+  }
 }
 
 /* One word's mask (SplitWords): room above for Vietnamese stacked marks and below for descenders. */

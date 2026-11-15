@@ -35,9 +35,10 @@ export function HeroHeading({ copy }: { copy: Copy<'hero'> }) {
  * is an art-directed <picture> of both files' optimised srcsets.
  *
  * The background film (HERO_VIDEO, lib/media/hero-video.ts, owner 2026-11-09) takes the slideshow's place for a
- * guest who allows motion and does not save data: it loads after hydration and fades in over slide 1 once it runs,
+ * guest who allows motion, does not save data and is not on a slow connection: it loads once the page has (and the
+ * browser is idle) and fades in over slide 1 once it runs,
  * so slide 1 is its poster and the first paint, and it has its own pause button on every width (WCAG 2.2.2). A guest
- * who reduces motion or saves data gets the slides as before (still, with their dots), so the slides staff manage
+ * who reduces motion, saves data or is on a slow connection gets the slides as before (still, with their dots), so the slides staff manage
  * on the hero screen still show.
  */
 export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'> }) {
@@ -60,10 +61,29 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
   // `motion` is whether it may run at all (not when motion is reduced); `paused` is the guest's choice.
   const motionAllowed = useMotionAllowed();
   const filmOn = useFilmAllowed(HERO_VIDEO.length > 0 && motionAllowed);
+  // Whether the browser has decided between film and slideshow: the server's HTML cannot know (motion, Save-Data).
+  const decided = useSyncExternalStore(noSubscribe, () => true, () => false);
   const motion = motionAllowed && count > 1 && !filmOn;
   const [paused, setPaused] = useState(false);
   const [filmRunning, setFilmRunning] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
+  /* The film's file is fetched once the page has loaded and the browser is idle: it is 2.2MB on a phone, and it
+     came straight after hydration, alongside the page's own pictures (UX/UI audit 2026-11-15, PERF-05). */
+  const [filmLoads, setFilmLoads] = useState(false);
+  useEffect(() => {
+    if (!filmOn) return;
+    let idle = 0;
+    const start = () => {
+      idle = window.requestIdleCallback ? window.requestIdleCallback(() => setFilmLoads(true), { timeout: 2000 }) : window.setTimeout(() => setFilmLoads(true), 200);
+    };
+    if (document.readyState === 'complete') start();
+    else window.addEventListener('load', start, { once: true });
+    return () => {
+      window.removeEventListener('load', start);
+      if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
+    };
+  }, [filmOn]);
 
   /* The film runs while the hero is the guest's view: not behind an overlay, not once they paused it. */
   useEffect(() => {
@@ -106,12 +126,16 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
                 // Phones show only this slide, in its own crop (spec §6.5).
                 <FirstSlide slide={s} />
               ) : (
-                <CmsImage media={s.image} sizes="100vw" width={s.image.width} height={s.image.height} className="fill" loading="lazy" />
+                // The other slides only once the browser knows the slideshow runs: in the server's HTML they were
+                // fetched before the film took their place (on screen, so `lazy` did not hold them back), 630KB
+                // a desktop visit never showed (UX/UI audit 2026-11-15, PERF-04).
+                decided &&
+                !filmOn && <CmsImage media={s.image} sizes="100vw" width={s.image.width} height={s.image.height} className="fill" loading="lazy" />
               )}
             </div>
           </div>
         ))}
-        {filmOn && (
+        {filmOn && filmLoads && (
           <div className="hero-film-layer" data-running={filmRunning || undefined} data-parallax="0.3">
             <video
               ref={video}
@@ -190,9 +214,11 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
                 <span aria-hidden="true" data-paused={paused} />
               </button>
             </div>
-          ) : (
-            count > 1 && (
-            <div className="hero-dots" data-intro="6">
+          ) : count > 1 ? (
+            // Without the film, the row still holds the film's pause row's place on a phone (styles/home.css): the server
+            // cannot know which a phone gets, and the row arriving or leaving after hydration moved the hero's copy
+            // (CLS 0.028, UX/UI audit, PERF-08).
+            <div className="hero-dots" data-intro="6" data-film-maybe={HERO_VIDEO.length > 0 ? '' : undefined}>
               <span className="hero-count" aria-hidden="true">
                 <span className="hero-count-now">{pad(slide + 1)}</span>
                 <span className="hero-count-of">{pad(count)}</span>
@@ -222,7 +248,8 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
                 </button>
               )}
             </div>
-            )
+          ) : (
+            HERO_VIDEO.length > 0 && <div className="hero-dots" data-film-maybe="" aria-hidden="true" />
           )}
         </div>
 
@@ -250,13 +277,18 @@ function FirstSlide({ slide }: { slide: HeroSlide }) {
 }
 
 /**
- * Whether the background film may load: motion allowed (passed in) and the guest's browser not asking to save data.
+ * Whether the background film may load: motion allowed (passed in), the guest's browser not asking to save data, and
+ * a connection the browser does not rate as 3G or slower (a 2.2MB film over it would take most of a minute).
  * False on the server and in the first render, so the film never competes with the poster for the first paint.
  */
 function useFilmAllowed(allowed: boolean): boolean {
-  const saveData = useSyncExternalStore(noSubscribe, readSaveData, () => true);
-  return allowed && !saveData;
+  const light = useSyncExternalStore(noSubscribe, readLightData, () => true);
+  return allowed && !light;
 }
 
 const noSubscribe = () => () => {};
-const readSaveData = () => (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+const SLOW_NETWORKS = new Set(['slow-2g', '2g', '3g']);
+const readLightData = () => {
+  const c = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  return c?.saveData === true || SLOW_NETWORKS.has(c?.effectiveType ?? '');
+};

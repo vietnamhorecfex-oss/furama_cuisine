@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
+    // AVIF first, WebP for a browser without it: the restaurant page's portrait, its phone's largest paint, was a
+    // 312KB WebP (UX/UI audit 2026-11-15, PERF-02; AVIF about 40% smaller). Each format is a transformation and a
+    // cache entry of its own on Vercel: the first AVIF request of each picture and width is one more.
+    formats: ['image/avif', 'image/webp'],
     // Content images from Vercel Blob go through the optimiser like the /assets ones (spec §6.3 item 7):
     // the store's own host when the build knows its store, https only, no port, no query string.
     remotePatterns: blobHost ? [{ protocol: 'https', hostname: blobHost, port: '', pathname: '/**', search: '' }] : [],

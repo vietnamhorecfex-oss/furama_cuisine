@@ -30,6 +30,9 @@ const INTRO_FRAMES: Record<IntroKind, Keyframe[]> = {
  */
 let curtainLiftsAt = 0;
 
+/** When CSS starts the entrance itself if the script has not (styles/motion.css, `intro-net`'s delay). */
+const INTRO_NET_MS = 900;
+
 /**
  * Set just before a route change that morphs a picture into the next page (lib/view-morph.ts): that page's
  * [data-intro-morph] element is the morph's landing, so it shows at once instead of playing its own entrance
@@ -93,6 +96,12 @@ export function useIntro(active: boolean, baseDelay = 0, root?: RefObject<HTMLEl
       const curtain = Math.max(0, curtainLiftsAt - performance.now());
       els.forEach((el) => {
         const kind = (el.getAttribute('data-intro-kind') as IntroKind) || 'rise';
+        // React came after CSS's net had begun the entrance (styles/motion.css, a slow phone): it finishes, then is done.
+        const net = el.getAnimations?.().find((a) => (a as CSSAnimation).animationName === 'intro-net');
+        if (net && Number(net.currentTime ?? 0) >= INTRO_NET_MS) {
+          net.finished.then(() => el.setAttribute('data-intro-done', '')).catch(() => {});
+          return;
+        }
         el.setAttribute('data-intro-done', '');
         if (!motion || !el.animate) return;
         const i = Number(el.getAttribute('data-intro')) || 0;
