@@ -53,7 +53,14 @@ export function HeaderLanguages() {
   const current = languages.find((l) => l.code === locale);
   return (
     <div className="hdr-lang" data-dd="1">
-      <button type="button" className="hdr-link hdr-lang-btn" aria-expanded={open} onClick={() => toggleDropdown('lang')}>
+      {/* Named for what it is and what is on: "EN" alone did not say it chose the language (UX/UI audit, UX-14). */}
+      <button
+        type="button"
+        className="hdr-link hdr-lang-btn"
+        aria-expanded={open}
+        aria-label={`${strings['ui.language_aria']}: ${current?.nativeName ?? locale}`}
+        onClick={() => toggleDropdown('lang')}
+      >
         {current?.shortLabel ?? locale.toUpperCase()}
         <span className="hdr-lang-caret" aria-hidden="true">
           ▾

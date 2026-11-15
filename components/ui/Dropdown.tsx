@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useRef } from 'react';
+import { useId, useLayoutEffect, useRef, type KeyboardEvent } from 'react';
 import { useSite } from '@/components/site/SiteProvider';
 
 export type Option<T extends string | number> = {
@@ -103,6 +103,8 @@ export function Dropdown<T extends string | number>({
   const current = options.find((o) => o.value === value);
   const trigger = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  /* Opened from the keyboard: the focus goes into the list once it is drawn. */
+  const focusOnOpen = useRef(false);
 
   // Placed before the first paint, and again when the phone turns while the list is open (a new width: a phone's
   // browser also resizes the window as its toolbar shrinks and grows with the scroll, which must not move the page).
@@ -118,9 +120,50 @@ export function Dropdown<T extends string | number>({
       place();
     };
     place();
+    if (focusOnOpen.current) {
+      focusOnOpen.current = false;
+      const items = [...(panel.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])];
+      (items.find((o) => o.getAttribute('aria-selected') === 'true') ?? items[0])?.focus();
+    }
     window.addEventListener('resize', turn);
     return () => window.removeEventListener('resize', turn);
   }, [open]);
+
+  /*
+   * The keys of a listbox (WAI-ARIA APG): Down/Up on the field open the list on
+   * its choice; in the list they move between options, Home/End to its ends.
+   * Escape closes the list alone, back on its field (the page's Escape closes
+   * the whole overlay: one press used to close the reservation form with it).
+   */
+  const onKeyDown = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === 'Escape') {
+      if (!open) return;
+      e.preventDefault();
+      e.stopPropagation();
+      closeDropdown();
+      trigger.current?.focus();
+      return;
+    }
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+    if (e.target === trigger.current) {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      e.preventDefault();
+      if (open) {
+        const items = [...(panel.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])];
+        (items.find((o) => o.getAttribute('aria-selected') === 'true') ?? items[0])?.focus();
+        return;
+      }
+      focusOnOpen.current = true;
+      toggleDropdown(id);
+      return;
+    }
+    const items = [...(panel.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])];
+    const at = items.indexOf(e.target as HTMLElement);
+    if (at < 0) return;
+    e.preventDefault();
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1 : Math.min(Math.max(at + (e.key === 'ArrowDown' ? 1 : -1), 0), items.length - 1);
+    items[next]?.focus();
+  };
 
   return (
     <div className={`dd dd-${variant}`} data-dd="1">
@@ -131,6 +174,7 @@ export function Dropdown<T extends string | number>({
         aria-expanded={open}
         aria-haspopup="listbox"
         onClick={() => toggleDropdown(id)}
+        onKeyDown={onKeyDown}
       >
         <span className="dd-label">{label}</span>
         <span className="dd-value">
@@ -142,7 +186,7 @@ export function Dropdown<T extends string | number>({
       </button>
 
       {open && (
-        <div ref={panel} className="dd-panel" role="listbox" aria-label={label}>
+        <div ref={panel} className="dd-panel" role="listbox" aria-label={label} tabIndex={-1} onKeyDown={onKeyDown}>
           {options.map((o) => {
             const selected = o.value === value;
             return (
@@ -160,6 +204,8 @@ export function Dropdown<T extends string | number>({
                   if (o.disabled) return;
                   onPick(o.value);
                   closeDropdown();
+                  // The option goes with the list: the focus stays on its field, not on <body>.
+                  trigger.current?.focus();
                 }}
               >
                 <span className="dd-option-main">
@@ -188,9 +234,12 @@ export function ChipGroup<T extends string | number>({
   options,
   onPick,
 }: Omit<Props<T>, 'id' | 'variant'>) {
+  const labelId = useId();
   return (
-    <div className="chip-group">
-      <div className="field-label">{label}</div>
+    <div className="chip-group" role="group" aria-labelledby={labelId}>
+      <div className="field-label" id={labelId}>
+        {label}
+      </div>
       <div className="chip-row">
         {options.map((o) => (
           <button

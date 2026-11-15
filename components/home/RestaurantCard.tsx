@@ -47,6 +47,10 @@ export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant;
         ? formatMessage(strings['booking.call_tag'], { phone: restaurant.phone.display }, locale)
         : null;
 
+  // Read out name first, then what the card does: as drawn, the tag above the picture came first, and a list of
+  // cards said "Reserve" eleven times before any name (UX/UI audit, UX-21). Every visible word is in it.
+  const name = [`${restaurant.name}, ${restaurant.type}`, tag].filter(Boolean).join(' · ');
+
   const body = (
     <>
       <span className="rcard-frame frame" data-reveal-img="1">
@@ -86,6 +90,7 @@ export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant;
         href={restaurantHref(locale, restaurant.slug)}
         className="rcard"
         hidden={hidden}
+        aria-label={name}
         onClick={(e) => {
           // A new tab or window (modifier keys, middle click) is the browser's; a plain click keeps the curtain.
           if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
@@ -105,6 +110,7 @@ export function RestaurantCard({ restaurant, hidden }: { restaurant: Restaurant;
       type="button"
       className="rcard"
       hidden={hidden}
+      aria-label={name}
       aria-disabled={tag ? undefined : true}
       onClick={() => openRestaurant(restaurant)}
     >

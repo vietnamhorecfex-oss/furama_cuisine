@@ -46,7 +46,8 @@
   --line-warm: #e7dabf;
   --line-soft: #ede5d4;
   --line-chip: #d8cdb5;
-  --line-field: #dcd2be;
+  /* A field's or a control's own edge: 3:1 on white and on the drawer's cream (WCAG 1.4.11; #dcd2be was 1.5:1). */
+  --line-field: #8c8270;
   --line-empty: #e4dac4;
   --line-row: #f0e9da;
 

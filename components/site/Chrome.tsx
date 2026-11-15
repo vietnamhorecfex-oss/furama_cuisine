@@ -115,6 +115,11 @@ export function Chrome({ children, banner }: { children: ReactNode; banner?: Rea
       <PointerFx />
       {/* What an open overlay makes inert (useModalOverlays). A plain box: the headers are fixed, the page a block. */}
       <div ref={behind}>
+        {/* The first Tab stop: past the header's ten to the page on screen (WCAG 2.4.1). Its <main> takes the focus,
+            not a fragment (so a button, not a link): the router keeps the pages it hides (<Activity>), each with a <main>, so no id is unique. */}
+        <button type="button" className="skip-link" onClick={() => pageRoot?.focus()}>
+          {strings['ui.skip_to_content']}
+        </button>
         <Header />
 
         <div className="page">

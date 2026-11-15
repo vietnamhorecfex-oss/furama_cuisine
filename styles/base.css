@@ -58,6 +58,34 @@ textarea {
   outline-color: var(--green);
 }
 
+/* "Skip to content" (Chrome): the first Tab stop, out of sight until it has the focus, then over the header. */
+.skip-link {
+  position: fixed;
+  border: 0;
+  cursor: pointer;
+  top: 8px;
+  left: max(8px, var(--safe-x));
+  z-index: 70;
+  padding: 12px 18px;
+  background: var(--cream);
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 16px));
+}
+
+.skip-link:focus {
+  transform: none;
+  outline-color: var(--green);
+}
+
+/* Its target, focused by script: no ring around the whole page. */
+main[tabindex='-1']:focus {
+  outline: none;
+}
+
 img {
   max-width: 100%;
 }

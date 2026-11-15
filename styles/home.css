@@ -133,13 +133,23 @@
 }
 
 @media (min-width: 760px) {
+  /* The title's last line reaches about 62% across, over a film whose frames run from night to bright fire:
+     a pool of shade behind the copy (bottom left) and a ramp that still holds there keep it at 3:1 and the
+     lede at 4.5:1 in every frame (UX/UI audit 2026-11-15, UI-01: 1.62:1 at worst under the old 70% ramp). */
   .hero-scrim {
     background:
+      radial-gradient(
+        ellipse 72% 62% at 22% 72%,
+        rgba(12, 18, 15, 0.62) 0%,
+        rgba(12, 18, 15, 0.4) 55%,
+        rgba(12, 18, 15, 0) 85%
+      ),
       linear-gradient(
         90deg,
-        rgba(12, 18, 15, 0.7) 0%,
-        rgba(12, 18, 15, 0.46) 40%,
-        rgba(12, 18, 15, 0) 70%
+        rgba(12, 18, 15, 0.72) 0%,
+        rgba(12, 18, 15, 0.6) 45%,
+        rgba(12, 18, 15, 0.3) 70%,
+        rgba(12, 18, 15, 0) 88%
       ),
       linear-gradient(
         180deg,

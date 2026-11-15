@@ -298,6 +298,13 @@ export function ReserveDrawer() {
   const hintId = useId();
   const privacyId = useId();
   const consentErrorId = useId();
+  /* A field's error is its description, not part of its name (the label wraps it, so it is aria-hidden there). */
+  const nameErrorId = useId();
+  const phoneErrorId = useId();
+  const emailErrorId = useId();
+  const doneLedeId = useId();
+  const doneSummaryId = useId();
+  const thanksRef = useRef<HTMLHeadingElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLButtonElement>(null);
@@ -358,6 +365,12 @@ export function ReserveDrawer() {
     else (day ?? failure?.querySelector<HTMLElement>('.load-retry') ?? failure ?? label ?? headingRef.current)?.focus({ preventScroll: true });
   });
 
+  /* Booked: REQUEST BOOKING is gone with the form, and the focus with it. The thanks takes it, and a screen
+     reader reads it out with what was booked and the reference (its description), the one thing to note down. */
+  useEffect(() => {
+    if (open && done) thanksRef.current?.focus({ preventScroll: true });
+  }, [open, done]);
+
   /* REQUEST BOOKING stopped on a failure shown above: take the guest to it (its Try again, or the message). */
   useEffect(() => {
     if (!failureNudge) return;
@@ -403,7 +416,10 @@ export function ReserveDrawer() {
     .map((r) => ({ value: r.id, label: r.name }));
 
   const guestLabel = (n: number) => formatMessage(strings['booking.guests_count'], { count: n }, locale);
-  const summary = [booking.date ? fmtDay(booking.date, locale) : '', booking.time, guestLabel(booking.guests)]
+  // The day and time once the chosen day's times are here and hold that time: before (or after a failed load) the
+  // form's starting 19:00 showed for a restaurant with no 19:00 at all (UX/UI audit, UX-15).
+  const timeShown = board?.periods.some((p) => p.slots.some((s) => s.time === booking.time)) ? booking.time : '';
+  const summary = [booking.date ? fmtDay(booking.date, locale) : '', timeShown, guestLabel(booking.guests)]
     .filter(Boolean)
     .join(' · ');
 
@@ -455,15 +471,17 @@ export function ReserveDrawer() {
                 <div className="drawer-tick" aria-hidden="true">
                   ✓
                 </div>
-                <div className="drawer-thanks">{formatMessage(strings['booking.thanks'], { name: form.name.trim() || strings['booking.thanks_anon'] }, locale)}</div>
+                <h2 ref={thanksRef} className="drawer-thanks" tabIndex={-1} aria-describedby={`${doneLedeId} ${doneSummaryId}`}>
+                  {formatMessage(strings['booking.thanks'], { name: form.name.trim() || strings['booking.thanks_anon'] }, locale)}
+                </h2>
                 {/* What was booked, as sent, in the words for its status: an auto-confirmed
                     booking never waits in the pending tab, so nobody would call to confirm it. */}
-                <p className="drawer-done-lede">
+                <p className="drawer-done-lede" id={doneLedeId}>
                   {formatMessage(strings[booked?.status === 'confirmed' ? 'booking.done_confirmed' : 'booking.done_requested'], {
                     restaurant: booked?.restaurantName ?? '',
                   })}
                 </p>
-                <div className="drawer-summary">
+                <div className="drawer-summary" id={doneSummaryId}>
                   <div className="drawer-summary-row">
                     <span>{strings['booking.label_date']}</span>
                     <span>{confirmedDate ? fmtDay(confirmedDate, locale) : ''}</span>
@@ -651,8 +669,13 @@ export function ReserveDrawer() {
                           maxLength={FIELD_MAX.name}
                           data-invalid={errors.name}
                           aria-invalid={errors.name}
+                          aria-describedby={errors.name ? nameErrorId : undefined}
                         />
-                        {errors.name && <span className="field-error">{strings['error.invalid_name']}</span>}
+                        {errors.name && (
+                          <span className="field-error" id={nameErrorId} aria-hidden="true">
+                            {strings['error.invalid_name']}
+                          </span>
+                        )}
                       </label>
 
                       <label className="field">
@@ -666,8 +689,13 @@ export function ReserveDrawer() {
                           maxLength={FIELD_MAX.phone}
                           data-invalid={errors.phone}
                           aria-invalid={errors.phone}
+                          aria-describedby={errors.phone ? phoneErrorId : undefined}
                         />
-                        {errors.phone && <span className="field-error">{strings['error.invalid_phone']}</span>}
+                        {errors.phone && (
+                          <span className="field-error" id={phoneErrorId} aria-hidden="true">
+                            {strings['error.invalid_phone']}
+                          </span>
+                        )}
                       </label>
 
                       <label className="field">
@@ -681,8 +709,13 @@ export function ReserveDrawer() {
                           maxLength={FIELD_MAX.email}
                           data-invalid={errors.email}
                           aria-invalid={errors.email}
+                          aria-describedby={errors.email ? emailErrorId : undefined}
                         />
-                        {errors.email && <span className="field-error">{strings['error.invalid_email']}</span>}
+                        {errors.email && (
+                          <span className="field-error" id={emailErrorId} aria-hidden="true">
+                            {strings['error.invalid_email']}
+                          </span>
+                        )}
                       </label>
 
                       <label className="field">
