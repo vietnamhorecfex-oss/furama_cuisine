@@ -155,9 +155,10 @@ test('a broken ICU plural is refused next to its field; a valid label reaches th
       await visitor.getByRole('banner').getByRole('button', { name: 'SEARCH', exact: true }).click();
       const search = visitor.getByRole('dialog', { name: 'Search' });
       await expect(search.getByText('TOP CUISINES E2E', { exact: true })).toBeVisible();
-      // The ICU plural of the registry default still counts.
+      // The ICU plural of the registry default still counts: on screen, and read out (the status region).
       await search.getByRole('textbox').fill('taya');
-      await expect(search.getByText(/^1 RESULT$/)).toBeVisible();
+      await expect(search.locator('.search-label-results')).toHaveText('1 RESULT');
+      await expect(search.getByRole('status')).toHaveText('1 RESULT');
     } finally {
       const back = await saveField(page, '/admin/content/ui-text', 'Chữ giao diện', 'Nhãn “ẩm thực phổ biến”', DEFAULT_POPULAR, 'Lưu chữ giao diện');
       await expect(back.getByRole('status')).toContainText('Đã lưu 1 mục');
