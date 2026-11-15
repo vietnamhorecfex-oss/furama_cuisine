@@ -1640,8 +1640,8 @@ a.dest-hit:hover {
   margin-inline-start: -11px;
 }
 
-/* Before the browser decides between film and slideshow (Hero `decided`), a phone keeps the film row's place,
-   empty, where the film may play: its arrival no longer moves the copy above it. */
+/* Without the film (before the browser decides, or a slow connection, or Save-Data), a phone keeps the film row's
+   place, empty, wherever the film may play: the row's arrival or absence no longer moves the copy above it. */
 @media (min-width: 760px) {
   .hero-dots[data-film-maybe][aria-hidden] {
     display: none;

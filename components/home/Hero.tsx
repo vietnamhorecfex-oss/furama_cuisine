@@ -215,9 +215,10 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
               </button>
             </div>
           ) : count > 1 ? (
-            // Until the browser has decided, the row holds the film's pause row's place on a phone (styles/home.css):
-            // it used to arrive after hydration and push the hero's copy up (CLS, UX/UI audit, PERF-08).
-            <div className="hero-dots" data-intro="6" data-film-maybe={!decided && HERO_VIDEO.length > 0 ? '' : undefined}>
+            // Without the film, the row still holds the film's pause row's place on a phone (styles/home.css): the server
+            // cannot know which a phone gets, and the row arriving or leaving after hydration moved the hero's copy
+            // (CLS 0.028, UX/UI audit, PERF-08).
+            <div className="hero-dots" data-intro="6" data-film-maybe={HERO_VIDEO.length > 0 ? '' : undefined}>
               <span className="hero-count" aria-hidden="true">
                 <span className="hero-count-now">{pad(slide + 1)}</span>
                 <span className="hero-count-of">{pad(count)}</span>
@@ -248,7 +249,7 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
               )}
             </div>
           ) : (
-            !decided && HERO_VIDEO.length > 0 && <div className="hero-dots" data-film-maybe="" aria-hidden="true" />
+            HERO_VIDEO.length > 0 && <div className="hero-dots" data-film-maybe="" aria-hidden="true" />
           )}
         </div>
 
