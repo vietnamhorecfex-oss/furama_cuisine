@@ -1,0 +1,32 @@
+# <Tên doanh nghiệp>
+
+> <Một-hai câu: là gì, ở đâu, cho ai. Dữ kiện, không quảng cáo — vd "Nhà hàng hải sản 4 tầng ở Mỹ Khê, Đà Nẵng,
+> mở 10:00–22:00 mỗi ngày, nhận đặt bàn trực tuyến.">
+
+<!--
+Khung llms.txt (đề xuất llmstxt.org). Phục vụ ở /llms.txt — nên SINH từ cùng nguồn CMS với trang (route động), không
+gõ tay: giờ, địa chỉ, FAQ ở đây phải là cùng giá trị trang đang hiện (N07, N77). Chỉ link trang ĐANG SỐNG.
+Thực tế: chưa trợ lý AI lớn nào cam kết đọc llms.txt — coi là phụ trợ rẻ, không thay HTML tĩnh tốt (N46, N79).
+Xoá khối chú thích này khi dùng.
+-->
+
+## Thông tin chính
+
+- Địa chỉ: <đọc từ CMS>
+- Điện thoại: <đọc từ CMS>
+- Giờ mở cửa: <đọc từ CMS — gồm giờ đặc biệt đang áp dụng>
+- Đặt chỗ: <URL trang đặt chỗ>
+
+## Trang chính
+
+- [Thực đơn / Phòng](https://example.com/<duong-dan>): <một câu: trang này trả lời câu hỏi gì>
+- [Giá & chính sách](https://example.com/<duong-dan>): <…>
+- [Liên hệ & chỉ đường](https://example.com/<duong-dan>): <…>
+
+## Câu hỏi thường gặp
+
+- [<Câu hỏi khách thật hay hỏi>](https://example.com/<trang-tra-loi>): <câu trả lời ngắn, khớp trang>
+
+## Ngôn ngữ khác
+
+- [English](https://example.com/en/llms.txt)

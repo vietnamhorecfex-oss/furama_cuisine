@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thư viện chuyển động + màu — team-agency</title>
+<!--
+  FILE CHẠY ĐƯỢC — mở thẳng bằng trình duyệt. `giam-doc-sang-tao` chép công thức từ đây vào bản mẫu; `ky-su-giao-dien`
+  chép vào code sản phẩm. Thêm ?reduced=1 để xem bản giảm chuyển động. Mỗi công thức giữ đủ 4 luật:
+    1. chỉ animate transform / opacity (N44)        3. có bản giảm chuyển động + dừng khi ra khỏi màn (N47)
+    2. chỉ dùng token thời lượng / easing            4. nội dung vẫn hiện khi JS hỏng; phần tử LCP không bắt đầu ẩn
+  Màu: MỘT biến sắc độ --h sinh cả hệ (oklch) — bấm các chấm màu ở đầu trang để thấy đổi thương hiệu bằng một biến.
+-->
+<script>document.documentElement.classList.add("js");
+if (new URLSearchParams(location.search).has("reduced") || matchMedia("(prefers-reduced-motion: reduce)").matches)
+  document.documentElement.classList.add("reduced");
+{ const h = new URLSearchParams(location.search).get("h"); if (h) document.documentElement.style.setProperty("--h", +h); }  // ?h=35 để xem/đo sắc độ khác</script>
+<style>
+:root{
+  --h:245;                                            /* sắc độ thương hiệu — đổi MỘT số này */
+  --nen:oklch(96% .03 var(--h));  --nen-2:oklch(84% .08 var(--h));  --nen-3:oklch(56% .13 var(--h));
+  --ke:oklch(74% .13 calc(var(--h) + 38));            /* màu KỀ — pha vào nền được; màu bổ túc pha vào nền ra xám bùn */
+  --chu:oklch(24% .06 var(--h));  --chu-2:oklch(36% .06 var(--h));
+  --nhan:oklch(48% .19 var(--h));  --nhan-2:oklch(70% .15 calc(var(--h) - 45));
+  --diem:oklch(80% .16 calc(var(--h) + 150));         /* màu điểm xuyết (bổ túc) — chỉ cho chi tiết NHỎ, ≤ 5% diện tích */
+  --kinh:oklch(100% 0 0 / .7);   --kinh-vien:oklch(100% 0 0 / .75);
+  --bong:0 18px 40px -18px oklch(30% .12 var(--h) / .45);
+  --dur-phan-hoi:120ms; --dur-nho:200ms; --dur-chuyen-canh:320ms; --dur-dan-dung:900ms;
+  --ease-vao:cubic-bezier(.16,1,.3,1); --ease-ra:cubic-bezier(.7,0,.84,0); --ease-doi:cubic-bezier(.65,0,.35,1);
+  --ease-ca-tinh:cubic-bezier(.34,1.56,.64,1);
+  --dich-nho:8px; --dich-vua:24px; --so-le:70ms;
+  --chu-trung:ui-serif,"Iowan Old Style","Palatino Linotype",Georgia,serif;   /* tiêu đề — PHẢI có dấu tiếng Việt */
+  --chu-than:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+.reduced{--dur-phan-hoi:1ms;--dur-nho:1ms;--dur-chuyen-canh:1ms;--dur-dan-dung:1ms;--dich-nho:0px;--dich-vua:0px;--so-le:0ms}
+*{box-sizing:border-box;margin:0} html{scroll-behavior:smooth} .reduced{scroll-behavior:auto}
+body{font:16px/1.55 var(--chu-than);color:var(--chu);background:var(--nen);overflow-x:hidden}
+a{color:inherit} button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--nhan);outline-offset:3px;border-radius:6px}
+.bo{max-width:1180px;margin:auto;padding:0 20px}
+
+/* ── Nền: hai khối màu mờ trôi CHẬM bằng transform (không animate background-position / blur) ── */
+.san{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(180deg,var(--nen) 0%,var(--nen-2) 34%,var(--nen-3) 100%)}
+/* Lớp tối phía chữ: chữ trắng phải đạt tương phản trên nền THẬT phía sau nó, không phải trên màu token */
+.san::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(125% 105% at 0% 100%,oklch(20% .09 var(--h) / .92),transparent 72%)}
+.khoi{position:absolute;z-index:-1;width:46vmax;aspect-ratio:1;border-radius:50%;filter:blur(70px);opacity:.42;
+  background:radial-gradient(circle at 35% 35%,var(--nhan-2),transparent 65%);animation:troi 26s var(--ease-doi) infinite alternate}
+.khoi--2{right:-12vmax;bottom:-18vmax;background:radial-gradient(circle at 50% 50%,var(--ke),transparent 60%);opacity:.55;animation-duration:34s;animation-direction:alternate-reverse}
+.khoi--1{right:6vmax;top:-20vmax}
+@keyframes troi{to{transform:translate3d(9vmax,6vmax,0) scale(1.12)}}
+.reduced .khoi,.ngoai-man .khoi{animation-play-state:paused}
+
+/* ── Thanh trên ── */
+.tren{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
+.tren b{font:600 18px var(--chu-trung);letter-spacing:.04em}
+.cham{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--chu-2)}
+.cham button{width:22px;height:22px;border-radius:50%;border:2px solid var(--kinh-vien);background:oklch(60% .18 var(--c));
+  transition:transform var(--dur-phan-hoi) var(--ease-ca-tinh)}
+.cham button:hover{transform:scale(1.18)} .cham button[aria-pressed=true]{box-shadow:0 0 0 2px var(--chu)}
+
+/* ── 1. HERO "chủ thể xuyên chữ": chữ khổng lồ nằm SAU chủ thể ⇒ có chiều sâu ── */
+.hero{position:relative;min-height:min(92vh,820px);display:grid;align-items:end;padding:24px 0 40px}
+.chu-lon{position:absolute;inset:10% 0 auto;z-index:0;text-align:center;white-space:nowrap;pointer-events:none;
+  font:400 clamp(5rem,23vw,21rem)/.9 var(--chu-trung);letter-spacing:.02em;color:oklch(100% 0 0 / .7);
+  transform:translate3d(calc(var(--px,0) * -14px),calc(var(--py,0) * -8px),0)}
+.chu-lon span{display:inline-block;animation:len var(--dur-dan-dung) var(--ease-vao) both;animation-delay:calc(var(--i) * var(--so-le))}
+@keyframes len{from{opacity:0;transform:translate3d(0,38%,0) rotate(4deg)}}
+.chu-the{position:absolute;z-index:1;left:50%;bottom:0;width:min(84vh,700px,92vw);translate:-46% 0;
+  transform:translate3d(calc(var(--px,0) * 18px),calc(var(--py,0) * 10px),0)}
+.chu-the svg{display:block;width:100%;height:auto;-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent);animation:dau var(--dur-dan-dung) var(--ease-vao) both} /* LCP: chỉ co nhẹ, KHÔNG mờ */
+@keyframes dau{from{transform:scale(1.07)}}
+.noi{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end}
+.loi{max-width:340px}
+.loi h1{font:400 clamp(2rem,4.4vw,3.2rem)/1.05 var(--chu-trung);color:#fff}
+.loi h1 em{font-style:normal;opacity:.72}
+.loi p{margin:12px 0 20px;font-size:15px;color:#fff;max-width:32ch}
+.hang-nut{display:flex;flex-wrap:wrap;gap:10px}
+.nut{display:inline-flex;align-items:center;gap:10px;border:0;text-decoration:none;border-radius:999px;padding:12px 14px 12px 20px;font-weight:600;font-size:14px;
+  background:var(--nhan);color:#fff;box-shadow:var(--bong);transition:transform var(--dur-nho) var(--ease-ca-tinh)}
+.nut i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--nhan);font-style:normal;
+  transition:transform var(--dur-nho) var(--ease-vao)}
+.nut:hover i{transform:translateX(3px) rotate(-45deg)} .nut:active{transform:scale(.96)}
+.nut--trang{background:#fff;color:var(--chu);padding:12px 20px;box-shadow:var(--bong),inset 0 0 0 1px oklch(86% .03 var(--h))}
+.the-kinh{background:var(--kinh);border:1px solid var(--kinh-vien);border-radius:22px;padding:16px;box-shadow:var(--bong);
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}  /* ĐẮT: ≤ 4 thẻ/màn, không animate blur */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.the-kinh{background:oklch(100% 0 0 / .86)}}
+.cum{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;justify-content:flex-end}
+.cum .the-kinh{width:168px;animation:noi-len var(--dur-dan-dung) var(--ease-vao) both;animation-delay:calc(300ms + var(--i) * var(--so-le))}
+@keyframes noi-len{from{opacity:0;transform:translate3d(0,var(--dich-vua),0)}}
+.cum small{display:block;font-size:11px;color:var(--chu-2)} .cum strong{display:block;font-size:14px;line-height:1.25;margin:6px 0 2px}
+.so{font:300 46px/1 var(--chu-trung)} .so sup{font-size:.45em}
+.bieu{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--nhan-2),var(--nhan));color:#fff;font-size:20px}
+.troi-nhe{animation:lo-lung 6s var(--ease-doi) infinite alternate} .troi-nhe:nth-child(2){animation-delay:-2s} .troi-nhe:nth-child(3){animation-delay:-4s}
+@keyframes lo-lung{to{transform:translate3d(0,-7px,0)}}
+.reduced .troi-nhe,.ngoai-man .troi-nhe{animation:none}
+.mat{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;width:max-content;margin:0 0 12px auto;padding:4px 14px 4px 4px;border-radius:999px;background:var(--kinh);border:1px solid var(--kinh-vien)}
+.mat span{width:30px;height:30px;border-radius:50%;border:2px solid #fff;margin-left:-10px;background:linear-gradient(135deg,oklch(80% .1 var(--g)),oklch(55% .15 var(--g)))}
+.mat span:first-child{margin-left:0}
+
+/* ── Lưới công thức ── */
+.muc{padding:72px 0} .muc h2{font:400 clamp(1.8rem,3.4vw,2.6rem)/1.1 var(--chu-trung);margin-bottom:8px} .muc>p{color:var(--chu-2);max-width:60ch;margin-bottom:32px}
+.luoi{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.o{background:#fff;border:1px solid oklch(90% .03 var(--h));border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px;min-height:230px}
+.o h3{font-size:15px} .o p{font-size:13px;color:var(--chu-2)} .san-thu{flex:1;display:grid;place-items:center;border-radius:14px;background:var(--nen);padding:16px;min-height:110px;overflow:hidden;position:relative}
+
+/* 2. Lộ diện khi cuộn — chỉ ẩn khi CÓ JS (.js), nên JS hỏng vẫn thấy nội dung */
+.js .lo{opacity:0;transform:translate3d(0,var(--dich-vua),0);transition:opacity var(--dur-chuyen-canh) var(--ease-vao),transform var(--dur-chuyen-canh) var(--ease-vao);transition-delay:calc(var(--i,0) * var(--so-le))}
+.js .lo.da-vao{opacity:1;transform:none}
+/* 3. Chữ lộ theo mặt nạ — bọc overflow:hidden, dòng trượt lên bằng transform */
+.mat-na{overflow:hidden;font:400 28px/1.15 var(--chu-trung)} .mat-na span{display:block;transform:translate3d(0,105%,0);transition:transform var(--dur-dan-dung) var(--ease-vao)}
+.da-vao .mat-na span,.reduced .mat-na span,html:not(.js) .mat-na span{transform:none}
+/* 4. Thẻ nghiêng theo con trỏ + vệt sáng */
+.nghieng{width:150px;height:96px;border-radius:16px;position:relative;overflow:hidden;color:#fff;padding:12px;font-size:13px;
+  background:linear-gradient(135deg,var(--nhan),var(--chu));box-shadow:var(--bong);  /* đầu sáng của gradient làm chữ trắng rớt 3.3:1 — đo rồi mới biết */
+  transform:perspective(700px) rotateX(calc(var(--ry,0) * -9deg)) rotateY(calc(var(--rx,0) * 12deg));transition:transform var(--dur-nho) var(--ease-vao)}
+.nghieng::after{content:"";position:absolute;inset:-40%;background:radial-gradient(circle at 50% 50%,oklch(100% 0 0 / .5),transparent 45%);
+  transform:translate3d(calc(var(--rx,0) * 45%),calc(var(--ry,0) * 45%),0);opacity:var(--sang,0);transition:opacity var(--dur-nho) var(--ease-doi)}
+/* 5. Nút từ tính */
+.tu-tinh{transform:translate3d(calc(var(--tx,0) * 1px),calc(var(--ty,0) * 1px),0);transition:transform var(--dur-chuyen-canh) var(--ease-ca-tinh)}
+/* 6. Chạy chữ vô hạn — dừng khi rê / focus / ra khỏi màn; có nút dừng (N47) */
+.chay{width:100%;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
+.chay__dai{display:flex;gap:28px;width:max-content;animation:chay 16s linear infinite;font:400 20px var(--chu-trung)}
+@keyframes chay{to{transform:translate3d(-50%,0,0)}}
+.chay:hover .chay__dai,.chay:focus-within .chay__dai,.dung .chay__dai,.ngoai-man .chay__dai,.reduced .chay__dai{animation-play-state:paused}
+/* 7. Khung chờ — vệt sáng chạy bằng transform, không bằng background-position */
+.cho{width:100%;display:grid;gap:8px} .cho b{display:block;height:12px;border-radius:6px;background:oklch(88% .03 var(--h));position:relative;overflow:hidden}
+.cho b::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,oklch(100% 0 0 / .7),transparent);transform:translateX(-100%);animation:quet 1.4s var(--ease-doi) infinite}
+@keyframes quet{to{transform:translateX(100%)}} .reduced .cho b::after,.ngoai-man .cho b::after{animation:none}
+/* 8. Nút có trạng thái: nghỉ → đang xử lý → xong */
+.tt{position:relative;min-width:150px;justify-content:center;padding:12px 20px} .tt svg{width:18px;height:18px;display:none}
+.tt[data-tt=cho] .quay{display:block;animation:xoay .8s linear infinite} .tt[data-tt=xong] .tich{display:block;animation:nay var(--dur-chuyen-canh) var(--ease-ca-tinh)}
+.tt[data-tt=xong]{background:oklch(58% .15 150)} @keyframes xoay{to{transform:rotate(1turn)}} @keyframes nay{from{transform:scale(0)}}
+/* 9. Đổi màu toàn trang bằng View Transitions (có thì dùng, không có vẫn đổi) */
+::view-transition-old(root),::view-transition-new(root){animation-duration:var(--dur-chuyen-canh)}
+
+.chan{padding:28px 0 48px;font-size:13px;color:var(--chu-2)}
+@media (max-width:720px){.san::before{background:linear-gradient(180deg,transparent 24%,oklch(22% .09 var(--h) / .82) 50%)}
+  .hero{display:block;min-height:0;padding-top:0}.chu-lon{inset:3% 0 auto}
+  .chu-the{position:relative;left:auto;bottom:auto;translate:none;width:min(74vw,320px);margin:64px auto -6px}
+  .noi{flex-direction:column;align-items:stretch}.cum{justify-content:flex-start}.cum .the-kinh{width:calc(50% - 7px)}.cum .the-kinh:last-child{width:100%}.mat{margin-left:0}}
+</style>
+</head>
+<body>
+
+<div class="san" data-theo-doi>
+  <div class="khoi khoi--1"></div><div class="khoi khoi--2"></div>
+  <div class="bo">
+    <header class="tren">
+      <b>HẢI ÂU</b>
+      <div class="cham" role="group" aria-label="Đổi sắc độ thương hiệu">
+        <span>Đổi <code>--h</code>:</span>
+        <button style="--c:245" data-h="245" aria-pressed="true" aria-label="Xanh dương"></button>
+        <button style="--c:165" data-h="165" aria-pressed="false" aria-label="Lục bảo"></button>
+        <button style="--c:35" data-h="35" aria-pressed="false" aria-label="Cam đất"></button>
+        <button style="--c:330" data-h="330" aria-pressed="false" aria-label="Hồng tím"></button>
+      </div>
+    </header>
+
+    <section class="hero" id="hero">
+      <div class="chu-lon" aria-hidden="true">
+        <span style="--i:0">H</span><span style="--i:1">Ả</span><span style="--i:2">I</span>&nbsp;<span style="--i:3">Â</span><span style="--i:4">U</span>
+      </div>
+      <div class="chu-the" aria-hidden="true">
+        <!-- Chủ thể thật là ảnh đã tách nền (PNG/AVIF có alpha); ở đây dùng SVG để file tự đứng được -->
+        <svg viewBox="0 0 400 420" role="img">
+          <defs>
+            <radialGradient id="than" cx="62%" cy="18%" r="95%"><stop offset="0" style="stop-color:var(--nhan-2)"/><stop offset=".5" style="stop-color:var(--nhan)"/><stop offset="1" style="stop-color:var(--chu)"/></radialGradient>
+            <linearGradient id="canh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--ke)"/><stop offset="1" style="stop-color:var(--nhan)"/></linearGradient>
+            <filter id="mo" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+          </defs>
+          <path d="M398 104l-50-14 2 30z" style="fill:var(--diem)"/>
+          <path d="M56 420C46 300 96 214 176 178c38-18 56-46 56-82 0-44 34-72 72-66 40 6 62 42 52 80-4 16-12 28-24 38 40 58 60 152 52 252z" fill="url(#than)"/>
+          <path d="M128 420c-12-90 20-170 106-208 42 66 50 142 30 208z" fill="url(#canh)" opacity=".7"/>
+          <ellipse cx="286" cy="60" rx="38" ry="20" fill="#fff" opacity=".45" filter="url(#mo)"/>
+          <ellipse cx="140" cy="300" rx="50" ry="90" fill="#fff" opacity=".16" filter="url(#mo)"/>
+          <circle cx="304" cy="86" r="9" fill="#0b1220"/><circle cx="307" cy="83" r="3" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="noi">
+        <div class="loi">
+          <h1>Đổi mới <em>&amp;</em> an toàn</h1>   <!-- chữ thật, hiện NGAY — không nằm trong dàn dựng -->
+          <p>Một trang mẫu để thấy màu, chiều sâu và chuyển động làm việc cùng nhau.</p>
+          <div class="hang-nut">
+            <a class="nut tu-tinh" data-tu-tinh href="#cong-thuc">Xem công thức <i aria-hidden="true">→</i></a>
+            <a class="nut nut--trang" href="?reduced=1">Bản giảm chuyển động</a>
+          </div>
+        </div>
+        <div>
+          <div class="mat" aria-label="Hơn 323 người dùng"><span style="--g:20"></span><span style="--g:140"></span><span style="--g:280"></span><b>+323</b></div>
+          <div class="cum">
+            <div class="the-kinh troi-nhe" style="--i:0"><div class="bieu" aria-hidden="true">◈</div><strong>Bảo vệ toàn diện</strong><small>Luật nằm ở server</small></div>
+            <div class="the-kinh troi-nhe" style="--i:1"><div class="bieu" aria-hidden="true">✦</div><strong>Trợ lý tích hợp</strong><small>Đề xuất, không tự quyết</small></div>
+            <div class="the-kinh troi-nhe" style="--i:2"><div class="so"><span data-dem="42">42</span><sup>%</sup></div><small>thao tác ít hơn sau khi thiết kế lại</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<main class="bo muc" id="cong-thuc">
+  <h2>Công thức chuyển động</h2>
+  <p>Mỗi ô là một công thức chạy thật, đủ bốn luật ở đầu file. Chép CSS + đoạn JS tương ứng ở cuối file.</p>
+  <div class="luoi">
+    <article class="o lo" style="--i:0"><h3>Lộ diện khi cuộn</h3><div class="san-thu"><div class="bieu">↑</div></div><p>Chính các ô này. Chỉ ẩn khi có JS; so le bằng <code>--i</code>, tối đa ~6 phần tử một nhóm.</p></article>
+    <article class="o lo" style="--i:1"><h3>Chữ lộ theo mặt nạ</h3><div class="san-thu"><div class="mat-na"><span>Bình minh</span></div></div><p>Cho tiêu đề TRANG TRÍ hoặc tiêu đề dưới màn đầu. Tiêu đề là LCP thì không dùng.</p></article>
+    <article class="o lo" style="--i:2"><h3>Thẻ nghiêng + vệt sáng</h3><div class="san-thu"><div class="nghieng" data-nghieng>Rê chuột vào đây</div></div><p>Phản hồi theo con trỏ cho thẻ sản phẩm, voucher. Không dùng trên màn chạm.</p></article>
+    <article class="o lo" style="--i:3"><h3>Nút từ tính</h3><div class="san-thu"><button class="nut tu-tinh" data-tu-tinh>Đặt bàn <i aria-hidden="true">→</i></button></div><p>Chỉ MỘT nút chính mỗi màn. Mũi tên trượt khi rê, co nhẹ khi nhấn.</p></article>
+    <article class="o lo" style="--i:4"><h3>Đếm số</h3><div class="san-thu"><div class="so"><span data-dem="1280">1280</span></div></div><p>Số thật nằm sẵn trong HTML; JS chỉ đếm khi vào màn. Giảm chuyển động: hiện thẳng.</p></article>
+    <article class="o lo" style="--i:5"><h3>Chạy chữ vô hạn</h3><div class="san-thu" data-theo-doi><div class="chay"><div class="chay__dai"><span>Hải sản</span><span>Nướng than</span><span>Rượu vang</span><span>Tráng miệng</span><span aria-hidden="true">Hải sản</span><span aria-hidden="true">Nướng than</span><span aria-hidden="true">Rượu vang</span><span aria-hidden="true">Tráng miệng</span></div></div></div><p><button class="nut nut--trang" data-dung style="padding:6px 14px;font-size:12px">Dừng</button> Tự dừng khi rê, focus, ra khỏi màn.</p></article>
+    <article class="o lo" style="--i:0"><h3>Khung chờ</h3><div class="san-thu" data-theo-doi><div class="cho"><b style="width:70%"></b><b></b><b style="width:85%"></b></div></div><p>Giữ đúng khung của nội dung thật để không nhảy bố cục.</p></article>
+    <article class="o lo" style="--i:1"><h3>Nút có trạng thái</h3><div class="san-thu"><button class="nut tt" data-tt="nghi"><svg class="quay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 3a9 9 0 1 0 9 9"/></svg><svg class="tich" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg><span>Gửi</span></button><span class="an" aria-live="polite" style="position:absolute;left:-9999px"></span></div><p>Nghỉ → đang xử lý → xong. Chặn bấm đúp; trạng thái đọc được qua <code>aria-live</code>.</p></article>
+    <article class="o lo" style="--i:2"><h3>Đổi cả hệ màu</h3><div class="san-thu"><div class="cham"><button style="--c:245" data-h="245" aria-label="Xanh dương"></button><button style="--c:165" data-h="165" aria-label="Lục bảo"></button><button style="--c:35" data-h="35" aria-label="Cam đất"></button><button style="--c:330" data-h="330" aria-label="Hồng tím"></button></div></div><p>Một biến <code>--h</code> sinh nền, chữ, nhấn, điểm xuyết. Chuyển bằng View Transitions khi có.</p></article>
+  </div>
+</main>
+<footer class="bo chan">Hero: chữ khổng lồ nằm sau chủ thể · thẻ kính ≤ 4 · nền trôi bằng transform · thị sai theo con trỏ. Thử thu cửa sổ về 390px.</footer>
+
+<script>
+(() => {
+  const goc = document.documentElement, giam = goc.classList.contains("reduced");
+  const tinh = matchMedia("(hover:hover) and (pointer:fine)").matches;   // hiệu ứng theo con trỏ chỉ cho chuột
+
+  // Dừng mọi animation vô hạn khi khối ra khỏi màn (N44) + lộ diện khi cuộn
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.target.matches("[data-theo-doi]")) e.target.classList.toggle("ngoai-man", !e.isIntersecting);
+    else if (e.isIntersecting) { e.target.classList.add("da-vao"); io.unobserve(e.target); dem(e.target); }
+  }), { threshold: .15 });
+  document.querySelectorAll("[data-theo-doi], .lo").forEach(el => io.observe(el));
+
+  // Đếm số: giá trị thật đã ở trong HTML; chỉ chạy khi vào màn
+  function dem(goc2) {
+    goc2.querySelectorAll("[data-dem]").forEach(el => {
+      const dich = +el.dataset.dem; if (giam || el.dataset.xong) return; el.dataset.xong = 1;
+      const t0 = performance.now(), dai = 1100;
+      (function buoc(t) { const p = Math.min(1, (t - t0) / dai), e = 1 - Math.pow(1 - p, 4);
+        el.textContent = Math.round(dich * e); if (p < 1) requestAnimationFrame(buoc); })(t0);
+    });
+  }
+  dem(document.getElementById("hero"));
+
+  if (tinh && !giam) {
+    // Thị sai theo con trỏ: ghi 2 biến, CSS tự dịch từng lớp; gom về 1 lần mỗi khung hình
+    const hero = document.getElementById("hero"); let cho = false;
+    hero.addEventListener("pointermove", ev => { if (cho) return; cho = true; requestAnimationFrame(() => {
+      const r = hero.getBoundingClientRect();
+      hero.style.setProperty("--px", ((ev.clientX - r.left) / r.width - .5).toFixed(3));
+      hero.style.setProperty("--py", ((ev.clientY - r.top) / r.height - .5).toFixed(3)); cho = false; }); });
+    // Thẻ nghiêng
+    document.querySelectorAll("[data-nghieng]").forEach(el => {
+      el.addEventListener("pointermove", ev => { const r = el.getBoundingClientRect();
+        el.style.setProperty("--rx", ((ev.clientX - r.left) / r.width - .5).toFixed(3));
+        el.style.setProperty("--ry", ((ev.clientY - r.top) / r.height - .5).toFixed(3)); el.style.setProperty("--sang", 1); });
+      el.addEventListener("pointerleave", () => ["--rx", "--ry", "--sang"].forEach(k => el.style.setProperty(k, 0)));
+    });
+    // Nút từ tính
+    document.querySelectorAll("[data-tu-tinh]").forEach(el => {
+      el.addEventListener("pointermove", ev => { const r = el.getBoundingClientRect();
+        el.style.setProperty("--tx", ((ev.clientX - r.left - r.width / 2) * .3).toFixed(1));
+        el.style.setProperty("--ty", ((ev.clientY - r.top - r.height / 2) * .3).toFixed(1)); });
+      el.addEventListener("pointerleave", () => { el.style.setProperty("--tx", 0); el.style.setProperty("--ty", 0); });
+    });
+  }
+
+  // Nút dừng cho chạy chữ
+  document.querySelectorAll("[data-dung]").forEach(b => b.addEventListener("click", () => {
+    const o = b.closest(".o"); const dung = o.classList.toggle("dung"); b.textContent = dung ? "Chạy" : "Dừng"; }));
+
+  // Nút có trạng thái — khoá bấm đúp bằng cờ, không chỉ bằng disabled
+  document.querySelectorAll(".tt").forEach(b => { let ban = false; const chu = b.querySelector("span"), doc = b.parentElement.querySelector("[aria-live]");
+    b.addEventListener("click", () => { if (ban) return; ban = true; b.dataset.tt = "cho"; chu.textContent = "Đang gửi"; doc.textContent = "Đang gửi";
+      setTimeout(() => { b.dataset.tt = "xong"; chu.textContent = "Đã gửi"; doc.textContent = "Đã gửi";
+        setTimeout(() => { b.dataset.tt = "nghi"; chu.textContent = "Gửi"; ban = false; }, 1600); }, 1200); }); });
+
+  // Đổi sắc độ — View Transitions nếu có
+  document.querySelectorAll("[data-h]").forEach(b => b.addEventListener("click", () => {
+    const doi = () => { goc.style.setProperty("--h", b.dataset.h);
+      document.querySelectorAll("[data-h]").forEach(x => x.setAttribute("aria-pressed", x.dataset.h === b.dataset.h)); };
+    document.startViewTransition && !giam ? document.startViewTransition(doi) : doi(); }));
+})();
+</script>
+</body>
+</html>

@@ -12,3 +12,5 @@ playwright-report
 test-results
 # Script fonts fetched at build time (scripts/fetch-script-fonts.mjs)
 /public/fonts/
+# team-agency: nhật ký lùi của script dữ liệu — có thể chứa dữ liệu cá nhân
+backups/
