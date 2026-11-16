@@ -1362,6 +1362,11 @@ a.dest-hit:hover {
   line-height: 1.2;
 }
 
+/* Words in gold on the green band read in its lighter gold. */
+.experiences .eyebrow {
+  color: var(--gold-on-green);
+}
+
 .experience-blurb {
   font-size: 12px;
   line-height: 1.5;
@@ -1370,7 +1375,7 @@ a.dest-hit:hover {
 
 .experience-arrow {
   font-size: 14px;
-  color: var(--gold);
+  color: var(--gold-on-green);
 }
 
 /* ── Heritage ────────────────────────────────────────────────────────────── */

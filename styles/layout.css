@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: rgba(20, 32, 28, 0.96);
+  background: rgba(31, 53, 48, 0.96); /* --green-deep */
   box-shadow: 0 1px 0 rgba(247, 242, 232, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);

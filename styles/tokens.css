@@ -6,15 +6,16 @@
   --sand: #e8dfcd;
   --sand-warm: #ece4d3;
 
-  /* Greens */
-  --green: #1f3d34;
-  --green-card: #1e3a31;
-  --green-deep: #14201c;
-  --green-btn: #17342b;
-  --green-btn-hover: #224a3d;
-  --green-rule: #475f56;
-  --green-muted: #adb4aa;
-  --footer-rule: #2c3b35;
+  /* Greens: one step lighter than the design canvas's (guests found the site too dark; owner, 2026-11-16). Cream
+     text keeps more than 7:1 on every one of them, gold more than 4.5:1 on the deep one. */
+  --green: #2b5447;
+  --green-card: #2a4c41;
+  --green-deep: #1f3530;
+  --green-btn: #244a3e;
+  --green-btn-hover: #2f5d4f;
+  --green-rule: #4f6a60;
+  --green-muted: #c0c6bc;
+  --footer-rule: #38504a;
 
   /* Jade: the logo's own colours (public/brand/furama-dining-world-mark.png), its frame and its flower.
      A small accent beside the gold: the rule in the header's lockup, ties the mark to the wordmark. */
@@ -25,7 +26,9 @@
   --gold: #c6a664;
   --gold-hover: #d3b574;
   --gold-deep: #8a6b33;
-  --gold-footer: #a48c56;
+  --gold-footer: #b09760;
+  /* Gold for words on --green and --green-card (4.5:1 at 11px); --gold itself reads on --green-deep. */
+  --gold-on-green: #d9bd80;
   --brown: #7a6b47;
 
   /* Ink */
