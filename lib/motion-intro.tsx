@@ -16,11 +16,10 @@ const INTRO_FRAMES: Record<IntroKind, Keyframe[]> = {
   rise: [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }],
   line: [{ transform: 'translateY(110%)' }, { transform: 'none' }],
   clip: [{ clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)' }],
-  // The hero's words: up out of the line's mask, a touch of tilt. Transform and opacity only (a blur was a filter
-  // repainted on every frame of every word: UX/UI audit 2026-11-15, UI-05).
+  // The hero's words: up out of the line's mask, out of a blur, a touch of tilt.
   word: [
-    { transform: 'translateY(110%) rotate(5deg)', opacity: 0 },
-    { transform: 'none', opacity: 1 },
+    { transform: 'translateY(110%) rotate(5deg)', filter: 'blur(8px)', opacity: 0 },
+    { transform: 'none', filter: 'blur(0)', opacity: 1 },
   ],
 };
 

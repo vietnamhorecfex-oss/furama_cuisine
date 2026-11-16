@@ -43,7 +43,7 @@
 /* ── Buttons that lean towards the pointer ───────────────────────────────── */
 
 [data-magnetic] {
-  transition: translate var(--dur-base) var(--ease-out), background-color var(--dur-quick) ease, color var(--dur-quick) ease;
+  transition: translate 0.45s var(--ease-out), background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ── Destination cards: a desktop's row of four, each under its stop on the route ── */
@@ -331,7 +331,7 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  transition: color var(--dur-base) var(--ease-out), translate var(--dur-base) var(--ease-out), scale 0.16s var(--ease-out);
+  transition: color 0.45s var(--ease-out), translate 0.45s var(--ease-out), scale 0.16s var(--ease-out);
 }
 
 /* A button gives a little under the finger: the only answer a tap gets, the fill being the pointer's hover.
@@ -426,7 +426,7 @@
 :is(.btn-slab, .btn-green) :is(.arrow, .hero-arrow, span:last-child),
 .experience-arrow {
   display: inline-block;
-  transition: transform var(--dur-base) var(--ease-out);
+  transition: transform 0.45s var(--ease-out);
 }
 
 @media (hover: hover) {

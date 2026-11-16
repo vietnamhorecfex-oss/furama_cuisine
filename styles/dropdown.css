@@ -14,7 +14,7 @@
 }
 
 .dd-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -42,7 +42,7 @@
 .dd-caret {
   display: inline-block;
   font-size: 11px;
-  transition: transform var(--dur-quick) ease;
+  transition: transform 0.25s ease;
 }
 
 .dd-caret[data-open='true'] {
@@ -130,7 +130,7 @@
 
 .dd-note {
   font-family: var(--sans);
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -147,7 +147,7 @@
 }
 
 .dd-boxed .dd-label {
-  font-size: 11px;
+  font-size: 9px;
   color: var(--brown);
 }
 
@@ -158,7 +158,7 @@
 }
 
 .dd-boxed .dd-caret {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .dd-boxed .dd-panel {
@@ -204,7 +204,7 @@
 
   .dd-boxed .dd-label,
   .dd-note {
-    font-size: 11px;
+    font-size: 10px;
   }
 }
 

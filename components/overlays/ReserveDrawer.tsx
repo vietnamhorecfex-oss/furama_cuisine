@@ -109,11 +109,9 @@ function DayStrip({
   failure: ReactNode;
   locale: string;
 }) {
-  /* The unavailable day a guest last tapped. Its reason stays while the calendar on screen still says the same of
-     that day: a fresh answer for the same restaurant (a second load as the drawer opens) used to take it away the
-     moment it showed; another restaurant's answer, which opens the day or gives another reason, still does. */
-  const [tapped, setTapped] = useState<DayInfo | null>(null);
-  const note = tapped ? (days.find((d) => d.date === tapped.date && d.state === tapped.state && d.reason === tapped.reason) ?? null) : null;
+  /* The unavailable day a guest last tapped, and the calendar it was tapped on. */
+  const [tapped, setTapped] = useState<{ days: DayInfo[]; day: DayInfo } | null>(null);
+  const note = tapped?.days === days ? tapped.day : null;
   const noDates = days.length > 0 && !days.some((d) => d.state === 'open');
   const loading = days.length === 0 && !failure;
   const message = failure
@@ -232,7 +230,7 @@ function DayStrip({
                   if (strip.current && e.currentTarget.matches(':focus-visible')) reveal(strip.current, e.currentTarget);
                 }}
                 onClick={() => {
-                  setTapped(open ? null : d);
+                  setTapped(open ? null : { days, day: d });
                   if (open) onPick(d.date);
                 }}
               >

@@ -67,8 +67,7 @@
    paint). Waiting slides are drawn whole underneath, not clipped: a clipped or hidden picture would not
    lazy-load before its turn. */
 .hero-slide[data-wipe] {
-  /* 900ms: a change of scene may take longer than the 400ms base, not 1.5s (UX/UI audit, UI-07). */
-  animation: hero-wipe 900ms var(--ease-inout) both;
+  animation: hero-wipe 1.5s var(--ease-inout) both;
 }
 
 @keyframes hero-wipe {
@@ -136,22 +135,20 @@
 @media (min-width: 760px) {
   /* The title's last line reaches about 62% across, over a film whose frames run from night to bright fire:
      a pool of shade behind the copy (bottom left) and a ramp that still holds there keep it at 3:1 and the
-     lede at 4.5:1 in every frame (UX/UI audit 2026-11-15, UI-01: 1.62:1 at worst under the old 70% ramp).
-     As light as that allows (guests found the film too dark, 2026-11-16): measured over 9 frames at 1440 and
-     1080px, last line 3.15:1 at .46/.55, so a step darker for frames not measured. */
+     lede at 4.5:1 in every frame (UX/UI audit 2026-11-15, UI-01: 1.62:1 at worst under the old 70% ramp). */
   .hero-scrim {
     background:
       radial-gradient(
         ellipse 72% 62% at 22% 72%,
-        rgba(12, 18, 15, 0.5) 0%,
-        rgba(12, 18, 15, 0.3) 55%,
+        rgba(12, 18, 15, 0.62) 0%,
+        rgba(12, 18, 15, 0.4) 55%,
         rgba(12, 18, 15, 0) 85%
       ),
       linear-gradient(
         90deg,
-        rgba(12, 18, 15, 0.58) 0%,
-        rgba(12, 18, 15, 0.45) 45%,
-        rgba(12, 18, 15, 0.18) 70%,
+        rgba(12, 18, 15, 0.72) 0%,
+        rgba(12, 18, 15, 0.6) 45%,
+        rgba(12, 18, 15, 0.3) 70%,
         rgba(12, 18, 15, 0) 88%
       ),
       linear-gradient(
@@ -238,12 +235,11 @@
 .hero-lede {
   display: none;
   margin: 26px 0 0;
-  max-width: 480px;
+  max-width: 560px;
   font-size: 15px;
   line-height: 1.8;
   color: var(--on-dark-soft);
-  /* Two lines of even length, as the owner set it (2026-11-16): "… ra ngoài thành phố, / khám phá …". */
-  text-wrap: balance;
+  text-wrap: pretty;
 }
 
 @media (min-width: 760px) {
@@ -285,7 +281,7 @@
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.22em;
-  transition: color var(--dur-quick);
+  transition: color 0.25s;
 }
 
 .hero-film:hover {
@@ -489,29 +485,20 @@
     background: rgba(247, 242, 232, 0.22);
   }
 
-  /* Moved by transform, not `top` (a layout every frame), and paused out of view (Hero useOffscreenPause). */
   .hero-scroll span {
     position: absolute;
     left: 0;
-    top: 0;
+    top: -40%;
     width: 1px;
     height: 40%;
     background: var(--gold);
     animation: hero-drop 2.4s var(--ease-inout) infinite;
   }
-
-  .hero-scroll[data-offscreen] span {
-    animation-play-state: paused;
-  }
 }
 
-/* From just above the line (its own height) to just below it (the line is 2.5 of its heights). */
 @keyframes hero-drop {
-  from {
-    transform: translateY(-100%);
-  }
   to {
-    transform: translateY(250%);
+    top: 100%;
   }
 }
 
@@ -709,7 +696,7 @@
   border-radius: 50%;
   background: var(--sand);
   box-shadow: 0 0 0 4px var(--cream), 0 0 0 5px rgba(31, 61, 52, 0);
-  transition: box-shadow var(--dur-quick) ease, transform var(--dur-base) var(--ease-soft);
+  transition: box-shadow 0.3s ease, transform 0.45s var(--ease-soft);
   --cuisine-size: 84px;
 }
 
@@ -726,7 +713,7 @@
   inset: -9px;
   border-radius: 50%;
   border: 1px solid rgba(198, 166, 100, 0.55);
-  transition: inset var(--dur-base) var(--ease-soft), border-color var(--dur-quick) ease;
+  transition: inset 0.45s var(--ease-soft), border-color 0.3s ease;
   pointer-events: none;
 }
 
@@ -806,7 +793,7 @@
   font-weight: 500;
   letter-spacing: 0.04em;
   color: var(--ink);
-  transition: border-color var(--dur-quick);
+  transition: border-color 0.25s;
 }
 
 .filter-chip:hover {
@@ -821,7 +808,7 @@
 
 .filter-clear {
   padding: 8px 4px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.16em;
   color: var(--green);
@@ -900,7 +887,7 @@ a.rcard:hover {
   bottom: 12px;
   padding: 8px 12px;
   background: rgba(247, 242, 232, 0.95);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -938,7 +925,7 @@ a.rcard:hover {
   font-weight: 500;
   line-height: 1.25;
   color: var(--ink);
-  transition: color var(--dur-quick);
+  transition: color 0.25s;
 }
 
 .rcard:not([aria-disabled='true']):hover .rcard-name {
@@ -1025,7 +1012,7 @@ a.rcard:hover {
   border-radius: 50%;
   border: 1px solid var(--gold);
   background: var(--white);
-  transition: background-color var(--dur-quick) var(--ease-out), scale var(--dur-quick) var(--ease-out);
+  transition: background-color 0.25s var(--ease-out), scale 0.25s var(--ease-out);
 }
 
 /* The stop of the card under the pointer or the keyboard's focus (components/home/Destinations.tsx). */
@@ -1097,9 +1084,9 @@ a.dest-hit:hover {
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(20, 32, 28, 0.5) 0%,
-    rgba(20, 32, 28, 0.2) 10%,
-    rgba(30, 58, 49, 0) 18%,
+    rgba(20, 32, 28, 0.62) 0%,
+    rgba(20, 32, 28, 0.25) 12%,
+    rgba(30, 58, 49, 0) 24%,
     rgba(30, 58, 49, 0) 40%,
     rgba(30, 58, 49, 0.7) 68%,
     var(--green-card) 100%
@@ -1112,21 +1099,10 @@ a.dest-hit:hover {
   inset: 12px;
   border: 1px solid rgba(198, 166, 100, 0.28);
   pointer-events: none;
-  transition: scale 0.5s var(--ease-out), border-color var(--dur-quick) ease;
-}
-
-/* The number keeps its own small pool of shade, not a band across the photograph's top: 2.27:1 over a bright sky
-   or a shop sign before (UX/UI audit 2026-11-15, UI-09), at least 7:1 now on every card and width. */
-.dest-index::before {
-  content: '';
-  position: absolute;
-  inset: -16px -22px;
-  z-index: -1;
-  background: radial-gradient(closest-side, rgba(12, 18, 15, 0.72), rgba(12, 18, 15, 0.5) 55%, transparent);
+  transition: scale 0.5s var(--ease-out), border-color 0.3s ease;
 }
 
 .dest-index {
-  z-index: 1;
   position: absolute;
   top: clamp(26px, 2.4vw, 34px);
   left: clamp(20px, 1.95vw, 28px);
@@ -1137,7 +1113,7 @@ a.dest-hit:hover {
   color: var(--on-dark);
   pointer-events: none;
   text-shadow: 0 1px 12px rgba(12, 18, 15, 0.5);
-  transition: color var(--dur-quick) ease;
+  transition: color 0.3s ease;
 }
 
 .dest-copy {
@@ -1171,20 +1147,19 @@ a.dest-hit:hover {
 .dest-count {
   display: block;
   margin-top: 18px;
-  /* 12px in the lighter gold: 11px gold over the photograph's foot read 3.9:1 at worst (UX/UI audit, UX-18). */
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--gold-hover);
+  color: var(--gold);
   opacity: 1;
   transform: translateY(0);
-  transition: opacity var(--dur-quick) var(--ease-out), transform var(--dur-quick) var(--ease-out);
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
 }
 
 .dest-count span {
   display: inline-block;
-  transition: translate var(--dur-quick) var(--ease-out);
+  transition: translate 0.3s var(--ease-out);
 }
 
 /*
@@ -1362,11 +1337,6 @@ a.dest-hit:hover {
   line-height: 1.2;
 }
 
-/* Words in gold on the green band read in its lighter gold. */
-.experiences .eyebrow {
-  color: var(--gold-on-green);
-}
-
 .experience-blurb {
   font-size: 12px;
   line-height: 1.5;
@@ -1375,7 +1345,7 @@ a.dest-hit:hover {
 
 .experience-arrow {
   font-size: 14px;
-  color: var(--gold-on-green);
+  color: var(--gold);
 }
 
 /* ── Heritage ────────────────────────────────────────────────────────────── */
@@ -1402,13 +1372,11 @@ a.dest-hit:hover {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Shade only where the words are, a wide low band across the middle: the title measured 2.74:1 over the sunset
-     on a phone (UX/UI audit 2026-11-15, UI-08); the sky and the resort above and below stay bright. */
   background: radial-gradient(
-    ellipse 80% 36% at 50% 50%,
-    rgba(12, 18, 15, 0.64) 0%,
-    rgba(12, 18, 15, 0.42) 60%,
-    rgba(12, 18, 15, 0.1) 100%
+    ellipse 60% 70% at 50% 55%,
+    rgba(12, 18, 15, 0.5) 0%,
+    rgba(12, 18, 15, 0.25) 60%,
+    rgba(12, 18, 15, 0.15) 100%
   );
 }
 
@@ -1436,11 +1404,11 @@ a.dest-hit:hover {
 }
 
 .heritage-kicker {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--on-dark);
+  color: var(--on-dark-soft);
 }
 
 .heritage-title {
@@ -1637,7 +1605,7 @@ a.dest-hit:hover {
   font-weight: 600;
   letter-spacing: 0.18em;
   color: var(--green);
-  transition: color var(--dur-quick);
+  transition: color 0.3s;
 }
 
 .offer-cta:hover {

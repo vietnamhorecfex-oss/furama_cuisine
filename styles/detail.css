@@ -104,9 +104,8 @@
     180deg,
     rgba(12, 18, 15, 0.5) 0%,
     rgba(12, 18, 15, 0) 22%,
-    rgba(12, 18, 15, 0) 44%,
-    rgba(16, 24, 20, 0.64) 64%,
-    rgba(16, 24, 20, 0.86) 84%,
+    rgba(12, 18, 15, 0) 46%,
+    rgba(16, 24, 20, 0.86) 86%,
     #101814 100%
   );
 }
@@ -126,7 +125,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--on-dark);
-  transition: color var(--dur-quick);
+  transition: color 0.25s;
 }
 
 .taya-back:hover {
@@ -138,24 +137,19 @@
 }
 
 /* Floating back button, phone only. Its label lines up with the page's gutter (clear of a notch, styles/tokens.css). */
-/* On a pill of shade: 11px white over the palms read 2.22:1 (UX/UI audit 2026-11-15, UI-09). */
 .taya-back-float {
   position: absolute;
   top: calc(12px + env(safe-area-inset-top));
-  left: calc(var(--gutter) - 12px);
+  left: calc(var(--gutter) - 10px);
   z-index: 2;
   height: 44px;
-  padding: 0 14px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
   gap: 8px;
-  border-radius: 22px;
-  background: rgba(12, 18, 15, 0.5);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   color: var(--on-dark);
 }
 
@@ -171,7 +165,7 @@
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold-on-green);
+  color: var(--gold);
 }
 
 .taya-title {
@@ -199,12 +193,11 @@
 }
 
 .taya-kicker-m {
-  /* 12px in the lighter gold over the shade: 11px gold over the photograph read 3.38:1 (UX/UI audit, UI-09). */
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--gold-hover);
+  color: var(--gold);
 }
 
 .taya-title-m {
@@ -223,7 +216,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--gold-on-green);
+  color: var(--gold);
 }
 
 .taya-story {
@@ -290,7 +283,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--on-dark);
-  transition: color var(--dur-quick);
+  transition: color 0.25s;
 }
 
 .taya-link:hover {

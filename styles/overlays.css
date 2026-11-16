@@ -74,7 +74,7 @@
 .drawer-kicker {
   /* The drawer focuses it on opening: a keyboard's ring hugs the words, not the head's width. */
   width: fit-content;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--gold-deep);
@@ -136,7 +136,7 @@
 
 .drawer-label {
   margin-top: 26px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--brown);
@@ -248,7 +248,7 @@
   border: 1px solid var(--line);
   background: var(--white);
   color: var(--ink);
-  transition: background-color var(--dur-quick) ease, color var(--dur-quick) ease, border-color var(--dur-quick) ease, transform 0.16s var(--ease-out);
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.16s var(--ease-out);
 }
 
 .day[data-selected='true'] {
@@ -267,7 +267,7 @@
 
 .day-wd,
 .day-mo {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -281,7 +281,7 @@
 /* The small print changes colour with its day, as smoothly as the day does. */
 .day-wd,
 .day-mo {
-  transition: color var(--dur-quick) ease;
+  transition: color 0.25s ease;
 }
 
 .day[data-selected='true'] .day-wd,
@@ -344,7 +344,7 @@
 }
 
 .guests-label {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.16em;
   color: var(--brown);
@@ -409,7 +409,7 @@
   font-size: 13px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  transition: background-color var(--dur-quick) ease, color var(--dur-quick) ease, border-color var(--dur-quick) ease, transform 0.16s var(--ease-out);
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.16s var(--ease-out);
 }
 
 .slot[data-selected='true'] {
@@ -614,7 +614,7 @@
 }
 
 .drawer-foot-label {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.16em;
   color: var(--brown);
@@ -644,7 +644,7 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.16em;
-  transition: background-color var(--dur-quick);
+  transition: background-color 0.3s;
 }
 
 .drawer-submit:hover:not(:disabled) {
@@ -830,15 +830,7 @@
       scroll-timeline: --drawer-scroll y;
     }
 
-    /* The shadow is a layer of its own that fades in (opacity), not a box-shadow repainted on every frame of the
-       scroll (UX/UI audit 2026-11-15, UI-05). */
-    .drawer-close::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      border-radius: 50%;
-      box-shadow: 0 2px 12px rgba(10, 16, 13, 0.16);
+    .drawer-close {
       animation: drawer-close-lift linear both;
       animation-timeline: --drawer-scroll;
       animation-range: 0 48px;
@@ -848,11 +840,11 @@
 
 @keyframes drawer-close-lift {
   from {
-    opacity: 0;
+    box-shadow: 0 0 0 rgba(10, 16, 13, 0);
   }
 
   to {
-    opacity: 1;
+    box-shadow: 0 2px 12px rgba(10, 16, 13, 0.16);
   }
 }
 
@@ -1070,7 +1062,7 @@
 
 .menu-arrow {
   font-size: 14px;
-  color: var(--gold-on-green);
+  color: var(--gold);
 }
 
 .menu-foot {
@@ -1120,15 +1112,15 @@
 }
 
 .menu-lang[data-selected='true'] {
-  border-color: var(--gold-on-green);
-  color: var(--gold-on-green);
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .menu-tagline {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.18em;
-  color: var(--gold-on-green);
+  color: var(--gold-footer);
 }
 
 /* A landscape phone (C2): the links down the left, RESERVE A TABLE and the languages beside them on the right,
@@ -1218,7 +1210,7 @@
 
 .search-label {
   margin-top: 32px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--brown);
@@ -1242,7 +1234,7 @@
   background: var(--white);
   font-size: 12px;
   color: var(--ink);
-  transition: border-color var(--dur-quick);
+  transition: border-color 0.25s;
 }
 
 .search-chip:hover {
@@ -1262,7 +1254,7 @@
   padding: 14px 0;
   border-bottom: 1px solid var(--line-empty);
   text-align: left;
-  transition: padding var(--dur-quick) ease;
+  transition: padding 0.3s ease;
 }
 
 .search-result:hover {
@@ -1293,7 +1285,7 @@
 .search-result-meta {
   display: block;
   margin-top: 5px;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--brown);
@@ -1301,7 +1293,7 @@
 
 .search-result-action {
   flex: 0 0 auto;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.16em;
   color: var(--green);

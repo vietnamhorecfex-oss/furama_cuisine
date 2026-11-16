@@ -5,8 +5,7 @@ import { privacyHref } from '@/lib/legal';
 import { useSite } from '@/components/site/SiteProvider';
 import { socialKey } from '@/lib/content/footer';
 import { homeHref } from '@/lib/i18n/href';
-import { useRef, useState } from 'react';
-import { useOffscreenPause, useReveal } from '@/lib/motion';
+import { useReveal } from '@/lib/motion';
 
 const WORDMARK = 'FURAMA DINING WORLD';
 /** Each half of the band repeats the wordmark this often: wider than a 2560 px screen at the band's largest size. */
@@ -15,10 +14,6 @@ const BAND_REPEATS = 4;
 export function Footer() {
   const { goHomeTop, locale, site, strings } = useSite();
   const reveal = useReveal<HTMLDivElement>('fade');
-  const band = useRef<HTMLDivElement>(null);
-  useOffscreenPause(band);
-  // WCAG 2.2.2: moving for more than five seconds beside other content, so it can be stopped (and stays stopped).
-  const [bandPaused, setBandPaused] = useState(false);
   // The destinations staff mark for the footer, each as "name · address · phone" (destinations.show_in_footer; R24: edited on the destinations screen).
   const venues = site.destinations.filter((d) => d.showInFooter);
   const email = site.settings.email;
@@ -80,8 +75,7 @@ export function Footer() {
 
       {/* The wordmark running right to left without end, in outline: decoration (the wordmark above names the brand),
           so hidden from screen readers. Two identical halves slide by one half's width and start over. It pauses under
-          the pointer, out of view and with its button, and stands still when motion is reduced (styles/layout.css). */}
-      <div ref={band} className="footer-band-wrap" data-paused={bandPaused || undefined}>
+          the pointer and stands still when motion is reduced (styles/layout.css). */}
       <div className="footer-band" aria-hidden="true">
         <div className="footer-band-track">
           {[0, 1].map((half) => (
@@ -94,16 +88,6 @@ export function Footer() {
             </span>
           ))}
         </div>
-      </div>
-        <button
-          type="button"
-          className="footer-band-pause"
-          aria-label={bandPaused ? strings['footer.band_play_aria'] : strings['footer.band_pause_aria']}
-          aria-pressed={bandPaused}
-          onClick={() => setBandPaused((p) => !p)}
-        >
-          <span aria-hidden="true" data-paused={bandPaused} />
-        </button>
       </div>
 
       {/* Clears the fixed mobile tab bar. */}

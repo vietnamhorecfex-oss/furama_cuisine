@@ -126,7 +126,7 @@
   text-transform: uppercase;
   text-decoration: none;
   color: var(--green);
-  transition: color var(--dur-quick);
+  transition: color 0.25s;
 }
 
 .page-message .page-message-home:hover {

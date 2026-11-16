@@ -823,7 +823,7 @@ export const REGISTRY = {
   // the same three title lines name the page from a hidden <h1> when the hero is left out (phase-6 F-A, L7-16) ──
   'hero.title_1': {
     en: 'Many Flavours.',
-    vi: 'Muôn hương vị.',
+    vi: 'Muôn vị ẩm thực.',
     maxLength: 28,
     context:
       'Home page, hero title, line 1 of 3, very large over the photo. Also the start of the page’s hidden heading when the hero is switched off. Keep each line short.',
@@ -847,17 +847,16 @@ export const REGISTRY = {
     label: 'Tiêu đề, dòng 3',
   },
   'hero.lede': {
-    en: 'From the resort out into the city, discover the world of Furama dining.',
-    vi: 'Từ khu nghỉ dưỡng ra ngoài thành phố, khám phá thế giới ẩm thực Furama.',
+    en: 'From beachfront dining to vibrant city destinations – discover the restaurants, cuisines and people of Furama Dining World.',
+    vi: 'Từ bữa tối bên bờ biển đến những điểm đến sôi động giữa lòng phố — khám phá nhà hàng, ẩm thực và con người Furama Dining World.',
     maxLength: 160,
-    context:
-      'Home page, one short sentence under the hero title, over the film; set on two balanced lines. Short on purpose (owner, 2026-11-16: fewer words on the hero).',
+    context: 'Home page, one sentence under the hero title, over the photo.',
     screen: 'hero',
     label: 'Câu dẫn',
   },
   'hero.cta_explore': {
-    en: 'EXPLORE NOW',
-    vi: 'KHÁM PHÁ NGAY',
+    en: 'EXPLORE OUR RESTAURANTS',
+    vi: 'KHÁM PHÁ NHÀ HÀNG',
     maxLength: 32,
     context: 'Home page, the hero’s main button; scrolls to the restaurants. Capitals; an arrow follows it.',
     screen: 'hero',
@@ -1465,22 +1464,6 @@ export const REGISTRY = {
     context: 'The small line at the right of the footer’s top band, under the social links: who runs the restaurants. Capitals.',
     screen: 'contact',
     label: 'Dòng “thuộc Furama” (chân trang)',
-  },
-  'footer.band_pause_aria': {
-    en: 'Pause the moving wordmark',
-    vi: 'Dừng dòng chữ chạy',
-    maxLength: 40,
-    context: 'Screen-reader name of the small button at the end of the footer’s running FURAMA DINING WORLD band that stops it.',
-    screen: 'ui-text',
-    label: 'Tên nút dừng dòng chữ chạy ở chân trang (trình đọc màn hình)',
-  },
-  'footer.band_play_aria': {
-    en: 'Play the moving wordmark',
-    vi: 'Chạy lại dòng chữ',
-    maxLength: 40,
-    context: 'The same button once the band is stopped: it starts it again.',
-    screen: 'ui-text',
-    label: 'Tên nút chạy lại dòng chữ ở chân trang (trình đọc màn hình)',
   },
   'social.facebook': {
     en: 'FACEBOOK',

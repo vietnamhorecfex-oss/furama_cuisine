@@ -34,8 +34,10 @@ export function Header() {
             }}
           >
             <BrandMark className="hdr-logo-mark" />
-            {/* One line in the hero title's serif (owner, 2026-11-16): the brand as the hero names it. */}
-            <span className="hdr-logo-text">Furama Dining World</span>
+            <span className="hdr-logo-text">
+              <span className="hdr-logo-word">FURAMA</span>
+              <span className="hdr-logo-sub">DINING WORLD</span>
+            </span>
           </a>
 
           {/* nav_item_i18n holds one label per language as written ("Restaurants"); styles/layout.css sets it in capitals here. */}
@@ -76,7 +78,10 @@ export function Header() {
             }}
           >
             <BrandMark className="hdr-wordmark-mark" />
-            <span className="hdr-wordmark-text">Furama Dining World</span>
+            <span className="hdr-wordmark-text">
+              FURAMA
+              <span className="hdr-wordmark-sub">DINING WORLD</span>
+            </span>
           </a>
           <div className="hdr-compact-actions">
             <button type="button" className="btn-gold hdr-compact-reserve" onClick={() => openReserve()}>

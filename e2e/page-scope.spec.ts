@@ -61,15 +61,6 @@ const offsetFromHeader = (page: Page, id: string) =>
 
 const tayaCard = (page: Page) => page.locator('.rcard:visible', { hasText: 'Tàya House' }).first();
 
-/**
- * Resolves once the restaurant page has been fetched ahead (RestaurantCard prefetches it as the card comes into
- * view; an RSC request). Set up before the page loads. Not "network idle": the background film and the pictures
- * the optimiser encodes on a cold cache keep the network busy well past the prefetch.
- */
-function tayaPrefetched(page: Page): Promise<unknown> {
-  return page.waitForResponse((r) => r.url().includes(DETAIL_PATH) && r.request().headers()['rsc'] === '1' && r.ok());
-}
-
 async function openTaya(page: Page) {
   await tayaCard(page).click();
   await page.waitForURL((u) => u.pathname === DETAIL_PATH);
@@ -86,12 +77,11 @@ test('each page owns its <main data-view>, and the document says which page is s
 });
 
 test('a card opens the restaurant page by growing its picture into the portrait, without the curtain, at the top', async ({ page }) => {
-  const prefetched = tayaPrefetched(page);
   await page.goto(HOME_PATH);
   await recordCurtain(page);
   // The page is fetched while the guest points at the card, so it renders in the route change's commit (lib/view-morph.ts).
   await tayaCard(page).hover();
-  await prefetched;
+  await page.waitForLoadState('networkidle');
   await page.evaluate(() => {
     const w = window as Window & { __morph?: string[] };
     w.__morph = [];
@@ -159,13 +149,12 @@ test('a second visit to the restaurant page plays its entrance again', async ({ 
 });
 
 test('navigation still works after the error page replaces a page the curtain was covering', async ({ page }) => {
-  const prefetched = tayaPrefetched(page);
   await page.goto(HOME_PATH);
   // The card fetches its page once it comes into view (RestaurantCard). A click while that fetch is still on its way
   // and the page then fails to render leaves the guest on this one, with no error page (Next's router); a guest sees
   // a card before clicking it, so the fetch has long finished. The test does as a guest does.
   await tayaCard(page).scrollIntoViewIfNeeded();
-  await prefetched;
+  await page.waitForLoadState('networkidle');
   // Test-only fault: while armed, MoreRestaurants' restaurants.find(r => r.slug === slug) throws,
   // so the restaurant page fails to render under the covering curtain and [lang]/error.tsx
   // takes over (and unmounts the curtain mid-cover). No production code is involved.

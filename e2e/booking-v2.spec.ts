@@ -60,8 +60,7 @@ test('a closed day is greyed out, cannot be chosen, and says why', async ({ page
   await expect(closed.locator('.day-num')).toHaveCSS('text-decoration-line', 'line-through');
 
   // Playwright waits for aria-disabled elements to become enabled; a guest's tap still lands (it is not `disabled`).
-  // Dispatched on the day itself: a forced click lands at a point of a strip that may still be scrolling.
-  await closed.dispatchEvent('click');
+  await closed.click({ force: true });
   await expect(closed).toHaveAttribute('aria-pressed', 'false');
   await expect(drawer.locator('.day[aria-pressed="true"] .day-num')).toHaveText('2');
   await expect(said(drawer)).toHaveText('Sun, 4 Oct: Closed for a private event');
@@ -199,9 +198,7 @@ test('the party limit comes from the server: max_party 8 blocks a ninth guest an
 test('the reason under the strip belongs to that calendar: another restaurant’s answer clears it', async ({ page }) => {
   const days: Record<string, MockDay> = { '2026-10-04': { state: 'closed', reason: 'Closed for a private event' } };
   const drawer = await openDrawer(page, { days });
-  // Dispatched on the day itself: a forced click lands at its point on screen, and the strip may still be scrolling
-  // its chosen day into view, so the click could land on a neighbour.
-  await drawer.getByRole('button', { name: 'Sun, 4 Oct: Closed for a private event' }).dispatchEvent('click');
+  await drawer.getByRole('button', { name: 'Sun, 4 Oct: Closed for a private event' }).click({ force: true });
   await expect(said(drawer)).toHaveText('Sun, 4 Oct: Closed for a private event');
 
   // The next restaurant takes bookings that day (the mock reads `days` per request).
@@ -690,8 +687,8 @@ test('a max_party of 8 in the database stops the stepper at 8 and names the dest
       // From the keyboard: at the limit the button keeps the focus, and the hint is read out.
       // The strip can still show the previous calendar's days: the stepper waits for The Fan's own.
       await expect(more).toBeEnabled();
-      // Each Enter on the button itself: The Fan's calendar arriving can move the focus to its chosen day.
-      for (let i = 2; i < 8; i++) await more.press('Enter');
+      await more.focus();
+      for (let i = 2; i < 8; i++) await page.keyboard.press('Enter');
       await expect(drawer.locator('.guests-value')).toHaveText('8 guests');
       await expect(more).toBeDisabled();
       // Chrome moves the focus off a button that turned `disabled` at its next rendering update, not at once.
@@ -758,7 +755,7 @@ test('the dates’ live region stays mounted while their failure shows, so what 
   await drawer.getByRole('button', { name: 'Try again' }).click();
   await expect(drawer.locator('.daystrip .day')).toHaveCount(14);
   // aria-disabled, so Playwright would wait for it to become enabled; a guest's tap lands (it is not `disabled`).
-  await drawer.locator('.day[data-state="closed"]').dispatchEvent('click');
+  await drawer.locator('.day[data-state="closed"]').click({ force: true });
   const note = said(drawer).filter({ hasText: 'Closed' });
   await expect(note).toHaveCount(1);
   // The same element as during the failure, never remounted (it used to unmount with the strip).
@@ -768,8 +765,8 @@ test('the dates’ live region stays mounted while their failure shows, so what 
 test('at one guest, “Fewer guests” keeps the focus: aria-disabled, like “More guests” at the limit', async ({ page }) => {
   const drawer = await openDrawer(page);
   const fewer = drawer.getByRole('button', { name: 'Fewer guests' });
-  // Enter on the button itself: the calendar arriving can move the focus to the chosen day first.
-  await fewer.press('Enter');
+  await fewer.focus();
+  await page.keyboard.press('Enter');
   await expect(drawer.locator('.guests-value')).toHaveText('1 guest');
   await expect(fewer).toHaveAttribute('aria-disabled', 'true');
   await expect(fewer).toBeFocused();
