@@ -252,10 +252,13 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(kind: RevealKi
 }
 
 /**
- * One rAF loop for everything scroll-driven: header auto-hide, parallax, hero
+ * One frame for everything scroll-driven: header auto-hide, parallax, hero
  * fade and a picture settling from a zoom as it scrolls in ([data-scale-in]).
  * Everything but the header only touches `page` (the visible page's
  * <main>): a page hidden by <Activity>, or one still hydrating, is left alone.
+ * The frame runs when the page scrolls or resizes, not every frame: a page
+ * standing still kept a phone's main thread busy 600ms in every 5s (UX/UI
+ * audit 2026-11-15, PERF-07).
  */
 export function useScrollMotion(overlayOpen: boolean, page: HTMLElement | null) {
   const motion = useMotion();
@@ -289,7 +292,7 @@ export function useScrollMotion(overlayOpen: boolean, page: HTMLElement | null) 
     let raf = 0;
 
     const frame = () => {
-      raf = requestAnimationFrame(frame);
+      raf = 0;
       const y = window.scrollY || 0;
       const vh = window.innerHeight || 800;
       const prev = lastY.current ?? y;
@@ -338,9 +341,36 @@ export function useScrollMotion(overlayOpen: boolean, page: HTMLElement | null) 
       }
     };
 
-    raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+    kick();
+    window.addEventListener('scroll', kick, { passive: true });
+    window.addEventListener('resize', kick, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', kick);
+      window.removeEventListener('resize', kick);
+      cancelAnimationFrame(raf);
+    };
   }, [motion, overlayOpen, page]);
+}
+
+/**
+ * Marks `ref`'s element `data-offscreen` while it is out of view, so CSS can
+ * pause an endless animation nobody sees (the hero's falling light, the
+ * footer's running wordmark: UX/UI audit 2026-11-15, UI-06).
+ */
+export function useOffscreenPause<T extends HTMLElement>(ref: RefObject<T | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) el.removeAttribute('data-offscreen');
+      else el.setAttribute('data-offscreen', '');
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref]);
 }
 
 /**

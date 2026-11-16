@@ -11,8 +11,13 @@ import { EASE_INOUT, EASE_OUT, EASE_POP } from '@/lib/motion';
  * (lib/motion.tsx), and everything is simply there.
  */
 
+/*
+ * The whole within the staging budget (styles/tokens.css, 1.2s): four cards 140ms apart, each open in 500ms and its
+ * photograph settled in 700ms, its lines up by then. It ran 2.78s, and a quick scroll met two columns still empty
+ * (UX/UI audit 2026-11-15, UI-03).
+ */
 /** From one stop to the next along the route, and so from one card to the next. */
-const STOP_MS = 380;
+const STOP_MS = 140;
 /** The cards' own pace where there is no route. */
 const RAIL_STAGGER_MS = 90;
 
@@ -23,15 +28,12 @@ const LINE_RISE: Keyframe[] = [
   { opacity: 1, transform: 'none' },
 ];
 
-/** The stop: out of a small point, filled with its ring's gold as the route arrives, then back to its own centre. */
-function stopLight(stop: HTMLElement): Keyframe[] {
-  const { borderTopColor: gold, backgroundColor: centre } = getComputedStyle(stop);
-  return [
-    { opacity: 0, transform: 'scale(.5)', backgroundColor: gold },
-    { opacity: 1, transform: 'none', backgroundColor: gold, offset: 0.35 },
-    { opacity: 1, transform: 'none', backgroundColor: centre },
-  ];
-}
+/** The stop: out of a small point as the route arrives (transform and opacity only: no colour to repaint each frame). */
+const STOP_LIGHT: Keyframe[] = [
+  { opacity: 0, transform: 'scale(.5)' },
+  { opacity: 1, transform: 'scale(1.25)', offset: 0.5 },
+  { opacity: 1, transform: 'none' },
+];
 
 /** The section's reveal (a 'stage' choreography, lib/motion.tsx): its animations, from `delay` on. */
 export function playDestinations(stage: HTMLElement, delay: number): Animation[] {
@@ -50,16 +52,16 @@ export function playDestinations(stage: HTMLElement, delay: number): Animation[]
   if (routed) {
     // From the first stop to the last, linear: it reaches stop i at reach(i).
     play(line, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], (cards.length - 1) * STOP_MS, delay, 'linear');
-    stops.forEach((stop, i) => play(stop, stopLight(stop), 900, reach(i), EASE_POP));
+    stops.forEach((stop, i) => play(stop, STOP_LIGHT, 400, reach(i), EASE_POP));
   }
 
   cards.forEach((card, i) => {
     const at = reach(i);
-    play(card, CARD_OPEN, 900, at, EASE_INOUT);
-    play(card.querySelector('[data-reveal-zoom]'), PHOTO_SETTLE, 1500, at, EASE_OUT);
-    play(card.querySelector('.dest-frame'), [{ opacity: 0 }, { opacity: 1 }], 600, at + 500, 'ease');
+    play(card, CARD_OPEN, 500, at, EASE_INOUT);
+    play(card.querySelector('[data-reveal-zoom]'), PHOTO_SETTLE, 700, at, EASE_OUT);
+    play(card.querySelector('.dest-frame'), [{ opacity: 0 }, { opacity: 1 }], 400, at + 200, 'ease');
     // Its number, title and words once the card is half open; the count keeps its own hover behaviour.
-    card.querySelectorAll('.dest-index,.dest-title,.dest-blurb').forEach((el, j) => play(el, LINE_RISE, 600, at + 380 + j * 70, EASE_OUT));
+    card.querySelectorAll('.dest-index,.dest-title,.dest-blurb').forEach((el, j) => play(el, LINE_RISE, 400, at + 200 + j * 50, EASE_OUT));
   });
 
   return anims;

@@ -99,6 +99,11 @@
   display: inline-block;
 }
 
+/* A heading's last two words, kept on one line (SplitWords). */
+.sw-keep {
+  white-space: nowrap;
+}
+
 /* Masks a heading line so its glyphs can rise from below the baseline. */
 .line-mask {
   display: block;
@@ -216,16 +221,15 @@ html[data-intro='play'] .intro-curtain {
   animation: fc-in 0.3s var(--ease-out) 0.2s both;
 }
 
+/* Transform and opacity only: a blur here repainted each letter on every frame (UX/UI audit 2026-11-15, UI-05). */
 @keyframes fc-letter {
   from {
     opacity: 0;
     transform: translateY(105%) rotate(6deg);
-    filter: blur(6px);
   }
   to {
     opacity: 1;
     transform: none;
-    filter: blur(0);
   }
 }
 
@@ -284,7 +288,8 @@ html[data-intro='play'] .intro-curtain {
 /*
  * View transitions (R2): the restaurant card's picture morphing into its page's portrait (.morph, lib/view-morph.ts)
  * and the grid's cards sliding to their places when a filter changes (.grid-move, components/home/Restaurants.tsx).
- * Both within the motion budget (styles/tokens.css). A soft blur mid-flight hides the two pictures' crossfade.
+ * Both within the motion budget (styles/tokens.css). The two pictures crossfade (opacity, the browser's own); a blur
+ * mid-flight was a filter repainted on every frame (UX/UI audit 2026-11-15, UI-05).
  * Clicks go through to the page while one runs; a guest who asks for reduced motion gets the swap at once.
  */
 ::view-transition {
@@ -296,16 +301,6 @@ html[data-intro='play'] .intro-curtain {
   animation-timing-function: var(--ease-out);
 }
 
-::view-transition-image-pair(.morph) {
-  animation-name: morph-blur;
-  animation-duration: var(--dur-base);
-}
-
-@keyframes morph-blur {
-  30% {
-    filter: blur(3px);
-  }
-}
 
 ::view-transition-group(.grid-move) {
   animation-duration: var(--dur-base);

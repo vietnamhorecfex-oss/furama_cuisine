@@ -1465,6 +1465,22 @@ export const REGISTRY = {
     screen: 'contact',
     label: 'Dòng “thuộc Furama” (chân trang)',
   },
+  'footer.band_pause_aria': {
+    en: 'Pause the moving wordmark',
+    vi: 'Dừng dòng chữ chạy',
+    maxLength: 40,
+    context: 'Screen-reader name of the small button at the end of the footer’s running FURAMA DINING WORLD band that stops it.',
+    screen: 'ui-text',
+    label: 'Tên nút dừng dòng chữ chạy ở chân trang (trình đọc màn hình)',
+  },
+  'footer.band_play_aria': {
+    en: 'Play the moving wordmark',
+    vi: 'Chạy lại dòng chữ',
+    maxLength: 40,
+    context: 'The same button once the band is stopped: it starts it again.',
+    screen: 'ui-text',
+    label: 'Tên nút chạy lại dòng chữ ở chân trang (trình đọc màn hình)',
+  },
   'social.facebook': {
     en: 'FACEBOOK',
     vi: 'FACEBOOK',

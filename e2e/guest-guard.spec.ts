@@ -212,7 +212,10 @@ function contrastInHeader(el: Element): number {
     return { rgb: [r, g, b], a };
   };
   const page = rgba(getComputedStyle(document.body).backgroundColor);
-  const bar = rgba(getComputedStyle(header).backgroundColor);
+  // The header's solid state is its ::before layer, faded in by opacity (styles/layout.css).
+  const layer = getComputedStyle(header, '::before');
+  const bar = rgba(layer.backgroundColor);
+  bar.a *= Number(layer.opacity);
   const behind = bar.rgb.map((c, i) => c * bar.a + page.rgb[i] * (1 - bar.a));
   const luminance = (rgb: number[]) => {
     const [r, g, b] = rgb.map((c) => (c / 255 <= 0.04045 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4));
@@ -223,7 +226,9 @@ function contrastInHeader(el: Element): number {
 }
 
 const LOGO = /^FURAMA\s*DINING\s*WORLD$/;
-const CLEAR = 'rgba(20, 32, 28, 0)';
+
+/** How much of the header's solid layer shows (its ::before's opacity): 0 is clear, over the hero. */
+const solidLayer = (page: Page) => page.getByRole('banner').evaluate((h) => Number(getComputedStyle(h, '::before').opacity));
 
 /*
  * The policy page has no dark hero behind the header: the cream page is there,
@@ -253,7 +258,7 @@ test('the policy page’s header is solid from its first paint, on desktop and o
     await page.goto(HOME_PATH);
     await expect(page.locator('html')).toHaveAttribute('data-view', 'home');
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
-    await expect(page.getByRole('banner')).toHaveCSS('background-color', CLEAR);
+    await expect.poll(() => solidLayer(page)).toBe(0);
   }
   // The desktop header's navigation reads too, not only the logo.
   await page.setViewportSize({ width: 1280, height: 860 });
@@ -279,7 +284,7 @@ test('reached from the footer without a page load, the policy page’s header is
   await expect(page.locator('html')).toHaveAttribute('data-view', 'home');
   expect(await page.evaluate(() => Reflect.get(window, 'samePage'))).toBe(true);
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-  await expect(page.getByRole('banner')).toHaveCSS('background-color', CLEAR);
+  await expect.poll(() => solidLayer(page)).toBe(0);
 });
 
 test('the policy page sets its date line small, and a shared link previews the policy, not the home page', async ({ page }) => {

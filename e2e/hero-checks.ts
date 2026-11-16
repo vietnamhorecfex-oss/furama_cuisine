@@ -8,10 +8,14 @@ import { expect, type Locator, type Page } from '@playwright/test';
  * switched off by an editor, L7-1).
  */
 
-/** Runs in the page: the alpha of a computed colour ("rgba(20, 32, 28, 0)" is 0, "rgb(…)" 1). */
+/**
+ * Runs in the page: how opaque a header's background shows, its solid ::before layer's colour alpha times that
+ * layer's opacity (styles/layout.css fades the layer in): 0 is clear over the hero, 0.96 solid.
+ */
 export function backgroundAlpha(el: Element): number {
-  const parts = (getComputedStyle(el).backgroundColor.match(/[\d.]+/g) ?? []).map(Number);
-  return parts.length === 4 ? parts[3] : 1;
+  const layer = getComputedStyle(el, '::before');
+  const parts = (layer.backgroundColor.match(/[\d.]+/g) ?? []).map(Number);
+  return (parts.length === 4 ? parts[3] : 1) * Number(layer.opacity);
 }
 
 /** Runs in the page: how far the page's first visible section starts below the visible header's bottom (negative: under it), and which section that is. */

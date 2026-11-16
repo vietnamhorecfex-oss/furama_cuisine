@@ -104,8 +104,9 @@
     180deg,
     rgba(12, 18, 15, 0.5) 0%,
     rgba(12, 18, 15, 0) 22%,
-    rgba(12, 18, 15, 0) 46%,
-    rgba(16, 24, 20, 0.86) 86%,
+    rgba(12, 18, 15, 0) 40%,
+    rgba(16, 24, 20, 0.6) 62%,
+    rgba(16, 24, 20, 0.88) 82%,
     #101814 100%
   );
 }
@@ -125,7 +126,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--on-dark);
-  transition: color 0.25s;
+  transition: color var(--dur-quick);
 }
 
 .taya-back:hover {
@@ -137,19 +138,24 @@
 }
 
 /* Floating back button, phone only. Its label lines up with the page's gutter (clear of a notch, styles/tokens.css). */
+/* On a pill of shade: 11px white over the palms read 2.22:1 (UX/UI audit 2026-11-15, UI-09). */
 .taya-back-float {
   position: absolute;
   top: calc(12px + env(safe-area-inset-top));
-  left: calc(var(--gutter) - 10px);
+  left: calc(var(--gutter) - 12px);
   z-index: 2;
   height: 44px;
-  padding: 0 10px;
+  padding: 0 14px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  border-radius: 22px;
+  background: rgba(12, 18, 15, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   color: var(--on-dark);
 }
 
@@ -193,11 +199,12 @@
 }
 
 .taya-kicker-m {
-  font-size: 11px;
+  /* 12px in the lighter gold over the shade: 11px gold over the photograph read 3.38:1 (UX/UI audit, UI-09). */
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--gold-hover);
 }
 
 .taya-title-m {
@@ -283,7 +290,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--on-dark);
-  transition: color 0.25s;
+  transition: color var(--dur-quick);
 }
 
 .taya-link:hover {

@@ -36,7 +36,7 @@ function offstage(root: HTMLElement, panel: HTMLElement) {
 }
 
 /** The panel's slide in, its slide out (a quicker reply to a close), and the fade that stands for both with reduced motion. */
-const IN_MS = 450;
+const IN_MS = 400;
 const OUT_MS = 280;
 const FADE_MS = 150;
 

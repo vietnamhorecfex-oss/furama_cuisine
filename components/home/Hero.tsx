@@ -8,7 +8,7 @@ import type { Copy } from '@/lib/i18n/registry';
 import { useSite } from '@/components/site/SiteProvider';
 import { CmsImage, cmsPictureProps } from '@/components/ui/CmsImage';
 import { SplitWords } from '@/components/ui/SplitWords';
-import { useMotionAllowed } from '@/lib/motion';
+import { useMotionAllowed, useOffscreenPause } from '@/lib/motion';
 import { HERO_VIDEO } from '@/lib/media/hero-video';
 
 /** The hero's headline, a line each (registry hero.title_*, spec §7.2 content/hero). */
@@ -67,6 +67,8 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
   const [paused, setPaused] = useState(false);
   const [filmRunning, setFilmRunning] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
+  const scrollCue = useRef<HTMLSpanElement>(null);
+  useOffscreenPause(scrollCue);
   /* The film's file is fetched once the page has loaded and the browser is idle: it is 2.2MB on a phone, and it
      came straight after hydration, alongside the page's own pictures (UX/UI audit 2026-11-15, PERF-05). */
   const [filmLoads, setFilmLoads] = useState(false);
@@ -254,7 +256,7 @@ export function Hero({ slides, copy }: { slides: HeroSlide[]; copy: Copy<'hero'>
         </div>
 
         {/* A drop of light down a hairline: there is more below. */}
-        <span className="hero-scroll" aria-hidden="true">
+        <span ref={scrollCue} className="hero-scroll" aria-hidden="true">
           <span />
         </span>
       </div>
