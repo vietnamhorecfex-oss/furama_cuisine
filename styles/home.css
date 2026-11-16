@@ -1095,10 +1095,10 @@ a.dest-hit:hover {
   /* The top holds the number over a bright sky or a sign (2.27:1 before: UX/UI audit 2026-11-15, UI-09). */
   background: linear-gradient(
     180deg,
-    rgba(20, 32, 28, 0.74) 0%,
-    rgba(20, 32, 28, 0.5) 11%,
-    rgba(20, 32, 28, 0.18) 19%,
-    rgba(30, 58, 49, 0) 27%,
+    rgba(20, 32, 28, 0.8) 0%,
+    rgba(20, 32, 28, 0.62) 11%,
+    rgba(20, 32, 28, 0.22) 20%,
+    rgba(30, 58, 49, 0) 28%,
     rgba(30, 58, 49, 0) 40%,
     rgba(30, 58, 49, 0.7) 68%,
     var(--green-card) 100%
