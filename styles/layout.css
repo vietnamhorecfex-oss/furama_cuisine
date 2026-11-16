@@ -240,17 +240,14 @@ html {
 /* The brand on one line, in the hero title's serif and case (owner, 2026-11-16). */
 .hdr-logo-text {
   font-family: var(--serif);
-  font-size: clamp(19px, 1.6vw, 26px);
+  /* 17px at 1080, 23px at 1440: the sections' Vietnamese names stay on one line beside it. */
+  font-size: clamp(17px, 1.6vw, 26px);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
-/* Each section's name on one line: two-word Vietnamese names broke in two beside the longer wordmark. */
-.hdr-full .hdr-nav .hdr-link {
-  white-space: nowrap;
-}
 
 /* 53 px at 1360, where it first shows and the header has no room to spare; 60 px from 1440. */
 .hdr-logo-mark {
