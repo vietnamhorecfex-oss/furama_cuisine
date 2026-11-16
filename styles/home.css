@@ -238,11 +238,12 @@
 .hero-lede {
   display: none;
   margin: 26px 0 0;
-  max-width: 560px;
+  max-width: 480px;
   font-size: 15px;
   line-height: 1.8;
   color: var(--on-dark-soft);
-  text-wrap: pretty;
+  /* Two lines of even length, as the owner set it (2026-11-16): "… ra ngoài thành phố, / khám phá …". */
+  text-wrap: balance;
 }
 
 @media (min-width: 760px) {

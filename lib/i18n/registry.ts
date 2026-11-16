@@ -823,7 +823,7 @@ export const REGISTRY = {
   // the same three title lines name the page from a hidden <h1> when the hero is left out (phase-6 F-A, L7-16) ──
   'hero.title_1': {
     en: 'Many Flavours.',
-    vi: 'Muôn vị ẩm thực.',
+    vi: 'Muôn hương vị.',
     maxLength: 28,
     context:
       'Home page, hero title, line 1 of 3, very large over the photo. Also the start of the page’s hidden heading when the hero is switched off. Keep each line short.',
@@ -847,16 +847,17 @@ export const REGISTRY = {
     label: 'Tiêu đề, dòng 3',
   },
   'hero.lede': {
-    en: 'From beachfront dining to vibrant city destinations – discover the restaurants, cuisines and people of Furama Dining World.',
-    vi: 'Từ bữa tối bên bờ biển đến những điểm đến sôi động giữa lòng phố — khám phá nhà hàng, ẩm thực và con người Furama Dining World.',
+    en: 'From the resort out into the city, discover the world of Furama dining.',
+    vi: 'Từ khu nghỉ dưỡng ra ngoài thành phố, khám phá thế giới ẩm thực Furama.',
     maxLength: 160,
-    context: 'Home page, one sentence under the hero title, over the photo.',
+    context:
+      'Home page, one short sentence under the hero title, over the film; set on two balanced lines. Short on purpose (owner, 2026-11-16: fewer words on the hero).',
     screen: 'hero',
     label: 'Câu dẫn',
   },
   'hero.cta_explore': {
-    en: 'EXPLORE OUR RESTAURANTS',
-    vi: 'KHÁM PHÁ NHÀ HÀNG',
+    en: 'EXPLORE NOW',
+    vi: 'KHÁM PHÁ NGAY',
     maxLength: 32,
     context: 'Home page, the hero’s main button; scrolls to the restaurants. Capitals; an arrow follows it.',
     screen: 'hero',

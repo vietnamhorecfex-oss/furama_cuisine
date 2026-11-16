@@ -225,7 +225,7 @@ function contrastInHeader(el: Element): number {
   return (Math.max(text, back) + 0.05) / (Math.min(text, back) + 0.05);
 }
 
-const LOGO = /^FURAMA\s*DINING\s*WORLD$/;
+const LOGO = /^Furama Dining World$/;
 
 /** How much of the header's solid layer shows (its ::before's opacity): 0 is clear, over the hero. */
 const solidLayer = (page: Page) => page.getByRole('banner').evaluate((h) => Number(getComputedStyle(h, '::before').opacity));

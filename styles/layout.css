@@ -167,10 +167,6 @@ main[data-view='home'][data-hero='none'] {
     letter-spacing: 0.1em;
   }
 
-  /* The rule before DINING WORLD does not fit here. */
-  .hdr-logo-sub::before {
-    display: none;
-  }
 }
 
 /* Below 1360 the mark would crowd the nav (the six sections, SEARCH, the language and RESERVE): the wordmark alone. */
@@ -241,10 +237,19 @@ html {
   color: var(--on-dark);
 }
 
+/* The brand on one line, in the hero title's serif and case (owner, 2026-11-16). */
 .hdr-logo-text {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  font-family: var(--serif);
+  font-size: clamp(19px, 1.6vw, 26px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* Each section's name on one line: two-word Vietnamese names broke in two beside the longer wordmark. */
+.hdr-full .hdr-nav .hdr-link {
+  white-space: nowrap;
 }
 
 /* 53 px at 1360, where it first shows and the header has no room to spare; 60 px from 1440. */
@@ -259,32 +264,6 @@ html {
   aspect-ratio: 1;
 }
 
-.hdr-logo-word {
-  font-family: var(--serif);
-  font-size: clamp(24px, 2vw, 29px);
-  line-height: 0.9;
-  letter-spacing: 0.24em;
-  font-weight: 400;
-}
-
-/* DINING WORLD after a short jade rule, in the mark's colour. */
-.hdr-logo-sub {
-  display: flex;
-  align-items: center;
-  gap: 0.8em;
-  font-size: 9.5px;
-  line-height: 1;
-  letter-spacing: 0.46em;
-  font-weight: 500;
-}
-
-.hdr-logo-sub::before {
-  content: '';
-  width: 1.5em;
-  height: 1px;
-  background: var(--jade);
-}
-
 .hdr-wordmark {
   /* A 44px touch area; the negative margin keeps the header's height. */
   padding: 13px 0;
@@ -293,7 +272,7 @@ html {
   font-size: 18px;
   font-weight: 400;
   line-height: 1;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.01em;
   color: var(--on-dark);
   white-space: nowrap;
   display: flex;
@@ -307,17 +286,8 @@ html {
 }
 
 .hdr-wordmark-text {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  letter-spacing: 0.24em;
-}
-
-.hdr-wordmark-sub {
-  font-family: var(--sans);
-  font-size: 8.5px;
-  font-weight: 500;
-  letter-spacing: 0.38em;
+  font-size: 20px;
+  letter-spacing: 0.01em;
 }
 
 .hdr-wordmark:hover {
