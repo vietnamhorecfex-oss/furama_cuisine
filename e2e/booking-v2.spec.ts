@@ -60,7 +60,8 @@ test('a closed day is greyed out, cannot be chosen, and says why', async ({ page
   await expect(closed.locator('.day-num')).toHaveCSS('text-decoration-line', 'line-through');
 
   // Playwright waits for aria-disabled elements to become enabled; a guest's tap still lands (it is not `disabled`).
-  await closed.click({ force: true });
+  // Dispatched on the day itself: a forced click lands at a point of a strip that may still be scrolling.
+  await closed.dispatchEvent('click');
   await expect(closed).toHaveAttribute('aria-pressed', 'false');
   await expect(drawer.locator('.day[aria-pressed="true"] .day-num')).toHaveText('2');
   await expect(said(drawer)).toHaveText('Sun, 4 Oct: Closed for a private event');
@@ -757,7 +758,7 @@ test('the dates’ live region stays mounted while their failure shows, so what 
   await drawer.getByRole('button', { name: 'Try again' }).click();
   await expect(drawer.locator('.daystrip .day')).toHaveCount(14);
   // aria-disabled, so Playwright would wait for it to become enabled; a guest's tap lands (it is not `disabled`).
-  await drawer.locator('.day[data-state="closed"]').click({ force: true });
+  await drawer.locator('.day[data-state="closed"]').dispatchEvent('click');
   const note = said(drawer).filter({ hasText: 'Closed' });
   await expect(note).toHaveCount(1);
   // The same element as during the failure, never remounted (it used to unmount with the strip).
