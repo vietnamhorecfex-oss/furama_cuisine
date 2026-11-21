@@ -13,7 +13,7 @@ import { siteOrigin } from '@/lib/site-origin';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const origin = siteOrigin();
   const [languages, slugs] = await Promise.all([getEnabledLocales(), getDetailSlugs()]);
-  const paths = ['', '/privacy', ...slugs.map((slug) => `/restaurants/${slug}`)];
+  const paths = ['', '/news', '/privacy', ...slugs.map((slug) => `/restaurants/${slug}`)];
   return paths.flatMap((path) => {
     const alternates = {
       languages: Object.fromEntries(languages.map((l) => [l.bcp47, new URL(`/${l.code}${path}`, origin).href])),

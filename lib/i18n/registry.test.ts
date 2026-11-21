@@ -48,7 +48,7 @@ describe('registry', () => {
 
 describe('key delivery', () => {
   it('names a section’s own keys by prefix, and every screen in the list edits at least one key or is a list screen', () => {
-    expect(sectionKeys('stories')).toEqual(['stories.title', 'stories.lede']);
+    expect(sectionKeys('stories')).toEqual(['stories.title', 'stories.lede', 'stories.view_all', 'stories.news_title', 'stories.news_lede', 'stories.news_empty']);
     expect(HOME_KEYS).toEqual(expect.arrayContaining(['stories.title', 'heritage.cta']));
     expect(keysForScreen('heritage')).toEqual(['heritage.kicker', 'heritage.title_1', 'heritage.title_2', 'heritage.cta']);
   });

@@ -17,3 +17,7 @@ export function homeHref(locale: string): string {
 export function restaurantHref(locale: string, slug: string): string {
   return localeHref(locale, `/restaurants/${slug}`);
 }
+
+export function newsHref(locale: string): string {
+  return localeHref(locale, '/news');
+}

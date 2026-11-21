@@ -1659,3 +1659,52 @@ a.dest-hit:hover {
 .hero-dots[data-film] .hero-pause:not([data-ready]) {
   visibility: hidden;
 }
+
+/* ── News (app/(site)/[lang]/(guarded)/news): every story, the home page's cards in a grid ─────────────── */
+
+/* The Stories section's way to it, under its lede. */
+.stories-all {
+  display: inline-block;
+  margin-top: 14px;
+}
+
+.news {
+  padding-top: calc(var(--header-h-compact) + clamp(40px, 6vw, 72px));
+  padding-bottom: clamp(72px, 9vw, 120px);
+  color: var(--ink);
+}
+
+@media (min-width: 1080px) {
+  .news {
+    padding-top: calc(var(--header-h-solid) + clamp(40px, 5vw, 72px));
+  }
+}
+
+.news-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(38px, 4.4vw, 56px);
+  line-height: 1.1;
+}
+
+.news-lede {
+  margin: 16px 0 0;
+  max-width: 40em;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.news-grid {
+  margin-top: clamp(32px, 4vw, 56px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: clamp(28px, 3vw, 40px) 24px;
+}
+
+.news-empty {
+  margin-top: 32px;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
