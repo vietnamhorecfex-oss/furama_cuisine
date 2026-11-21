@@ -18,6 +18,7 @@ describe.skipIf(!TEST_DATABASE_URL)('sitemap.xml and robots.txt (database)', () 
     expect(urls).toContain('https://dining.example/en');
     expect(urls).toContain('https://dining.example/vi');
     expect(urls).toContain('https://dining.example/vi/privacy');
+    expect(urls).toContain('https://dining.example/vi/news');
     expect(urls).toContain('https://dining.example/en/restaurants/taya-house');
     expect(urls.some((u) => u.includes('/ko'))).toBe(false);
     expect(entries.find((e) => e.url === 'https://dining.example/vi/restaurants/taya-house')?.alternates).toEqual({
