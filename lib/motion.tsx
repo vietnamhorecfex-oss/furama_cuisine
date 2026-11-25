@@ -286,19 +286,32 @@ export function useScrollMotion(overlayOpen: boolean, page: HTMLElement | null) 
       showHeader();
       return;
     }
+    /*
+     * The loop runs while the page moves and stops once it has stood still a few frames; a scroll, a resize or
+     * the focus entering the header starts it again. It ran every frame forever, about 20% of a slow phone's
+     * main thread with the page standing still (UX/UI audit 2026-11-25, HN-04 / CD-03).
+     */
     let raf = 0;
+    let still = 0;
+    const kick = () => {
+      still = 0;
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+    // The header holding the focus (a keyboard on its menu) stays in view.
+    const headerHasFocus = () => !!document.activeElement?.closest('[data-header]');
 
     const frame = () => {
-      raf = requestAnimationFrame(frame);
       const y = window.scrollY || 0;
       const vh = window.innerHeight || 800;
       const prev = lastY.current ?? y;
       const delta = y - prev;
       lastY.current = y;
+      still = delta === 0 ? still + 1 : 0;
+      raf = still > 3 ? 0 : requestAnimationFrame(frame);
 
       // Headers retract on downward scroll once past the hero lip.
       let hide = hidden.current;
-      if (overlayOpen || y < 240) hide = false;
+      if (overlayOpen || y < 240 || headerHasFocus()) hide = false;
       else if (delta > 6) hide = true;
       else if (delta < -6) hide = false;
       if (hide !== hidden.current) {
@@ -339,7 +352,15 @@ export function useScrollMotion(overlayOpen: boolean, page: HTMLElement | null) 
     };
 
     raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
+    window.addEventListener('scroll', kick, { passive: true });
+    window.addEventListener('resize', kick);
+    document.addEventListener('focusin', kick);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', kick);
+      window.removeEventListener('resize', kick);
+      document.removeEventListener('focusin', kick);
+    };
   }, [motion, overlayOpen, page]);
 }
 

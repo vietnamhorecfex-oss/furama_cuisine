@@ -39,7 +39,9 @@ export function authErrorMessage(
   fallback = AUTH_FALLBACK,
 ): string {
   if (status === 429) {
-    return retryAfterSeconds && retryAfterSeconds > 0
+    // Better Auth's own count can come back absurd (179559074624805 giây, UX/UI audit 2026-11-25 AH-01: its
+    // bigint column read as text and added as a string): anything past an hour says "a moment" instead.
+    return retryAfterSeconds && retryAfterSeconds > 0 && retryAfterSeconds <= 3600
       ? `Bạn đã thử quá nhiều lần. Vui lòng thử lại sau ${retryAfterSeconds} giây.`
       : 'Bạn đã thử quá nhiều lần. Vui lòng đợi một lát rồi thử lại.';
   }
@@ -81,6 +83,7 @@ const ACTION_MESSAGES: Record<ActionCode, string> = {
   ai_failed: 'Vertex không trả lời được. Thử lại sau.',
   ai_placeholder: 'AI làm mất tên riêng hoặc biến; không dùng được bản dịch này.',
   ai_preview: 'Bản xem trước không gọi AI.',
+  network: 'Chưa lưu được: mất kết nối hoặc máy chủ đang lỗi. Chữ bạn đã gõ vẫn còn; kiểm tra mạng rồi bấm lưu lại. Nếu đã đăng xuất, mở trang đăng nhập ở tab mới rồi quay lại đây lưu.',
 };
 
 /** `params` fills in the codes that carry details: who saved first and when, the covers left. */

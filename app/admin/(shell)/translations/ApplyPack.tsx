@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FormMessage } from '../_ui/FormMessage';
 import { applyShippedTranslationPack, type PackRun } from './actions';
@@ -12,7 +13,7 @@ import { applyShippedTranslationPack, type PackRun } from './actions';
  * changed since, is skipped and listed with the reason.
  */
 export function ApplyPack({ id, label, canApply }: { id: string; label: string; canApply: boolean }) {
-  const [state, dispatch, pending] = useActionState<ActionResult<PackRun> | null, FormData>(applyShippedTranslationPack, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult<PackRun> | null, FormData>(applyShippedTranslationPack, null);
   const run = state?.ok ? state.data : null;
   return (
     <form action={dispatch} aria-label={`Gói bản dịch: ${label}`} className="a-section-card">

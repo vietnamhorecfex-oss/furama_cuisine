@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import { useLeaveGuard } from '../../../_kit/useLeaveGuard';
@@ -16,7 +17,7 @@ type Defaults = { windowDays: number; leadMinutes: number; maxParty: number };
  * mark clears on a save here, or when the saved values change (the form then shows them).
  */
 export function RulesForm({ restaurant: r, defaults }: { restaurant: Rules; defaults: Defaults }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(saveRules, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(saveRules, null);
   const uid = useId();
   const err = (name: string) => `${uid}-${name}-error`;
   const values = `${r.bookingEnabled}|${r.windowDays}|${r.leadMinutes}|${r.maxParty}`;

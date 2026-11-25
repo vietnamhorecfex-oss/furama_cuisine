@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FormMessage, RuleAlert, fieldMessages } from '../_ui/FormMessage';
 import { archiveRestaurantAction, showRestaurantAction } from './actions';
@@ -17,8 +18,8 @@ function SwitchMessage({ state }: { state: ActionResult | null }) {
  * neither ever deletes it (F10).
  */
 export function RestaurantSwitches({ id, name, token, shown, archived }: { id: string; name: string; token: string; shown: boolean; archived: boolean }) {
-  const [showState, show, showing] = useActionState<ActionResult | null, FormData>(showRestaurantAction, null);
-  const [archiveState, archive, archiving] = useActionState<ActionResult | null, FormData>(archiveRestaurantAction, null);
+  const [showState, show, showing] = useAdminAction<ActionResult | null, FormData>(showRestaurantAction, null);
+  const [archiveState, archive, archiving] = useAdminAction<ActionResult | null, FormData>(archiveRestaurantAction, null);
   return (
     <div className="a-actions">
       <form action={show} className="a-inline-form">

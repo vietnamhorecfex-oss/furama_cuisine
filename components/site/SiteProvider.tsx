@@ -90,7 +90,8 @@ export type LoadFailure = 'network' | 'restaurant_unavailable';
 type WaitNote = { restaurant: string };
 
 /** A failure the footer says: its error.<code> and the params that fill it. */
-export type ServerError = { code: BookingErrorCode; params: Record<string, string> };
+/** `from`: the date and time the refused request had, so the form can say when it has moved them since (audit DB-02). */
+export type ServerError = { code: BookingErrorCode; params: Record<string, string>; from?: { date: string; time: string } };
 
 /* The two forms of GET /api/availability (lib/booking/api.ts). */
 const calendarUrl = (restaurant: string, locale: string) =>
@@ -490,7 +491,17 @@ export function SiteProvider({
 
   const shownCount = useMemo(() => restaurants.filter(matches).length, [matches, restaurants]);
 
+  /*
+   * While a request is on its way the form stays open: closed then, the booking was still made (and emailed)
+   * but the guest never saw the thanks, and the form reopened as if nothing had been sent (UX/UI audit
+   * 2026-11-25, DB-01). The submit button says it is sending; the answer comes within seconds.
+   */
+  const sending = useRef(false);
+  useEffect(() => {
+    sending.current = pending;
+  }, [pending]);
   const close = useCallback(() => {
+    if (sending.current) return;
     setOverlay(null);
     setOpenDropdown(null);
   }, []);
@@ -519,6 +530,22 @@ export function SiteProvider({
     });
   }, [findSection]);
 
+  /*
+   * The focus follows a jump to a section, to its title: it stayed on the menu item, which the header then hid
+   * above the screen, and the next Tab pulled the page back to the top (UX/UI audit 2026-11-25, DH-02 / TC-01).
+   * After an overlay's close has handed the focus back to what opened it (Chrome's useModalOverlays).
+   */
+  const focusSection = useCallback(
+    (id: string) => {
+      const section = findSection(id);
+      const title = section?.querySelector<HTMLElement>('.section-title') ?? section?.querySelector<HTMLElement>('h2');
+      if (!title) return;
+      if (!title.hasAttribute('tabindex')) title.setAttribute('tabindex', '-1');
+      title.focus({ preventScroll: true });
+    },
+    [findSection],
+  );
+
   const scrollToId = useCallback(
     (id: string) => {
       setOverlay(null);
@@ -529,8 +556,9 @@ export function SiteProvider({
         return;
       }
       window.setTimeout(() => scrollTo(id), 30);
+      window.setTimeout(() => focusSection(id), 80);
     },
-    [findSection, home, router, scrollTo, view],
+    [findSection, focusSection, home, router, scrollTo, view],
   );
 
   /* A cross-view scroll target survives the route change and fires once the
@@ -539,9 +567,12 @@ export function SiteProvider({
     const id = pendingScroll.current;
     if (!id || !pageRoot) return;
     pendingScroll.current = null;
-    const frame = requestAnimationFrame(() => scrollTo(id));
+    const frame = requestAnimationFrame(() => {
+      scrollTo(id);
+      focusSection(id);
+    });
     return () => cancelAnimationFrame(frame);
-  }, [pageRoot, scrollTo]);
+  }, [focusSection, pageRoot, scrollTo]);
 
   const goHomeTop = useCallback(() => {
     setOverlay(null);
@@ -672,13 +703,13 @@ export function SiteProvider({
       if (day.state === 'closed') {
         // A closure came after the calendar: say so, and fetch the calendar
         // again, which greys the day and moves the date off it.
-        setServerError({ code: 'closed', params: {} });
+        setServerError({ code: 'closed', params: {}, from: { date, time: booking.time } });
         loadCalendar(restaurant);
       } else {
         // The form is fine, so the slot is the problem (it closed or filled
         // while the drawer sat open): say so and slide to the nearest open one.
         const past = clockBlock(date, booking.time, at, day) !== null;
-        setServerError({ code: past ? 'past' : 'full', params: {} });
+        setServerError({ code: past ? 'past' : 'full', params: {}, from: { date, time: booking.time } });
         setBookingState((b) => reconcileBooking(b, {}, context(at)));
       }
       return;
@@ -715,7 +746,7 @@ export function SiteProvider({
           setDone(true);
           return;
         }
-        setServerError({ code: result.code, params: errorParams(booking.restaurant, result.params) });
+        setServerError({ code: result.code, params: errorParams(booking.restaurant, result.params), from: { date, time: booking.time } });
         setTried(true);
         // Ask again so a lost race (or a new closure) shows up at once; the
         // answers move the time off a slot that has just filled.
@@ -787,11 +818,21 @@ export function SiteProvider({
     return () => window.removeEventListener('scroll', sync);
   }, [pageRoot]);
 
-  /* Escape closes everything; a click outside a dropdown closes just that. */
+  /*
+   * Escape closes the innermost layer: an open list alone (its own handler puts the focus back on its field),
+   * else the overlay. Read from a ref, not the event's path: the list's stopPropagation did not keep this
+   * listener from closing the reservation form with it (UX-05, still so in the UX/UI audit of 2026-11-25).
+   */
+  const openDropdownRef = useRef(openDropdown);
+  openDropdownRef.current = openDropdown;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
-      setOpenDropdown(null);
+      if (openDropdownRef.current !== null || e.defaultPrevented) {
+        setOpenDropdown(null);
+        return;
+      }
+      if (sending.current) return;
       setOverlay(null);
     };
     const onClick = (e: MouseEvent) => {
@@ -805,6 +846,34 @@ export function SiteProvider({
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('click', onClick);
     };
+  }, []);
+
+  /*
+   * The phone's Back button closes an open overlay instead of leaving the site (UX/UI audit 2026-11-25,
+   * DH-03 / DB-10: Back while the reservation form was open left the page, and what the guest had typed went
+   * with it). Opening one adds a history entry of the same address; Back pops it, and the popstate closes
+   * the overlay. An overlay closed any other way (×, Escape, a booking done) takes its entry back off, unless
+   * a link moved on to another page meanwhile (that page's entry is on top, and stays).
+   */
+  const overlayEntry = useRef(false);
+  useEffect(() => {
+    if (overlay && !overlayEntry.current) {
+      overlayEntry.current = true;
+      window.history.pushState({ ...window.history.state, fcOverlay: true }, '');
+    } else if (!overlay && overlayEntry.current) {
+      overlayEntry.current = false;
+      if (window.history.state?.fcOverlay) window.history.back();
+    }
+  }, [overlay]);
+  useEffect(() => {
+    const onPop = () => {
+      if (!overlayEntry.current || window.history.state?.fcOverlay) return;
+      overlayEntry.current = false;
+      setOpenDropdown(null);
+      setOverlay(null);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
   }, []);
 
   /* Lock the page behind any overlay. */

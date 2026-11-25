@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import { EMAIL_EVENTS, EMAIL_EVENT_LABELS } from '@/lib/email/events';
 import type { ActionResult } from '@/lib/server/action-result';
@@ -16,7 +17,7 @@ const SENT: Record<EmailDeliveryMode, (to: string) => string> = {
 
 /* "Gửi email thử" (spec §10.4): the sample booking's email in the chosen language, through the same gate as real emails. */
 export function TestEmailForm({ defaultTo, locales }: { defaultTo: string; locales: { code: string; name: string }[] }) {
-  const [state, action, pending] = useActionState<ActionResult<{ mode: EmailDeliveryMode; to: string }> | null, FormData>(sendTest, null);
+  const [state, action, pending] = useAdminAction<ActionResult<{ mode: EmailDeliveryMode; to: string }> | null, FormData>(sendTest, null);
   const uid = useId();
   return (
     <form method="post" className="a-grid-form" onSubmit={submitKeepingValues(action)} noValidate aria-label="Gửi email thử">

@@ -322,6 +322,16 @@ export const REGISTRY = {
     screen: 'booking',
     label: 'Thông báo ngày đã chọn bị đổi',
   },
+  'booking.refused_moved': {
+    en: 'Your table is now set for {to}. Check it before you send again.',
+    vi: 'Bàn của quý khách đã được chuyển sang {to}. Vui lòng kiểm tra lại trước khi gửi.',
+    maxLength: 160,
+    vars: ['to'],
+    context:
+      'Reservation form, under the error beside REQUEST BOOKING, when a request was refused (the time just filled, the day just closed) and the form moved the choice to the nearest open time or day. {to} is the new day, time and party size as the footer shows them; keep it.',
+    screen: 'booking',
+    label: 'Thông báo giờ đã đổi sau khi bị từ chối',
+  },
   'booking.loading': {
     en: 'Checking tables…',
     vi: 'Đang kiểm tra bàn…',
@@ -332,8 +342,8 @@ export const REGISTRY = {
     label: 'Đang kiểm tra bàn trống',
   },
   'booking.done_requested': {
-    en: 'Your table request at {restaurant} has been received. Our team will contact you shortly to confirm.',
-    vi: '{restaurant} đã nhận yêu cầu đặt bàn của quý khách. Chúng tôi sẽ liên hệ ngay để xác nhận.',
+    en: 'Your table request at {restaurant} has been received. This is not a confirmation yet: our team will contact you shortly to confirm.',
+    vi: 'Yêu cầu đặt bàn của quý khách tại {restaurant} đã được tiếp nhận. Đây chưa phải là xác nhận: chúng tôi sẽ liên hệ ngay để xác nhận.',
     maxLength: 200,
     vars: ['restaurant'],
     context:
@@ -1884,7 +1894,7 @@ export const REGISTRY = {
   },
   'email.common.footer_guest': {
     en: 'You are receiving this email because a table was booked with this address at Furama Dining World.',
-    vi: 'Bạn nhận được email này vì có một đặt bàn tại Furama Dining World dùng địa chỉ email này.',
+    vi: 'Quý khách nhận được email này vì có một đặt bàn tại Furama Dining World dùng địa chỉ email này.',
     maxLength: 200,
     context: 'Guest booking emails, small print at the bottom.',
     screen: 'emails',
@@ -1900,7 +1910,7 @@ export const REGISTRY = {
   },
   'email.guest.ack.subject': {
     en: 'We have received your table request ({reference})',
-    vi: 'Chúng tôi đã nhận yêu cầu đặt bàn của bạn ({reference})',
+    vi: 'Chúng tôi đã nhận yêu cầu đặt bàn của quý khách ({reference})',
     maxLength: 120,
     vars: ['reference'],
     context: 'Subject of the email a guest gets right after booking online, while the request waits for staff. {reference} is the booking reference; keep it.',
@@ -1916,8 +1926,8 @@ export const REGISTRY = {
     label: 'Dòng tiêu đề trong email (Khách: đã nhận yêu cầu)',
   },
   'email.guest.ack.intro': {
-    en: 'Your table request at {restaurant} has been received. Our team will contact you shortly to confirm.',
-    vi: 'Yêu cầu đặt bàn của bạn tại {restaurant} đã được tiếp nhận. Đội ngũ của chúng tôi sẽ sớm liên hệ để xác nhận.',
+    en: 'Your table request at {restaurant} has been received. This is not a confirmation yet: our team will contact you shortly to confirm.',
+    vi: 'Yêu cầu đặt bàn của quý khách tại {restaurant} đã được tiếp nhận. Đây chưa phải là xác nhận: chúng tôi sẽ liên hệ ngay để xác nhận.',
     maxLength: 300,
     vars: ['restaurant'],
     context:
@@ -1927,7 +1937,7 @@ export const REGISTRY = {
   },
   'email.guest.confirmed.subject': {
     en: 'Your table is confirmed ({reference})',
-    vi: 'Đặt bàn của bạn đã được xác nhận ({reference})',
+    vi: 'Đặt bàn của quý khách đã được xác nhận ({reference})',
     maxLength: 120,
     vars: ['reference'],
     context: 'Subject of the email a guest gets when the booking is confirmed (by staff, automatically, or a phone booking). {reference}: keep it.',
@@ -1944,7 +1954,7 @@ export const REGISTRY = {
   },
   'email.guest.confirmed.intro': {
     en: 'Your table at {restaurant} is confirmed. We look forward to welcoming you.',
-    vi: 'Bàn của bạn tại {restaurant} đã được xác nhận. Chúng tôi rất mong được đón tiếp bạn.',
+    vi: 'Bàn của quý khách tại {restaurant} đã được xác nhận. Chúng tôi rất mong được đón tiếp quý khách.',
     maxLength: 300,
     vars: ['restaurant'],
     context:
@@ -1954,7 +1964,7 @@ export const REGISTRY = {
   },
   'email.guest.declined.subject': {
     en: 'We could not confirm your table request ({reference})',
-    vi: 'Rất tiếc, chúng tôi không thể nhận yêu cầu đặt bàn của bạn ({reference})',
+    vi: 'Rất tiếc, chúng tôi không thể nhận yêu cầu đặt bàn của quý khách ({reference})',
     maxLength: 120,
     vars: ['reference'],
     context: 'Subject of the email a guest gets when staff decline the request. {reference}: keep it.',
@@ -1971,7 +1981,7 @@ export const REGISTRY = {
   },
   'email.guest.declined.intro': {
     en: 'We are sorry, but we cannot confirm your table request at {restaurant}.',
-    vi: 'Rất tiếc, chúng tôi không thể xác nhận yêu cầu đặt bàn của bạn tại {restaurant}.',
+    vi: 'Rất tiếc, chúng tôi không thể xác nhận yêu cầu đặt bàn của quý khách tại {restaurant}.',
     maxLength: 300,
     vars: ['restaurant'],
     context: 'First paragraph of the decline email; the reason staff gave follows. {restaurant}: keep it.',
@@ -1980,7 +1990,7 @@ export const REGISTRY = {
   },
   'email.guest.cancelled.subject': {
     en: 'Your reservation has been cancelled ({reference})',
-    vi: 'Đặt bàn của bạn đã được hủy ({reference})',
+    vi: 'Đặt bàn của quý khách đã được hủy ({reference})',
     maxLength: 120,
     vars: ['reference'],
     context: 'Subject of the email a guest gets when staff cancel the booking and tick "notify the guest". {reference}: keep it.',
@@ -1997,7 +2007,7 @@ export const REGISTRY = {
   },
   'email.guest.cancelled.intro': {
     en: 'Your reservation at {restaurant} has been cancelled.',
-    vi: 'Đặt bàn của bạn tại {restaurant} đã được hủy.',
+    vi: 'Đặt bàn của quý khách tại {restaurant} đã được hủy.',
     maxLength: 300,
     vars: ['restaurant'],
     context: 'First paragraph of the cancellation email; the reason staff gave follows. {restaurant}: keep it.',

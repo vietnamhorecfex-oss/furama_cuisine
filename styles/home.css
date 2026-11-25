@@ -496,9 +496,11 @@
   }
 }
 
+/* The line falls from above the track (top: -40%, 40% tall) to its foot: 140% of the track, 350% of the line.
+   By transform, so the compositor draws it: animating top laid the page out 60 times a second (audit CD-03). */
 @keyframes hero-drop {
   to {
-    top: 100%;
+    transform: translateY(350%);
   }
 }
 
@@ -1061,6 +1063,11 @@ a.rcard:hover {
   text-align: left;
 }
 
+/* The ring drawn inside the card: outside it the card's overflow clipped it away (audit TC-07). */
+.dest-hit:focus-visible {
+  outline-offset: -5px;
+}
+
 /* A card with a website is a link: it keeps the card's colours, not base.css's link green. */
 a.dest-hit,
 a.dest-hit:hover {
@@ -1112,8 +1119,11 @@ a.dest-hit:hover {
   letter-spacing: 0.08em;
   color: var(--on-dark);
   pointer-events: none;
-  text-shadow: 0 1px 12px rgba(12, 18, 15, 0.5);
-  transition: color 0.3s ease;
+  /* A close dark halo as well as the soft one: over a bright sign or a grey ceiling the number read at 2.3:1
+     (UX/UI audit 2026-11-25, TG-01). It stays cream when the card is hovered: gold on grey all but vanished. */
+  text-shadow:
+    0 0 3px rgba(12, 18, 15, 0.75),
+    0 1px 14px rgba(12, 18, 15, 0.7);
 }
 
 .dest-copy {
@@ -1165,8 +1175,7 @@ a.dest-hit:hover {
 /*
  * A card that leads somewhere (a link or a button; the teaser, a plain box,
  * stays still) answers the keyboard's focus and a pointer's hover alike: the
- * photograph leans in, the hairline closes in and brightens, the number turns
- * gold, the words lift and the count rises under them, its arrow stepping on;
+ * photograph leans in, the hairline closes in and brightens, the words lift and the count rises under them, its arrow stepping on;
  * the route's stop above lights up with it. The hover for a pointer only: on a
  * touch screen a tap would leave the card so until the next, and the count is
  * there outright. Going in, the count follows the lift; going out, all at once.
@@ -1178,10 +1187,6 @@ a.dest-hit:hover {
 .dest-hit:focus-visible .dest-frame {
   scale: 0.97;
   border-color: rgba(198, 166, 100, 0.8);
-}
-
-.dest-hit:focus-visible .dest-index {
-  color: var(--gold);
 }
 
 .dest-hit:focus-visible .dest-copy {
@@ -1218,10 +1223,6 @@ a.dest-hit:hover {
   .dest-hit:is(a, button):hover .dest-frame {
     scale: 0.97;
     border-color: rgba(198, 166, 100, 0.8);
-  }
-
-  .dest-hit:is(a, button):hover .dest-index {
-    color: var(--gold);
   }
 
   .dest-hit:is(a, button):hover .dest-copy {
@@ -1408,7 +1409,9 @@ a.dest-hit:hover {
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--on-dark-soft);
+  /* Full cream with a soft halo: the softer cream read at 3.4–3.8:1 over the sunset (UX/UI audit 2026-11-25, TG-03). */
+  color: var(--on-dark);
+  text-shadow: 0 0 10px rgba(12, 18, 15, 0.6);
 }
 
 .heritage-title {

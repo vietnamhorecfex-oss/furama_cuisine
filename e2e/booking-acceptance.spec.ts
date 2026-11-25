@@ -54,6 +54,11 @@ const heldCovers = async (date: string, time: string) =>
     )
   )!.covers;
 
+// Cancel, decline and no-show ask first (window.confirm, UX/UI audit 2026-11-25 AB-05): staff say yes.
+test.beforeEach(({ page }) => {
+  page.on('dialog', (dialog) => void dialog.accept());
+});
+
 test('A1. concurrent bookings never exceed capacity: eight replays of a guest’s request for the last four covers book two', async ({ browser }) => {
   const date = venueDay(12);
   // A slot filled by an earlier run on this database would leave nothing to race for.

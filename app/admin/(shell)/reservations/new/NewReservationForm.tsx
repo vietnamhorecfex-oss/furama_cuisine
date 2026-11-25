@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState, useId, useState, type FormEvent } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState, type FormEvent } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
-import { isValidIsoDate } from '@/lib/venue-time';
+import { isValidIsoDate, toMinutes } from '@/lib/venue-time';
 import { FieldError, FormMessage, invalidField } from '../../_ui/FormMessage';
 import { createReservation } from '../actions';
 import { usePickedTarget } from './TargetPicker';
@@ -27,15 +28,28 @@ export function NewReservationForm(props: {
   date: string;
   dateLabel: string;
   walkInAllowed: boolean;
+  /** Minutes into today's service, when the form is for today; null for another day. */
+  nowMinutes: number | null;
   slots: SlotOption[];
   locales: { code: string; name: string }[];
   defaultLocale: string;
 }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(createReservation, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(createReservation, null);
   const uid = useId();
   const picked = usePickedTarget();
   const [refused, setRefused] = useState(false);
   const [walkIn, setWalkIn] = useState(false);
+  // The time a booking of this kind most likely has (UX/UI audit 2026-11-25, AB-03: a walk-in at 19:18 took the
+  // day's first slot, 11:30 · Lunch): a walk-in the last slot that has started, a phone booking for today the
+  // next slot still ahead; staff can still pick any slot.
+  const suggest = (kind: 'phone' | 'walk_in') => {
+    const now = props.nowMinutes;
+    if (now === null || props.slots.length === 0) return props.slots[0]?.time ?? '';
+    const started = props.slots.filter((s) => toMinutes(s.time) <= now);
+    const ahead = props.slots.find((s) => toMinutes(s.time) >= now);
+    return kind === 'walk_in' ? (started.at(-1) ?? props.slots[0]).time : (ahead ?? props.slots.at(-1)!).time;
+  };
+  const [time, setTime] = useState(() => suggest('phone'));
   const err = (name: string) => `${uid}-${name}-error`;
   // The picker no longer shows this form's target: its times are the old target's, so posting would book there.
   const stale = !!picked && (picked.restaurant !== props.restaurantId || picked.date !== props.date);
@@ -63,17 +77,25 @@ export function NewReservationForm(props: {
       <fieldset className="a-field a-field--wide">
         <legend>Nguồn</legend>
         <label className="a-check">
-          <input type="radio" name="source" value="phone" defaultChecked onChange={() => setWalkIn(false)} />
+          <input type="radio" name="source" value="phone" defaultChecked onChange={() => {
+              setWalkIn(false);
+              setTime(suggest('phone'));
+            }}
+          />
           Điện thoại (đã xác nhận)
         </label>
         <label className="a-check">
-          <input type="radio" name="source" value="walk_in" disabled={!props.walkInAllowed} onChange={() => setWalkIn(true)} />
+          <input type="radio" name="source" value="walk_in" disabled={!props.walkInAllowed} onChange={() => {
+              setWalkIn(true);
+              setTime(suggest('walk_in'));
+            }}
+          />
           Khách vãng lai (đã đến)
         </label>
       </fieldset>
       <div className="a-field">
         <label htmlFor={`${uid}-time`}>Giờ</label>
-        <select id={`${uid}-time`} name="time" aria-describedby={err('time')} aria-invalid={invalidField(state, 'time')}>
+        <select id={`${uid}-time`} name="time" value={time} onChange={(e) => setTime(e.target.value)} aria-describedby={err('time')} aria-invalid={invalidField(state, 'time')}>
           {props.slots.map((s) => (
             <option key={s.time} value={s.time}>
               {s.label}

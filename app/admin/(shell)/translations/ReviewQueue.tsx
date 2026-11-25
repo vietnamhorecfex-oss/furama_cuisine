@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import Link from 'next/link';
 import { toBcp47 } from '@/lib/i18n/locales';
 import type { ActionResult } from '@/lib/server/action-result';
@@ -19,7 +20,7 @@ import { reviewQueueItems } from './actions';
 const value = (i: QueueItem) => `${i.kind}|${i.id}|${i.locale}|${i.token}`;
 
 export function ReviewQueue({ items, canReview }: { items: readonly QueueItem[]; canReview: boolean }) {
-  const [state, dispatch, pending] = useActionState<ActionResult | null, FormData>(reviewQueueItems, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult | null, FormData>(reviewQueueItems, null);
   if (items.length === 0) return <p className="a-muted">Không có bản dịch nào chờ duyệt.</p>;
   return (
     <form action={dispatch} aria-label="Hàng chờ duyệt">

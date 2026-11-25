@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState } from 'react';
 import { inviteOutcome } from '@/lib/admin/auth-errors';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
@@ -18,7 +19,7 @@ import { inviteStaff } from './actions';
  * invite is an alert, with why).
  */
 export function InviteForm() {
-  const [state, action, pending] = useActionState<ActionResult<InviteDelivery> | null, FormData>(inviteStaff, null);
+  const [state, action, pending] = useAdminAction<ActionResult<InviteDelivery> | null, FormData>(inviteStaff, null);
   const [sent, setSent] = useState({ state, count: 0 });
   if (sent.state !== state) setSent({ state, count: sent.count + (state?.ok ? 1 : 0) });
   const uid = useId();

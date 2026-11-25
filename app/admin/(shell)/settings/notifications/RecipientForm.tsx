@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import { STAFF_EMAIL_EVENTS } from '@/lib/email/events';
 import type { ActionResult } from '@/lib/server/action-result';
@@ -33,7 +34,7 @@ const STAFF_EVENT_LABELS: Record<(typeof STAFF_EMAIL_EVENTS)[number], string> = 
  * post a stale target beside a newer token, and the message survives the remount.
  */
 export function RecipientEditor({ options, values }: { options: RecipientOptions; values: RecipientValues | null }) {
-  const [state, action, pending] = useActionState<ActionResult<unknown> | null, FormData>(
+  const [state, action, pending] = useAdminAction<ActionResult<unknown> | null, FormData>(
     (prev, formData) => (values ? editRecipient(prev as ActionResult | null, formData) : addRecipient(prev as ActionResult<{ id: string }> | null, formData)),
     null,
   );
@@ -157,7 +158,7 @@ function RecipientFields({
 }
 
 export function DeleteRecipient({ values }: { values: RecipientValues }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(removeRecipient, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(removeRecipient, null);
   // The confirm sits on the button, as in DeleteClosure: a form with a function action takes no onSubmit.
   return (
     <form className="a-inline-form a-inline-form--button" action={action}>

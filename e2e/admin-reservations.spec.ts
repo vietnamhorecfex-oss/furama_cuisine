@@ -48,6 +48,11 @@ async function countSubmits(page: Page): Promise<() => Promise<number>> {
   return () => page.evaluate(() => (window as unknown as { submits: number }).submits);
 }
 
+// Cancel, decline and no-show ask first (window.confirm, UX/UI audit 2026-11-25 AB-05): staff say yes.
+test.beforeEach(({ page }) => {
+  page.on('dialog', (dialog) => void dialog.accept());
+});
+
 test('an Editor confirms a request; the timeline names who did it', async ({ page }) => {
   const r = await seedReservation();
   const violations = await watchCsp(page);
@@ -76,7 +81,7 @@ test('cancel needs a reason; the reason is kept and shown', async ({ page }) => 
   await page.goto(`/admin/reservations/${r.id}`);
   // No guest email, so no email will quote the reason (R8), and no "Báo khách" box pretends one will go:
   // the panel says to phone instead (F2).
-  await expect(main(page).getByText(/sẽ được gửi cho khách/)).toHaveCount(0);
+  await expect(main(page).getByText(/sẽ được gửi nguyên văn cho khách/)).toHaveCount(0);
   await expect(main(page).getByText('Khách không để lại email: thay đổi ở đây không gửi email nào, hãy gọi điện báo khách.')).toBeVisible();
   await expect(main(page).getByRole('checkbox', { name: 'Báo khách qua email khi hủy' })).toHaveCount(0);
   await main(page).getByRole('button', { name: 'Hủy', exact: true }).click();
@@ -103,9 +108,9 @@ test('the guest emails staff choose (R8): "Báo khách" is on for a cancel and s
   const reason = page.getByLabel('Lý do (bắt buộc khi hủy hoặc từ chối)', { exact: true });
   const cancel = main(page).getByRole('button', { name: 'Hủy', exact: true });
   // One reason field serves every button: the hint names the ones whose email quotes it ("Đã đến" emails no one).
-  const hint = main(page).getByText(/sẽ được gửi cho khách/);
+  const hint = main(page).getByText(/sẽ được gửi nguyên văn cho khách/);
   await expect(notify).toBeChecked();
-  await expect(hint).toHaveText('Khi hủy, lý do này sẽ được gửi cho khách.');
+  await expect(hint).toHaveText(/^Khi hủy, lý do này sẽ được gửi nguyên văn cho khách\./);
   await notify.uncheck();
   await expect(hint).toHaveCount(0);
   await notify.check();
@@ -121,13 +126,13 @@ test('the guest emails staff choose (R8): "Báo khách" is on for a cancel and s
   await one(`UPDATE reservations SET email = $2 WHERE id = $1`, [quiet.id, `quiet-${quiet.id}@example.com`]);
   await page.goto(`/admin/reservations/${quiet.id}`);
   await expectHydrated(page);
-  await expect(hint).toHaveText('Khi từ chối hoặc hủy, lý do này sẽ được gửi cho khách.');
+  await expect(hint).toHaveText(/^Khi từ chối hoặc hủy, lý do này sẽ được gửi nguyên văn cho khách\./);
   await notify.uncheck();
-  await expect(hint).toHaveText('Khi từ chối, lý do này sẽ được gửi cho khách.');
+  await expect(hint).toHaveText(/^Khi từ chối, lý do này sẽ được gửi nguyên văn cho khách\./);
   await cancel.click();
   await expect(main(page).getByText('Nhập lý do.')).toBeVisible();
   await expect(notify).not.toBeChecked();
-  await expect(hint).toHaveText('Khi từ chối, lý do này sẽ được gửi cho khách.');
+  await expect(hint).toHaveText(/^Khi từ chối, lý do này sẽ được gửi nguyên văn cho khách\./);
   await reason.fill('Khách đổi ngày');
   await one(`UPDATE reservations SET note = 'Ghế trẻ em' WHERE id = $1`, [quiet.id]);
   await cancel.click();

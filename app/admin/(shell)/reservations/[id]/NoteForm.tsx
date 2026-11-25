@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FieldError, FormMessage, invalidField } from '../../_ui/FormMessage';
@@ -15,7 +16,7 @@ import { addNote } from '../actions';
  * useId (several booking pages can stay mounted, phase-5 ledger).
  */
 export function NoteForm({ id }: { id: string }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(addNote, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(addNote, null);
   const [saved, setSaved] = useState({ state, count: 0 });
   if (saved.state !== state) setSaved({ state, count: saved.count + (state?.ok ? 1 : 0) });
   const uid = useId();

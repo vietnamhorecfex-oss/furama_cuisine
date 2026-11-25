@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FormMessage } from '../../../_ui/FormMessage';
@@ -8,7 +9,7 @@ import { saveAutoConfirmSetting } from './auto-confirm-actions';
 
 /* Admin only: the page renders it only for a role with reservations:auto-confirm, and the action checks again. */
 export function AutoConfirmForm({ restaurantId, token, value, defaultValue }: { restaurantId: string; token: string; value: boolean | null; defaultValue: boolean }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(saveAutoConfirmSetting, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(saveAutoConfirmSetting, null);
   const uid = useId();
   const saved = value === null ? 'inherit' : value ? 'on' : 'off';
   return (

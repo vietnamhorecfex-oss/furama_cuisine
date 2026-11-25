@@ -144,7 +144,7 @@ describe('booking emails', () => {
       expect(line).not.toMatch(/chưa/i);
     }
     const { subject, text } = await render('guest.declined', VI);
-    expect(subject).toBe('Rất tiếc, chúng tôi không thể nhận yêu cầu đặt bàn của bạn (FC-7K3QH9XA)');
+    expect(subject).toBe('Rất tiếc, chúng tôi không thể nhận yêu cầu đặt bàn của quý khách (FC-7K3QH9XA)');
     expect(text).toContain('Không thể xác nhận đặt bàn');
     expect(text).not.toMatch(/chưa/i);
     // English is unchanged.
@@ -152,7 +152,7 @@ describe('booking emails', () => {
   });
 
   it('the request and confirmation open with the same words as the done screen of the form', async () => {
-    expect((await render('guest.ack')).text).toContain('Your table request at Tàya House has been received. Our team will contact you shortly to confirm.');
+    expect((await render('guest.ack')).text).toContain('Your table request at Tàya House has been received. This is not a confirmation yet: our team will contact you shortly to confirm.');
     expect((await render('guest.confirmed')).text).toContain('Your table at Tàya House is confirmed. We look forward to welcoming you.');
   });
 

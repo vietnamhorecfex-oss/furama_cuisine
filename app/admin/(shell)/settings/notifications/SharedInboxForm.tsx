@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FieldError, FormMessage } from '../../_ui/FormMessage';
@@ -8,7 +9,7 @@ import { saveInbox } from './actions';
 
 /* site_settings.email: where staff.new goes when nobody else matches, and where a guest's reply lands. */
 export function SharedInboxForm({ email, token }: { email: string; token: string }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(saveInbox, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(saveInbox, null);
   const uid = useId();
   return (
     <form method="post" className="a-grid-form" onSubmit={submitKeepingValues(action)} key={token} noValidate aria-label="Hộp thư chung">

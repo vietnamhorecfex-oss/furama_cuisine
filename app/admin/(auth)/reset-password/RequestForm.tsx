@@ -1,10 +1,11 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { requestPasswordReset, type RequestResetState } from './actions';
 
 export function RequestForm() {
-  const [state, action, pending] = useActionState<RequestResetState, FormData>(requestPasswordReset, null);
+  const [state, action, pending] = useAdminAction<RequestResetState, FormData>(requestPasswordReset, null);
   const errors = state?.fieldErrors ?? {};
   const uid = useId();
 

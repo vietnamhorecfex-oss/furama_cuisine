@@ -72,7 +72,7 @@ test('A1, A4. a guest booking emails the staff (the general inbox: nobody is lis
     [guest, `We have received your table request (${reference})`],
   ]);
   const ack = logged().find((e) => e.to === guest && e.subject.includes(reference));
-  expect(ack?.text).toContain('Your table request at Café Indochine has been received. Our team will contact you shortly to confirm.');
+  expect(ack?.text).toContain('Your table request at Café Indochine has been received. This is not a confirmation yet: our team will contact you shortly to confirm.');
   // The log line is written during the send; the row is marked sent just after it: poll, never read once.
   await expect
     .poll(() =>

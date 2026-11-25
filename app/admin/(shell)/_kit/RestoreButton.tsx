@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FormMessage, RuleAlert, fieldMessages } from '../_ui/FormMessage';
 import { useRestoreReport } from './RestoreOutcome';
@@ -39,7 +40,7 @@ export function RestoreButton({
   extra?: Record<string, string>;
 }) {
   const report = useRestoreReport();
-  const [state, dispatch, pending] = useActionState<ActionResult | null, FormData>(async (prev, formData) => {
+  const [state, dispatch, pending] = useAdminAction<ActionResult | null, FormData>(async (prev, formData) => {
     const result = await action(prev, formData);
     if (result.ok) report?.(`Đã khôi phục: ${label.charAt(0).toLowerCase()}${label.slice(1)} lúc ${when}.`);
     return result;

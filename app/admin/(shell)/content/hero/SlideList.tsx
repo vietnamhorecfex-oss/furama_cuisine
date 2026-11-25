@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useState } from 'react';
 import { LIMITS } from '@/lib/admin/content-rules';
 import type { MediaOption } from '@/lib/admin/media-option';
 import type { ActionResult } from '@/lib/server/action-result';
@@ -27,7 +28,7 @@ function ListMessage({ state, success }: { state: ActionResult | null; success?:
  * lives here and the order below remounts on a new list token.
  */
 export function SlideList({ items, listToken, warnings, ...shared }: { items: SlideListItem[]; listToken: string; warnings: string[] } & Shared) {
-  const [state, dispatch, pending] = useActionState<ActionResult | null, FormData>(reorderSlidesAction, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult | null, FormData>(reorderSlidesAction, null);
   return (
     <>
       <LimitNote shown={items.filter((i) => i.isPublished).length} max={LIMITS.heroSlides.max} warnings={warnings} />
@@ -82,8 +83,8 @@ function SlideOrder({
 }
 
 function SlideRow({ slide: s, images, upload }: { slide: SlideListItem } & Shared) {
-  const [toggleState, toggle, toggling] = useActionState<ActionResult | null, FormData>(toggleSlideAction, null);
-  const [deleteState, remove, removing] = useActionState<ActionResult | null, FormData>(deleteSlideAction, null);
+  const [toggleState, toggle, toggling] = useAdminAction<ActionResult | null, FormData>(toggleSlideAction, null);
+  const [deleteState, remove, removing] = useAdminAction<ActionResult | null, FormData>(deleteSlideAction, null);
   const image = images.find((i) => i.id === s.imageId);
   return (
     <div>

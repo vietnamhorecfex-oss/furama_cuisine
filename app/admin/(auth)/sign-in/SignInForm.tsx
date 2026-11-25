@@ -1,10 +1,11 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { signIn, type SignInState } from './actions';
 
 export function SignInForm({ next }: { next?: string }) {
-  const [state, action, pending] = useActionState<SignInState, FormData>(signIn, null);
+  const [state, action, pending] = useAdminAction<SignInState, FormData>(signIn, null);
   const errors = state?.fieldErrors ?? {};
   const uid = useId();
 

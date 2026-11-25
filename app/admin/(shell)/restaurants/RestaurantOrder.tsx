@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useState } from 'react';
 import type { ActionResult } from '@/lib/server/action-result';
 import type { RestaurantListItem } from '@/lib/server/content-admin/restaurants';
 import { FormMessage } from '../_ui/FormMessage';
@@ -14,7 +15,7 @@ import { reorderRestaurantsAction } from './actions';
  * the order below remounts on a new list token.
  */
 export function RestaurantOrder({ items, listToken }: { items: RestaurantListItem[]; listToken: string }) {
-  const [state, dispatch, pending] = useActionState<ActionResult | null, FormData>(reorderRestaurantsAction, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult | null, FormData>(reorderRestaurantsAction, null);
   return <Order key={listToken} items={items} listToken={listToken} state={state} dispatch={dispatch} pending={pending} />;
 }
 

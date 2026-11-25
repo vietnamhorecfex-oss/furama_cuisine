@@ -1,7 +1,7 @@
 'use client';
 
 import { getImageProps } from 'next/image';
-import { fold } from '@/lib/booking';
+import { fold, matchesSearch } from '@/lib/booking';
 import type { Media } from '@/lib/content/types';
 import { formatMessage } from '@/lib/i18n/format';
 import { useSite } from '@/components/site/SiteProvider';
@@ -45,7 +45,7 @@ export function SearchOverlay() {
 
   // r.search is folded on the server: name, type, cuisines and destination in this language and the default one (spec §6.3 item 9).
   const q = fold(query.trim());
-  const results = !q ? [] : restaurants.filter((r) => r.search.includes(q));
+  const results = !q ? [] : restaurants.filter((r) => matchesSearch(r.search, q));
 
   return (
     <div

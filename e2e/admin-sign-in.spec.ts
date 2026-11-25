@@ -83,7 +83,9 @@ test('the fourth try within 10 s is refused, even with the right password', asyn
     await settled(page);
   }
   await signIn(page, STAFF.admin.email, STAFF.admin.password);
-  await expect(formAlert(page)).toHaveText(/^Bạn đã thử quá nhiều lần\. Vui lòng thử lại sau \d+ giây\.$/);
+  // Better Auth's own wait comes back absurd here (its bigint read as text, UX/UI audit 2026-11-25 AH-01): past an
+  // hour the message says "a moment" rather than "179559074624805 giây".
+  await expect(formAlert(page)).toHaveText(/^Bạn đã thử quá nhiều lần\. Vui lòng (thử lại sau \d+ giây|đợi một lát rồi thử lại)\.$/);
   await expect(page).toHaveURL(/\/admin\/sign-in$/);
 });
 

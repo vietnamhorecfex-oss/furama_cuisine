@@ -180,7 +180,7 @@ describe.skipIf(!TEST_DATABASE_URL)('email screens and templates (database)', ()
       // Rendering reads no clock, so a literal date can pin the formatted day.
       const viBooking = await seedReservation({ locale: 'vi', status: 'confirmed', date: '2026-10-05' });
       const off = await render('guest.confirmed', viBooking, 'vi');
-      expect(off).toMatchObject({ locale: 'vi', subject: expect.stringMatching(/^Đặt bàn của bạn đã được xác nhận \(FC-/) });
+      expect(off).toMatchObject({ locale: 'vi', subject: expect.stringMatching(/^Đặt bàn của quý khách đã được xác nhận \(FC-/) });
       expect(off.html).toContain('lang="vi"');
       expect(off.text).toContain('Thứ Hai, 5 tháng 10, 2026');
       // A language with no copy of its own, switched off: the default language, not English copy with Korean dates.

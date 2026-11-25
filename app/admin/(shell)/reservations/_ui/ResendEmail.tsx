@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import { actionErrorMessage } from '@/lib/admin/auth-errors';
 import type { ActionResult } from '@/lib/server/action-result';
 import { resendEmail } from '../emails/actions';
@@ -12,7 +13,7 @@ import { resendEmail } from '../emails/actions';
  * T7.6): a second press would only be refused, or queue the row again.
  */
 export function ResendEmail({ id, label }: { id: string; label: string }) {
-  const [state, action, pending] = useActionState<ActionResult<{ id: string }> | null, FormData>(resendEmail, null);
+  const [state, action, pending] = useAdminAction<ActionResult<{ id: string }> | null, FormData>(resendEmail, null);
   return (
     <form className="a-resend" action={action}>
       <input type="hidden" name="id" value={id} />

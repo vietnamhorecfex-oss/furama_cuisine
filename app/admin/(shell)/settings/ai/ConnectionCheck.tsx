@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { FEATURE_LABELS } from '@/lib/admin/ai-schemas';
 import { actionErrorMessage } from '@/lib/admin/auth-errors';
 import { submitKeepingValues } from '@/lib/admin/form';
@@ -23,7 +24,7 @@ const STEP_LABELS: Record<CheckStepName, string> = {
  * tokens, and the Vietnamese sentence of the error code.
  */
 export function ConnectionCheck() {
-  const [state, action, pending] = useActionState<ActionResult<{ rows: CheckRow[] }> | null, FormData>(checkConnectionAction, null);
+  const [state, action, pending] = useAdminAction<ActionResult<{ rows: CheckRow[] }> | null, FormData>(checkConnectionAction, null);
   const uid = useId();
   return (
     <>

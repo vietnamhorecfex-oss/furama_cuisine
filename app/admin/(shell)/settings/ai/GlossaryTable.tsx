@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FieldError, FormMessage, invalidField } from '../../_ui/FormMessage';
@@ -82,7 +83,7 @@ function GlossaryRowView({ entry, id, locales, localeName }: { entry: GlossaryRo
 }
 
 function GlossaryEditor({ locales, entry }: { locales: GlossaryLocale[]; entry: (GlossaryRow & { id: string }) | null }) {
-  const [state, action, pending] = useActionState<ActionResult<{ id: string }> | null, FormData>(saveGlossaryAction, null);
+  const [state, action, pending] = useAdminAction<ActionResult<{ id: string }> | null, FormData>(saveGlossaryAction, null);
   const [added, setAdded] = useState(0);
   const [seen, setSeen] = useState(state);
   if (state !== seen) {
@@ -153,7 +154,7 @@ function GlossaryFields({
 }
 
 function DeleteGlossary({ id, term }: { id: string; term: string }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(deleteGlossaryAction, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(deleteGlossaryAction, null);
   return (
     <form className="a-inline-form a-inline-form--button" action={action}>
       <input type="hidden" name="id" value={id} />

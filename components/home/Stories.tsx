@@ -47,16 +47,19 @@ export function StoryCard({
   kicker,
   title,
   href,
+  reveal = true,
 }: {
   image: Media | null;
   kicker: string;
   title: string;
   href: string;
+  /** False on the News page: its cards are the first screen, which waited hidden for React (~4s on a slow phone, audit HN-01). */
+  reveal?: boolean;
 }) {
   const ref = useReveal<HTMLAnchorElement>('card');
 
   return (
-    <a ref={ref} data-reveal="card" href={href} target="_blank" rel="noopener" className="story">
+    <a ref={reveal ? ref : undefined} data-reveal={reveal ? 'card' : undefined} href={href} target="_blank" rel="noopener" className="story">
       <span className="story-frame frame" data-reveal-img="1">
         <span className="story-zoom" data-reveal-zoom="1">
           {/* Decorative by role: the title below says what the story is. */}

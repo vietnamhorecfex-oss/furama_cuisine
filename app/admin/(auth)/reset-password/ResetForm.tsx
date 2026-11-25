@@ -1,7 +1,8 @@
 'use client';
 
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import Link from 'next/link';
-import { useActionState, useId } from 'react';
+import { useId } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import { ADMIN_SIGN_IN } from '@/lib/admin/paths';
 import { resetPassword, type ResetState } from './actions';
@@ -13,7 +14,7 @@ import { resetPassword, type ResetState } from './actions';
  * password keeps what was typed (submitKeepingValues).
  */
 export function ResetForm({ token }: { token: string }) {
-  const [state, action, pending] = useActionState<ResetState, FormData>(resetPassword, null);
+  const [state, action, pending] = useAdminAction<ResetState, FormData>(resetPassword, null);
   const errors = state?.fieldErrors ?? {};
   const uid = useId();
 

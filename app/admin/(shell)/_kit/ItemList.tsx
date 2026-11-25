@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useState, type ReactNode } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useState, type ReactNode } from 'react';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FormMessage, RuleAlert, fieldMessages } from '../_ui/FormMessage';
 import { LimitNote, moved, SortableList } from './SortableList';
@@ -68,7 +69,7 @@ export function ItemList({
   remove: Action;
   details: Record<string, ReactNode>;
 }) {
-  const [state, dispatch, pending] = useActionState<ActionResult | null, FormData>(reorder, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult | null, FormData>(reorder, null);
   const shown = items.filter((i) => i.isPublished).length;
   return (
     <>
@@ -164,8 +165,8 @@ function ItemOrder({
 }
 
 function Row({ item: i, noun, toggle, remove, details }: { item: ItemRow; noun: string; toggle: Action; remove: Action; details: ReactNode }) {
-  const [toggleState, toggleDispatch, toggling] = useActionState<ActionResult | null, FormData>(toggle, null);
-  const [deleteState, removeDispatch, removing] = useActionState<ActionResult | null, FormData>(remove, null);
+  const [toggleState, toggleDispatch, toggling] = useAdminAction<ActionResult | null, FormData>(toggle, null);
+  const [deleteState, removeDispatch, removing] = useAdminAction<ActionResult | null, FormData>(remove, null);
   return (
     <div>
       <div className="a-item-row">
