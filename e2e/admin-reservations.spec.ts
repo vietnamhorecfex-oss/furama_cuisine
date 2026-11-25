@@ -81,7 +81,7 @@ test('cancel needs a reason; the reason is kept and shown', async ({ page }) => 
   await page.goto(`/admin/reservations/${r.id}`);
   // No guest email, so no email will quote the reason (R8), and no "Báo khách" box pretends one will go:
   // the panel says to phone instead (F2).
-  await expect(main(page).getByText(/sẽ được gửi cho khách/)).toHaveCount(0);
+  await expect(main(page).getByText(/sẽ được gửi nguyên văn cho khách/)).toHaveCount(0);
   await expect(main(page).getByText('Khách không để lại email: thay đổi ở đây không gửi email nào, hãy gọi điện báo khách.')).toBeVisible();
   await expect(main(page).getByRole('checkbox', { name: 'Báo khách qua email khi hủy' })).toHaveCount(0);
   await main(page).getByRole('button', { name: 'Hủy', exact: true }).click();
@@ -108,7 +108,7 @@ test('the guest emails staff choose (R8): "Báo khách" is on for a cancel and s
   const reason = page.getByLabel('Lý do (bắt buộc khi hủy hoặc từ chối)', { exact: true });
   const cancel = main(page).getByRole('button', { name: 'Hủy', exact: true });
   // One reason field serves every button: the hint names the ones whose email quotes it ("Đã đến" emails no one).
-  const hint = main(page).getByText(/sẽ được gửi cho khách/);
+  const hint = main(page).getByText(/sẽ được gửi nguyên văn cho khách/);
   await expect(notify).toBeChecked();
   await expect(hint).toHaveText(/^Khi hủy, lý do này sẽ được gửi nguyên văn cho khách\./);
   await notify.uncheck();

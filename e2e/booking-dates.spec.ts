@@ -121,9 +121,10 @@ test('submitting after the chosen sitting has closed explains why and moves the 
   await page.clock.setFixedTime(serverNow);
   await page.getByRole('button', { name: 'REQUEST BOOKING' }).click();
 
-  await expect(page.locator('.drawer-error[role="alert"]')).toHaveText(
-    'That time can no longer be booked online — please choose a later time or another day.',
-  );
+  const alert = page.locator('.drawer-error[role="alert"]');
+  await expect(alert).toContainText('That time can no longer be booked online — please choose a later time or another day.');
+  // The form moved the time: it says where, before a second press would book it (UX/UI audit 2026-11-25, DB-02).
+  await expect(alert.locator('.drawer-error-moved')).toHaveText(/^Your table is now set for Fri, 2 Oct · \d{2}:\d{2} · 2 guests\. Check it before you send again\.$/);
   await expect(page.locator('.drawer-done')).toHaveCount(0);
   expect(reachedServer).toBe(false);
 });

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectHydrated } from './csp';
 import { HOME_PATH } from './paths';
 
 /*
@@ -51,10 +52,11 @@ test('Back closes the Reserve drawer and stays on the page, the name typed kept'
 
 test('a section picked in the header menu takes the focus, so the next Tab is in that section', async ({ page }) => {
   await page.goto(HOME_PATH);
+  await expectHydrated(page);
   const offers = page.getByRole('banner').getByRole('button', { name: /^offers$/i });
   await offers.focus();
   await page.keyboard.press('Enter');
-  await expect.poll(() => page.evaluate(() => !!document.activeElement?.closest('#offers'))).toBe(true);
+  await expect(page.locator('#offers .section-title')).toBeFocused();
 });
 
 test('on /vi the search finds a restaurant by its cuisine in Vietnamese', async ({ page }) => {

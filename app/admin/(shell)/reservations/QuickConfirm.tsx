@@ -23,6 +23,7 @@ import { changeStatus, type StatusChange } from './actions';
  */
 const PAUSE_MS = 1500;
 let pausedUntil = 0;
+let pausedBy = '';
 let notice = '';
 const listeners = new Set<() => void>();
 const setNotice = (text: string) => {
@@ -37,8 +38,9 @@ const subscribe = (l: () => void) => {
 /** Says, once per confirmation, whom "Xác nhận" just confirmed. Render it above the list. */
 export function QuickConfirmNotice() {
   const text = useSyncExternalStore(subscribe, () => notice, () => '');
-  // The region is always there, so a screen reader hears each new sentence; it draws only with one.
-  return <div role="status">{text ? <p className="a-notice">{text}</p> : null}</div>;
+  // A live region always there, so a screen reader hears each new sentence; it draws only with one. Not role=status:
+  // the page's own status line (the inbox's search) stays the one status region of the list.
+  return <div aria-live="polite">{text ? <p className="a-notice">{text}</p> : null}</div>;
 }
 
 export function QuickConfirm({ id, version, reference, who }: { id: string; version: number; reference: string; who?: string }) {
@@ -52,11 +54,13 @@ export function QuickConfirm({ id, version, reference, who }: { id: string; vers
   const refusal = state && !state.ok && seen.version === version ? state : null;
   const submit = submitKeepingValues(action);
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    if (Date.now() < pausedUntil) {
+    // Another row's "Xác nhận" only: this row pressed again (after a conflict and "Tải lại") goes through.
+    if (Date.now() < pausedUntil && pausedBy !== id) {
       e.preventDefault();
       return;
     }
     pausedUntil = Date.now() + PAUSE_MS;
+    pausedBy = id;
     submit(e);
   };
   return (
