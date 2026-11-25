@@ -12,7 +12,7 @@ import { emailOverview } from '@/lib/server/email/outbox-log';
 import { venueNow } from '@/lib/venue-time';
 import { Icon, type IconName } from './_ui/Icon';
 import { PageHeader } from './_ui/PageHeader';
-import { QuickConfirm } from './reservations/QuickConfirm';
+import { QuickConfirm, QuickConfirmNotice } from './reservations/QuickConfirm';
 import { StatusBadge } from './reservations/_ui/StatusBadge';
 
 // Request-time like the whole admin (app/admin/layout.tsx); also opts navigations between admin pages out of dev instant validation (instant-navigation.md:568).
@@ -63,7 +63,7 @@ function BookingLine({ row, showDay, canConfirm }: { row: OverviewRow; showDay: 
         </small>
       </span>
       {canConfirm && row.status === 'requested' ? (
-        <QuickConfirm id={row.id} version={row.version} reference={row.reference} />
+        <QuickConfirm id={row.id} version={row.version} reference={row.reference} who={`${row.name} · ${row.guests} khách · ${row.time}`} />
       ) : (
         <StatusBadge status={row.status} />
       )}
@@ -193,6 +193,7 @@ export default async function OverviewPage() {
                 <Icon name="chevron-right" size={16} />
               </Link>
             </div>
+            <QuickConfirmNotice />
             {nextPending.length === 0 ? (
               <p className="a-empty">
                 <Icon name="check" size={24} />

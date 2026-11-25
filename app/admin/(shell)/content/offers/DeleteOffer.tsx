@@ -1,13 +1,14 @@
 'use client';
 
-import { useActionState } from 'react';
+
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FormMessage } from '../../_ui/FormMessage';
 import { deleteOfferAction } from './actions';
 
 /* "Xóa ưu đãi" on the offer's own page. After it, the page redraws as the deleted offer with its History. */
 export function DeleteOffer({ id, token, title }: { id: string; token: string; title: string }) {
-  const [state, dispatch, pending] = useActionState<ActionResult<{ unlinked: number }> | null, FormData>(deleteOfferAction, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult<{ unlinked: number }> | null, FormData>(deleteOfferAction, null);
   return (
     <form action={dispatch} className="a-inline-form a-danger-zone" aria-label="Xóa ưu đãi">
       <input type="hidden" name="id" value={id} />

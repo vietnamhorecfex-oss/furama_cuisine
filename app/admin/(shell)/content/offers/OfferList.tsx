@@ -1,7 +1,8 @@
 'use client';
 
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import Link from 'next/link';
-import { useActionState, useState } from 'react';
+import { useState } from 'react';
 import { LIMITS } from '@/lib/admin/content-rules';
 import type { ActionResult } from '@/lib/server/action-result';
 import type { OfferListItem } from '@/lib/server/content-admin/offers';
@@ -28,7 +29,7 @@ const STATE_LABELS: Record<OfferListItem['state'], string> = {
  * keeps a reorder that is not saved yet.
  */
 export function OfferList({ items, listToken, warnings }: { items: OfferListItem[]; listToken: string; warnings: string[] }) {
-  const [state, dispatch, pending] = useActionState<ActionResult | null, FormData>(reorderOffersAction, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult | null, FormData>(reorderOffersAction, null);
   const shown = items.filter((i) => i.state === 'shown').length;
   return (
     <>
@@ -85,8 +86,8 @@ function OfferOrder({
 
 function OfferRow({ offer: o }: { offer: OfferListItem }) {
   const name = o.title ?? `Ưu đãi ${o.id}`;
-  const [toggleState, toggle, toggling] = useActionState<ActionResult | null, FormData>(toggleOfferAction, null);
-  const [deleteState, remove, removing] = useActionState<ActionResult<{ unlinked: number }> | null, FormData>(deleteOfferAction, null);
+  const [toggleState, toggle, toggling] = useAdminAction<ActionResult | null, FormData>(toggleOfferAction, null);
+  const [deleteState, remove, removing] = useAdminAction<ActionResult<{ unlinked: number }> | null, FormData>(deleteOfferAction, null);
   const dates = [o.validFrom && `từ ${o.validFrom}`, o.validUntil && `đến ${o.validUntil}`].filter(Boolean).join(' ');
   return (
     <div className="a-offer-row">

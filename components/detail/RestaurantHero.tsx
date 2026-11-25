@@ -5,7 +5,6 @@ import type { RestaurantDetail } from '@/lib/content/types';
 import { useSite } from '@/components/site/SiteProvider';
 import { CmsImage } from '@/components/ui/CmsImage';
 import { openMenu } from '@/components/site/MobileBar';
-import { useReveal } from '@/lib/motion';
 import { restaurantMorphName } from '@/lib/view-morph';
 
 /*
@@ -20,7 +19,6 @@ import { restaurantMorphName } from '@/lib/view-morph';
  */
 export function RestaurantHero({ detail }: { detail: RestaurantDetail }) {
   const { goBackToRestaurants, openReserve, scrollToId, strings } = useSite();
-  const story = useReveal<HTMLParagraphElement>('up');
   // The restaurant's own label, else the one every page shares (detail.story_label, /admin/restaurants).
   const storyLabel = detail.storyLabel ?? strings['detail.story_label'];
   const menu = detail.menu;
@@ -139,7 +137,8 @@ export function RestaurantHero({ detail }: { detail: RestaurantDetail }) {
       {detail.story && (
         <section className="taya-story-mobile">
           <div className="taya-story-label">{storyLabel}</div>
-          <p ref={story} data-reveal="up" className="taya-story-m">
+          {/* Shown from the first paint: a phone's largest paint here, it waited hidden for React (~4.5s, UX/UI audit 2026-11-25, HN-01). */}
+          <p className="taya-story-m">
             {detail.story}
           </p>
         </section>

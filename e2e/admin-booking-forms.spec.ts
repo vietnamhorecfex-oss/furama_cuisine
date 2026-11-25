@@ -210,6 +210,7 @@ test('“Báo khách” is gone once the sitting has started, and the notice say
   const reason = page.getByLabel('Lý do (bắt buộc khi hủy hoặc từ chối)', { exact: true });
   await expect(reason).not.toHaveAccessibleDescription(/gửi cho khách/);
   await reason.fill('Khách gọi báo hủy');
+  page.once('dialog', (dialog) => void dialog.accept());
   await main(page).getByRole('button', { name: 'Hủy', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Đã hủy');
   await expect(main(page).getByRole('status')).toHaveText('Đã chuyển sang “Đã hủy”. Không gửi email cho khách: đã qua giờ hẹn.');

@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import { newPeriod, periodNames, type PeriodDraft } from '@/lib/admin/periods';
 import { SLOT_INTERVALS } from '@/lib/booking/rules';
@@ -51,7 +52,7 @@ export function PeriodsEditor({ restaurantId, token, meals, periods }: { restaur
     setRows(periods);
   }
   useLeaveGuard(JSON.stringify(rows) !== stored);
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(savePeriods, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(savePeriods, null);
   const uid = useId();
   const update = (i: number, patch: Partial<PeriodRow>) => setRows((list) => list.map((row, j) => (j === i ? { ...row, ...patch } : row)));
   const names = periodNames(rows);

@@ -107,7 +107,7 @@ const holds = (x: SheetRow) => (HOLDING_STATUSES as readonly string[]).includes(
 function SheetTable({ rows, notes }: { rows: { booking: SheetRow; load: string }[]; notes: Awaited<ReturnType<typeof listNotes>> }) {
   return (
     <div className="a-table-scroll">
-      <table className="a-table a-table--compact">
+      <table className="a-table a-table--compact a-table--phone-cards">
         <thead>
           <tr>
             <th scope="col">Giờ</th>
@@ -123,17 +123,17 @@ function SheetTable({ rows, notes }: { rows: { booking: SheetRow; load: string }
           {rows.map(({ booking: x, load }) => (
             <tr key={x.id}>
               {/* The time on every row: a printed sheet is read line by line. */}
-              <td>{x.time}</td>
-              <td>{load}</td>
-              <td className="a-ref">
+              <td data-label="Giờ">{x.time}</td>
+              <td data-label="Chỗ">{load}</td>
+              <td className="a-ref" data-label="Mã">
                 <Link href={`/admin/reservations/${x.id}`}>{x.reference}</Link>
               </td>
-              <td>{`${x.name} · ${x.phone}`}</td>
-              <td>{x.guests}</td>
-              <td>
+              <td data-label="Khách">{`${x.name} · ${x.phone}`}</td>
+              <td data-label="Số khách">{x.guests}</td>
+              <td data-label="Trạng thái">
                 <StatusBadge status={x.status} />
               </td>
-              <td>
+              <td data-label="Ghi chú">
                 {x.note ? <span>{`Khách: ${x.note}`}</span> : null}
                 {(notes.get(x.id) ?? []).map((n) => (
                   <span className="a-sub" key={n.id}>{`Nội bộ: ${n.body}`}</span>

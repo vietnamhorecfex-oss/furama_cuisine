@@ -62,7 +62,9 @@ export type ActionCode =
   /** Vercel Blob has no credentials in this environment (BLOB_READ_WRITE_TOKEN / BLOB_STORE_ID). */
   | 'blob_not_configured'
   // AI (spec §9, R9-15); the rate and budget codes carry params.limit / params.budget.
-  | AiErrorCode;
+  | AiErrorCode
+  /** Never sent by the server: the browser could not reach it, or it answered with an error page (useAdminAction). */
+  | 'network';
 
 export type ActionFailure = {
   ok: false;

@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import type { BookingSettings } from '@/lib/server/booking/config';
@@ -8,7 +9,7 @@ import { FieldError, FormMessage, invalidField } from '../../_ui/FormMessage';
 import { saveSettings } from './actions';
 
 export function SettingsForm({ settings: s }: { settings: BookingSettings }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(saveSettings, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(saveSettings, null);
   const uid = useId();
   const err = (name: string) => `${uid}-${name}-error`;
   return (

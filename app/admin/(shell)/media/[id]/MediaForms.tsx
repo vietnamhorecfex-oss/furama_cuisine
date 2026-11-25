@@ -1,7 +1,8 @@
 'use client';
 
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import Link from 'next/link';
-import { useActionState, useId } from 'react';
+import { useId } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { Saved } from '@/lib/admin/save-state';
 import type { TranslationState } from '@/lib/i18n/source-hash';
@@ -108,7 +109,7 @@ function DetailsFields({
  */
 export function DeleteMediaForm({ id, token, inUse, name }: { id: string; token: string; inUse: boolean; name: string }) {
   // A successful delete redirects to the library (actions.ts), so only a refusal comes back here.
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(deleteMediaAction, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(deleteMediaAction, null);
   const submit = submitKeepingValues(action);
   return (
     // Asks first, like every other delete (UX-10): it goes to the trash, and History brings it back.

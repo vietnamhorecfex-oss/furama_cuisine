@@ -34,7 +34,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
         <p className="a-empty">Chưa có mục nào.</p>
       ) : (
         <div className="a-table-scroll">
-          <table className="a-table">
+          <table className="a-table a-table--phone-cards">
             <thead>
               <tr>
                 <th scope="col">Thời gian</th>
@@ -50,11 +50,11 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                 const entity = `${auditEntityLabel(r.entity_type)} · ${ref?.label ?? r.entity_id ?? '—'}`;
                 return (
                   <tr key={`${r.source}:${r.id}`}>
-                    <td>{formatDateTimeVi(r.at)}</td>
-                    <td>{r.actor_label ?? 'Hệ thống'}</td>
-                    <td>{auditActionLabel(r.action)}</td>
-                    <td>{ref?.href ? <Link href={ref.href}>{entity}</Link> : entity}</td>
-                    <td>
+                    <td data-label="Thời gian">{formatDateTimeVi(r.at)}</td>
+                    <td data-label="Người thực hiện">{r.actor_label ?? 'Hệ thống'}</td>
+                    <td data-label="Thao tác">{auditActionLabel(r.action)}</td>
+                    <td data-label="Đối tượng">{ref?.href ? <Link href={ref.href}>{entity}</Link> : entity}</td>
+                    <td data-label="Chi tiết">
                       {r.before === null && r.after === null ? (
                         '—'
                       ) : (

@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { LENGTHS } from '@/lib/admin/content-rules';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
@@ -13,7 +14,7 @@ import { createRestaurantAction } from './actions';
  * the action opens its content screen.
  */
 export function NewRestaurantForm({ destinations }: { destinations: { id: string; name: string }[] }) {
-  const [state, dispatch, pending] = useActionState<ActionResult<{ id: string }> | null, FormData>(createRestaurantAction, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult<{ id: string }> | null, FormData>(createRestaurantAction, null);
   const uid = useId();
   return (
     <form method="post" className="a-grid-form" onSubmit={submitKeepingValues(dispatch)} noValidate aria-label="Thêm nhà hàng">

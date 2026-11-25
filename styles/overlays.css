@@ -451,6 +451,14 @@
   color: var(--error);
 }
 
+/* Where the form moved a refused request: its own line, in the text colour (news, not a second error). */
+.drawer-error-moved {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink);
+  font-weight: 600;
+}
+
 /* The number to call in a failure: one tap, never broken across lines in the footer's narrow column. */
 .drawer-error a {
   color: inherit;

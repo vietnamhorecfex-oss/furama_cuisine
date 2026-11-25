@@ -770,6 +770,11 @@ export function ReserveDrawer() {
                     {serverError && (
                       <div className="drawer-error" role="alert">
                         <BookingError code={serverError.code} params={serverError.params} strings={strings} phone={groupPhone} />
+                        {/* The form has slid the refused request to the nearest open time or day: say where, before a second
+                            press books it unseen (UX/UI audit 2026-11-25, DB-02). */}
+                        {serverError.from && timeShown && (serverError.from.date !== booking.date || serverError.from.time !== booking.time) ? (
+                          <span className="drawer-error-moved">{formatMessage(strings['booking.refused_moved'], { to: summary }, locale)}</span>
+                        ) : null}
                       </div>
                     )}
                     {/* REQUEST BOOKING waiting for the dates: news, not an error. Always mounted, so it is read out. */}

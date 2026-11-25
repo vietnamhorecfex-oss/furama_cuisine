@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FieldError, FormMessage, invalidField } from '../../_ui/FormMessage';
@@ -46,7 +47,7 @@ function WasScope({ values }: { values: ClosureValues }) {
  * Several editors render on the page, so their ids come from useId.
  */
 export function ClosureEditor({ options, values }: { options: Options; values: ClosureValues | null }) {
-  const [state, action, pending] = useActionState<ActionResult<unknown> | null, FormData>(
+  const [state, action, pending] = useAdminAction<ActionResult<unknown> | null, FormData>(
     (prev, formData) => (values ? editClosure(prev as ActionResult | null, formData) : addClosure(prev as ActionResult<{ id: string }> | null, formData)),
     null,
   );
@@ -176,7 +177,7 @@ function ClosureFields({
 }
 
 export function DeleteClosure({ values }: { values: ClosureValues }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(removeClosure, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(removeClosure, null);
   // The confirm sits on the button, not on the form's onSubmit: the admin guard asks every form with
   // onSubmit for method="post" (lib/admin/admin-pages.guard.test.ts), and React warns about a method on
   // a form whose action is a function (it posts that form itself). Cancelling the click stops the submit.

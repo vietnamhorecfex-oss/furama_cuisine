@@ -3597,6 +3597,71 @@ fieldset.a-field legend {
 }
 
 /* The day sheet on paper (spec §7.2): the sheet only, black on white, a restaurant never split. */
+/*
+ * The day sheet and the audit log on a phone screen: each row a card of its cells, the column's name over each
+ * value, so the status and the guest's note no longer hide past the edge (UX/UI audit 2026-11-25, AB-07 / AQ-01).
+ * Screen only: on paper the day sheet stays the table it is printed as.
+ */
+@media screen and (max-width: 640px) {
+  .a-table--phone-cards,
+  .a-table--phone-cards tbody,
+  .a-table-scroll > .a-table--phone-cards {
+    display: block;
+    min-width: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .a-table--phone-cards thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .a-table--phone-cards tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+    margin: 0 0 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--a-line);
+    border-radius: var(--a-radius);
+    background: var(--a-surface);
+  }
+
+  .a-table--phone-cards td {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .a-table--phone-cards td::before {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--a-ink-faint);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    content: attr(data-label);
+    content: attr(data-label) / '';
+  }
+
+  .a-table--phone-cards td:empty {
+    display: none;
+  }
+
+  /* The guest (or the record) and the last column (the note, the details): a line of their own. */
+  .a-table--phone-cards td:nth-child(4),
+  .a-table--phone-cards td:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
 @media print {
   body.admin {
     background: #fff;

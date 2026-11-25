@@ -507,7 +507,9 @@ html {
 .footer-socials {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  /* Rows far enough apart that the links' 44px touch areas (below) do not overlap when they wrap: at 320–360px
+     a tap on FACEBOOK opened TikTok, the row under it (UX/UI audit 2026-11-25, RS-02). */
+  gap: 30px 16px;
 }
 
 .footer-social {

@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId, useState, type FormEvent } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ReservationStatus } from '@/lib/booking/rules';
 import { STATUS_LABELS } from '@/lib/reservations/lifecycle';
@@ -36,22 +37,27 @@ export type TransitionOption = { to: ReservationStatus; label: string; reasonReq
  * in <Activity>) after a move to another, and fixed ids would then point
  * `htmlFor` and `aria-describedby` at the hidden copy (phase-5 ledger).
  */
+const LANGUAGE_NAMES: Record<string, string> = { en: 'tiếng Anh', ko: 'tiếng Hàn', zh: 'tiếng Trung', ja: 'tiếng Nhật', fr: 'tiếng Pháp', ru: 'tiếng Nga' };
+
 export function TransitionPanel({
   id,
   version,
   options,
   hasEmail,
+  guestLocale = 'vi',
   sittingPassed = false,
 }: {
   id: string;
   version: number;
   options: TransitionOption[];
   hasEmail: boolean;
+  /** The language the guest booked in: the emails are in it, the reason staff type goes in as written. */
+  guestLocale?: string;
   /** The sitting has started: no booking email goes out any more (F5). */
   sittingPassed?: boolean;
 }) {
   const uid = useId();
-  const [state, action, pending] = useActionState<ActionResult<StatusChange> | null, FormData>(changeStatus, null);
+  const [state, action, pending] = useAdminAction<ActionResult<StatusChange> | null, FormData>(changeStatus, null);
   // The reason and "Báo khách" keep what staff typed and chose through every refusal (no reason; a conflict,
   // then "Tải lại"), so an unticked box never comes back ticked behind their back. Only a change made here
   // starts them over: taken during render when its result arrives, not in an effect, and not with a key,
@@ -77,12 +83,38 @@ export function TransitionPanel({
   // The buttons whose email quotes the reason: a decline's always, a cancel's while "Báo khách" is ticked.
   const emails = hasEmail && !sittingPassed;
   const quotedBy = emails ? [canDecline ? 'từ chối' : null, canCancel && draft.notify ? 'hủy' : null].filter((b) => b !== null) : [];
-  const reasonHint = quotedBy.length ? `Khi ${quotedBy.join(' hoặc ')}, lý do này sẽ được gửi cho khách.` : null;
+  // A guest who booked in another language gets the reason as typed, inside an email in their language: a
+  // Vietnamese reason reached English-speaking guests (UX/UI audit 2026-11-25, EM-01).
+  const foreign = guestLocale !== 'vi' ? (LANGUAGE_NAMES[guestLocale] ?? guestLocale) : null;
+  const reasonHint = quotedBy.length
+    ? `Khi ${quotedBy.join(' hoặc ')}, lý do này sẽ được gửi nguyên văn cho khách.${foreign ? ` Khách đặt bằng ${foreign}: hãy viết lý do bằng ${foreign}.` : ''}`
+    : null;
+  // The changes that cannot be taken back ask first, and say whether the guest is emailed (UX/UI audit
+  // 2026-11-25, AB-05: one tap cancelled or declined a booking and emailed its guest). Like "Xóa ngày đóng cửa".
+  const submit = submitKeepingValues(action);
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const to = ((event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null)?.value;
+    const option = options.find((o) => o.to === to);
+    const ask =
+      to === 'cancelled'
+        ? `Hủy đặt bàn này?${emails && draft.notify ? ' Khách sẽ nhận email báo hủy.' : ''} Không hoàn tác được.`
+        : to === 'declined'
+          ? `Từ chối yêu cầu này?${emails ? ' Khách sẽ nhận email báo từ chối.' : ''} Không hoàn tác được.`
+          : to === 'no_show'
+            ? 'Đánh dấu khách không đến?'
+            : null;
+    // A missing reason is refused first, without a question.
+    if (ask && option?.enabled && !(option.reasonRequired && !draft.reason.trim()) && !window.confirm(ask)) {
+      event.preventDefault();
+      return;
+    }
+    submit(event);
+  };
   return (
     // Not action={action}: React resets a form once its action settles, whatever it returned, and that reset
     // ticked "Báo khách" again after a refused cancel, so the next cancel emailed a guest staff chose not to.
     // method="post": a submit before hydration must not GET the reason into the URL.
-    <form className="a-transitions" method="post" onSubmit={submitKeepingValues(action)}>
+    <form className="a-transitions" method="post" onSubmit={onSubmit}>
       {/* Enter in "Lý do" (implicit submission) clicks the form's first submit button: "Xác nhận" on a request,
           "Hủy" with "Báo khách" ticked on a confirmed booking, which then emails the guest a note meant for
           staff. A disabled first submit button makes Enter submit nothing (HTML: implicit submission does
@@ -129,6 +161,7 @@ export function TransitionPanel({
       ) : null}
       {canCancel && !hasEmail ? <p className="a-muted">Khách không để lại email: thay đổi ở đây không gửi email nào, hãy gọi điện báo khách.</p> : null}
       {hasEmail && sittingPassed ? <p className="a-muted">Đã qua giờ hẹn: thay đổi ở đây không gửi email cho khách, hãy gọi điện nếu cần báo.</p> : null}
+      {emails && options.some((o) => o.to === 'confirmed' && o.enabled) ? <p className="a-muted">Bấm “Xác nhận” sẽ gửi email xác nhận cho khách.</p> : null}
       <div className="a-actions">
         {options.map((o) => (
           <span className="a-action" key={o.to}>

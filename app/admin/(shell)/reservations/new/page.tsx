@@ -6,7 +6,7 @@ import { serviceDay } from '@/lib/reservations/lifecycle';
 import { listLocales, listRestaurantOptions } from '@/lib/server/booking/queries';
 import { loadBookedCovers, loadRestaurantRules } from '@/lib/server/booking/rules';
 import { requirePagePermission } from '@/lib/server/dal/session';
-import { isValidIsoDate } from '@/lib/venue-time';
+import { isValidIsoDate, venueNow } from '@/lib/venue-time';
 import { SectionNav } from '../_ui/SectionNav';
 import { NewReservationForm, type SlotOption } from './NewReservationForm';
 import { TargetPicker } from './TargetPicker';
@@ -70,6 +70,7 @@ export default async function NewReservationPage({ searchParams }: { searchParam
                 date={date}
                 dateLabel={formatIsoDayVi(date)}
                 walkInAllowed={date === today}
+                nowMinutes={date === today ? nowOnServiceDay(date) : null}
                 slots={slots}
                 locales={locales.map((l) => ({ code: l.code, name: l.name }))}
                 defaultLocale={defaultLocale}
@@ -80,4 +81,10 @@ export default async function NewReservationPage({ searchParams }: { searchParam
       </TargetPicker>
     </>
   );
+}
+
+/** Minutes into the service day `date` (it runs past midnight, until 04:00): what walk-in picks its time by. */
+function nowOnServiceDay(date: string): number {
+  const now = venueNow();
+  return now.date === date ? now.minutes : now.minutes + 24 * 60;
 }

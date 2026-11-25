@@ -151,6 +151,10 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   color: var(--on-dark);
+  /* Over the bright palm crowns at the picture's top it read at 2.0:1 without a halo (UX/UI audit 2026-11-25, TG-02). */
+  text-shadow:
+    0 0 3px rgba(12, 18, 15, 0.85),
+    0 1px 12px rgba(12, 18, 15, 0.75);
 }
 
 @media (min-width: 760px) {
@@ -197,7 +201,11 @@
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--gold);
+  /* The lighter gold, with a halo, over the thatch (2.7:1 before; audit TG-02). */
+  color: var(--gold-hover);
+  text-shadow:
+    0 0 3px rgba(12, 18, 15, 0.8),
+    0 1px 10px rgba(12, 18, 15, 0.7);
 }
 
 .taya-title-m {

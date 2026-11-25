@@ -7,7 +7,7 @@ import { readInboxSearch } from '@/lib/server/booking/inbox-search';
 import { INBOX_TABS, listInbox, type InboxTab } from '@/lib/server/booking/queries';
 import { requirePagePermission } from '@/lib/server/dal/session';
 import { venueNow } from '@/lib/venue-time';
-import { QuickConfirm } from './QuickConfirm';
+import { QuickConfirm, QuickConfirmNotice } from './QuickConfirm';
 import { searchReservations } from './actions';
 import { SectionNav } from './_ui/SectionNav';
 import { StatusBadge } from './_ui/StatusBadge';
@@ -70,6 +70,7 @@ export default async function ReservationsPage({ searchParams }: { searchParams:
           ))}
         </nav>
       )}
+      <QuickConfirmNotice />
       {rows.length === 0 ? (
         <p className="a-empty">Không có đặt bàn nào.</p>
       ) : (
@@ -119,7 +120,7 @@ export default async function ReservationsPage({ searchParams }: { searchParams:
                     {SOURCE_LABELS[r.source] ?? r.source}
                     <small className="a-sub">{formatDateTimeVi(r.createdAt)}</small>
                   </td>
-                  <td data-label="Thao tác">{r.status === 'requested' ? <QuickConfirm id={r.id} version={r.version} reference={r.reference} /> : null}</td>
+                  <td data-label="Thao tác">{r.status === 'requested' ? <QuickConfirm id={r.id} version={r.version} reference={r.reference} who={`${r.name} · ${r.guests} khách · ${formatIsoDayVi(r.date)} ${r.time}`} /> : null}</td>
                 </tr>
               ))}
             </tbody>

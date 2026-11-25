@@ -8,7 +8,7 @@ export function NewsGrid({ items }: { items: Story[] }) {
   return (
     <div className="news-grid">
       {items.map((s) => (
-        <StoryCard key={s.id} image={s.image} kicker={s.kicker} title={s.title} href={s.href} />
+        <StoryCard key={s.id} image={s.image} kicker={s.kicker} title={s.title} href={s.href} reveal={false} />
       ))}
     </div>
   );

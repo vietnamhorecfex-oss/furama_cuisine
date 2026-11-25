@@ -1,7 +1,8 @@
 'use client';
 
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import { useRouter } from 'next/navigation';
-import { useActionState, useState } from 'react';
+import { useState } from 'react';
 import { initialSaveState, markSaveDirty, nextSaveState, reloadSaveState, savedToken } from '@/lib/admin/save-state';
 import type { ActionResult } from '@/lib/server/action-result';
 import { useLeaveGuard } from './useLeaveGuard';
@@ -41,7 +42,7 @@ type Action<T> = (prev: ActionResult<T> | null, formData: FormData) => Promise<A
  */
 export function useSaveState<T, V>(action: Action<T>, token: string, view: V, written: (data: T, posted: V) => string | null = savedToken) {
   const router = useRouter();
-  const [state, dispatch, pending] = useActionState<ActionResult<T> | null, FormData>(action, null);
+  const [state, dispatch, pending] = useAdminAction<ActionResult<T> | null, FormData>(action, null);
   const [seen, setSeen] = useState(() => initialSaveState(state, token, view));
   // Adjusted during render, not in an effect, so the notice and the fields agree.
   const saved = state?.ok ? written(state.data, seen.view) : null;

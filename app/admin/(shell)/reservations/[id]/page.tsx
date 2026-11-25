@@ -154,6 +154,7 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
             version={reservation.version}
             options={options}
             hasEmail={Boolean(reservation.email)}
+            guestLocale={reservation.locale}
             sittingPassed={sittingPassed}
           />
         </section>

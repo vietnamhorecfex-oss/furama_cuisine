@@ -229,10 +229,10 @@ test('a booking on /vi is kept in Vietnamese with the consent it showed; its ema
       // Vietnamese has no policy wording of its own yet: the guest agreed to the English one, and the booking says which.
       { locale: 'vi', consent_locale: 'en', consent_version: policy },
     ]);
-    await expect.poll(() => logged().find((e) => e.to === viGuest && e.subject.includes(vi))?.subject).toBe(`Chúng tôi đã nhận yêu cầu đặt bàn của bạn (${vi})`);
+    await expect.poll(() => logged().find((e) => e.to === viGuest && e.subject.includes(vi))?.subject).toBe(`Chúng tôi đã nhận yêu cầu đặt bàn của quý khách (${vi})`);
     const ack = logged().find((e) => e.to === viGuest && e.subject.includes(vi))!;
     expect(ack.html).toContain('lang="vi"');
-    expect(ack.text).toContain('Yêu cầu đặt bàn của bạn tại Café Indochine đã được tiếp nhận.');
+    expect(ack.text).toContain('Yêu cầu đặt bàn của quý khách tại Café Indochine đã được tiếp nhận.');
     // The staff email goes to the shared inbox in the staff's language (the default staff locale, Vietnamese).
     await expect.poll(() => logged().find((e) => e.to !== viGuest && e.subject.includes(vi))?.subject).toMatch(new RegExp(`^Đặt bàn mới ${vi}: Café Indochine, `));
 

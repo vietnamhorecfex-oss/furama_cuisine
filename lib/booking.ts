@@ -64,4 +64,17 @@ export const fold = (x: string) =>
     .split(SPLIT)
     .map((run) => (IS_CJK.test(run) ? run.normalize('NFC') : run.normalize('NFD').replace(/[\u0300-\u036f]/g, '')))
     .join('')
-    .replace(/đ/g, 'd');
+    .replace(/đ/g, 'd')
+    // Curly and straight apostrophes are one ("Don Cipriani's" typed on a keyboard finds Don Cipriani’s).
+    .replace(/[\u2018\u2019\u02bc`]/g, "'");
+
+/**
+ * Whether a restaurant's folded search line matches a folded query (the search overlay). A single letter ("Ý",
+ * Italian) is a whole word, two letters the start of one; longer queries anywhere. As a plain substring "y"
+ * matched every name with a y (UX/UI audit 2026-11-25, DH-12).
+ */
+export function matchesSearch(search: string, q: string): boolean {
+  if (q.length > 2) return search.includes(q);
+  // Words split on anything but a letter or a digit (· , - ' and spaces).
+  return search.split(/[^\p{L}\p{N}]+/u).some((word) => (q.length === 1 ? word === q : word.startsWith(q)));
+}

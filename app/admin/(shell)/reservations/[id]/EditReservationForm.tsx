@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import { FieldError, FormMessage, invalidField } from '../../_ui/FormMessage';
@@ -19,7 +20,7 @@ type Editable = { id: string; version: number; date: string; time: string; guest
  * from useId (phase-5 ledger: an earlier booking's page can stay mounted, hidden, in <Activity>).
  */
 export function EditReservationForm({ reservation: r, times }: { reservation: Editable; times: string[] }) {
-  const [state, action, pending] = useActionState<ActionResult<{ changed: boolean }> | null, FormData>(updateReservation, null);
+  const [state, action, pending] = useAdminAction<ActionResult<{ changed: boolean }> | null, FormData>(updateReservation, null);
   const uid = useId();
   const id = (name: string) => `${uid}-${name}`;
   const err = (name: string) => `${uid}-${name}-error`;

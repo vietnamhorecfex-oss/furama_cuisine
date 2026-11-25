@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useId } from 'react';
+import { useAdminAction } from '@/lib/admin/use-admin-action';
+import { useId } from 'react';
 import { actionErrorMessage } from '@/lib/admin/auth-errors';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
@@ -13,7 +14,7 @@ import { acceptInvitation } from './actions';
  * kept. Success redirects (the action), so nothing here starts over.
  */
 export function AcceptForm({ token, email }: { token: string; email: string }) {
-  const [state, action, pending] = useActionState<ActionResult | null, FormData>(acceptInvitation, null);
+  const [state, action, pending] = useAdminAction<ActionResult | null, FormData>(acceptInvitation, null);
   const failed = state && !state.ok ? state : null;
   const errors = failed?.fieldErrors ?? {};
   const uid = useId();

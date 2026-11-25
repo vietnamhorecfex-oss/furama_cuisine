@@ -22,6 +22,14 @@ describe('packFallback', () => {
     expect(packFallback.restaurants('vi', [{ type: 'Thai · 2F', name: 'Thai' } as never])[0]).toMatchObject({ type: 'Thái Lan · Tầng 2', name: 'Thai' });
   });
 
+  it('adds the pack’s words to a restaurant’s search line, so a Vietnamese search finds what the card says (audit DH-01)', () => {
+    const [r] = packFallback.restaurants('vi', [{ type: 'Teochew Fresh Beef Hotpot · 3F', name: 'Chao Shan', search: 'chao shan teochew fresh beef hotpot · 3f hotpot' } as never]);
+    expect(r.search).toContain('lau');
+    expect(r.search).toContain('lau bo tuoi trieu chau');
+    expect(r.search.startsWith('chao shan teochew')).toBe(true);
+    expect(packFallback.restaurants('en', [{ type: 'Hotpot', name: 'X', search: 'x hotpot' } as never])[0].search).toBe('x hotpot');
+  });
+
   it('translates the category or the schedule inside a composed line', () => {
     const story: Story = { id: 1, image: null, kicker: 'Restaurant News · 9 Sep 2026', title: 'Grand opening: one house, four flavours in An Thượng', href: '#' };
     expect(packFallback.stories('vi', [story])[0]).toMatchObject({ kicker: 'Tin nhà hàng · 9 Sep 2026', title: 'Khai trương: một ngôi nhà, bốn hương vị tại An Thượng' });

@@ -1,7 +1,8 @@
 'use client';
 
+import { useAdminAction } from '@/lib/admin/use-admin-action';
 import Link from 'next/link';
-import { useActionState, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { submitKeepingValues } from '@/lib/admin/form';
 import type { ActionResult } from '@/lib/server/action-result';
 import { cancelReservations, type CancelManyResult } from '../reservations/actions';
@@ -40,7 +41,7 @@ const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`;
  * come to a closed restaurant.
  */
 export function AffectedList({ items, title }: { items: AffectedItem[]; title: string }) {
-  const [state, action, pending] = useActionState<ActionResult<CancelManyResult> | null, FormData>(cancelReservations, null);
+  const [state, action, pending] = useAdminAction<ActionResult<CancelManyResult> | null, FormData>(cancelReservations, null);
   const uid = useId();
   const formKey = items.map((i) => `${i.id}:${i.version}`).join();
   // "Lý do này sẽ được gửi cho khách." only while an email will quote it: the box on and a ticked booking whose

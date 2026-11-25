@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FIELD_MAX, fold, validate, type BookingForm } from './booking';
+import { FIELD_MAX, fold, matchesSearch, validate, type BookingForm } from './booking';
 import { parseReservationInput } from './server/booking/input';
 
 describe('fold', () => {
@@ -50,5 +50,19 @@ describe('FIELD_MAX', () => {
     expect(longest).toHaveLength(FIELD_MAX[field]);
     expect(parseReservationInput({ ...form, [field]: longest })).toMatchObject({ ok: true });
     expect(parseReservationInput({ ...form, [field]: ofLength[field](FIELD_MAX[field] + 1) })).toMatchObject({ ok: false });
+  });
+});
+
+describe('matchesSearch (search overlay, audit DH-12)', () => {
+  it('matches one letter as a whole word, two as a word start, more anywhere', () => {
+    expect(matchesSearch(fold("don cipriani's italian · y"), fold('Ý'))).toBe(true);
+    expect(matchesSearch('yum food village', fold('Ý'))).toBe(false);
+    expect(matchesSearch('hai van lounge', 'va')).toBe(true);
+    expect(matchesSearch('taya house', 'ya')).toBe(false);
+    expect(matchesSearch('taya house', 'aya')).toBe(true);
+  });
+
+  it('reads straight and curly apostrophes alike', () => {
+    expect(matchesSearch(fold('Don Cipriani’s'), fold("Don Cipriani's"))).toBe(true);
   });
 });

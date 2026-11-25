@@ -2,6 +2,7 @@ import 'server-only';
 import vietnamese from '@/db/translation-packs/2026-11-vietnamese.json';
 import type { Cuisine, Destination, Experience, HeroSlide, Highlight, Media, NavItem, Offer, RestaurantDetail, Sections, Story } from '@/lib/content/types';
 import type { Restaurant } from '@/lib/data';
+import { fold } from '@/lib/booking';
 
 /*
  * The shipped translation packs as the guest pages' fallback (owner,
@@ -64,6 +65,27 @@ function trPart(locale: string, entity: string, column: string, line: string): s
   return line;
 }
 
+/*
+ * The search line of a restaurant (folded on the server from the words the card shows) carries the
+ * English of its type, cuisines and destination while the database has no translation: the pack's
+ * translation of each such phrase is added, so "việt nam" or "lẩu" finds what the card says in
+ * Vietnamese (UX/UI audit 2026-11-25, DH-01: every Vietnamese search on production came back empty).
+ */
+const SEARCH_COLUMNS = new Set(['restaurants\u0000type_label', 'cuisines\u0000label', 'destinations\u0000name']);
+function searchWithPack(locale: string, search: string): string {
+  const map = BY_LOCALE.get(locale);
+  if (!map || !search) return search;
+  const extra: string[] = [];
+  for (const [k, text] of map) {
+    const [entity, column, english] = k.split('\u0000');
+    if (!SEARCH_COLUMNS.has(`${entity}\u0000${column}`)) continue;
+    const from = fold(english);
+    const to = fold(text);
+    if (from && search.includes(from) && !search.includes(to)) extra.push(to);
+  }
+  return extra.length ? `${search} ${extra.join(' ')}` : search;
+}
+
 const media = <M extends Media | null>(locale: string, m: M): M => (m && m.alt ? { ...m, alt: tr(locale, 'media', 'alt', m.alt) } : m);
 
 export const packFallback = {
@@ -96,7 +118,12 @@ export const packFallback = {
       detail: trPart(locale, 'offers', 'schedule', o.detail),
     })),
   restaurants: (locale: string, list: Restaurant[]): Restaurant[] =>
-    list.map((r) => ({ ...r, type: tr(locale, 'restaurants', 'type_label', r.type), image: media(locale, r.image) })),
+    list.map((r) => ({
+      ...r,
+      type: tr(locale, 'restaurants', 'type_label', r.type),
+      image: media(locale, r.image),
+      search: searchWithPack(locale, r.search),
+    })),
   media,
   heroSlides: (locale: string, list: HeroSlide[]): HeroSlide[] => list.map((h) => ({ ...h, image: media(locale, h.image), mobile: media(locale, h.mobile) })),
   sections: (locale: string, sections: Sections): Sections =>
